@@ -1,132 +1,140 @@
 import React from 'react';
+import GoogleMap from './GoogleMap.jsx';
 
 const Apia = {
   lat: -13.815605,
   lng: -171.780512
 };
 
-class GoogleMap extends React.Component {
-  constructor(props){
-    super(props);
-    this.map = null;
-    this.diasterEvent = null;
-  }
-
-  render(){
-    const style = {width: 100 + "%", height:400 + "px"};
-    console.log("Earthquake.render() ---------------");
-    if( this.props.disasterEvent != null ){
-      console.log("props.eventData = " + this.props.disasterEvent);
-      this.disasterEvent = this.props.disasterEvent;
-    }
-    else{
-      console.log("props.eventData is empty.");
-      this.disasterEvent = null;
-    }
-
-    return (
-      <div id="map_canvas" style={style} >
-      </div>
-    );
-  }
-
-  componentDidMount() {
-    console.log("Earthquake.componentDidMount.");
-    this.initializeMapView();
-  }
-
-  componentDidUpdate() {
-    console.log("Earthquake.componentDidUpdate.");
-    this.initializeMapView();
-  }
-
-  initializeMapView(){
-
-    let div = document.getElementById("map_canvas");
-
-    // Initialize the map view
-    this.map = plugin.google.maps.Map.getMap(div);
-
-    // Wait until the map is ready status.
-    this.map.addEventListener(plugin.google.maps.event.MAP_READY,
-      () => {this.onMapReady()});
-    }
-
-    onMapReady(){
-
-      this.moveToPosition();
-    }
-
-    moveToPosition(){
-
-      console.log("Earthquake.moveToPosition.");
-
-      if( !this.map ){
-        console.log("Map is empty.");
-        return;
-      }
-
-      let animationProps = {
-        target: Apia,
-        zoom: 13,
-        //      tilt: 60,
-        //      bearing: 140,
-        duration: 5000
-      };
-
-      if( this.disasterEvent == null ){
-        console.log("moveCamera 1 =======");
-        this.map.moveCamera(animationProps);
-
-      }
-      else{
-        const epicenter = {
-          lat: this.disasterEvent.epicenter_lat,
-          lng: this.disasterEvent.epicenter_lng
-        };
-
-        animationProps.target = epicenter;
-
-        console.log("epicenter.lat = "+ epicenter.lat);
-        console.log("epicenter.lng = "+ epicenter.lng);
-
-        let markerProps = {
-          position: epicenter,
-          //        position: new plugin.google.maps.LatLng(this.disasterEvent.epicenter_lat, this.disasterEvent.epicenter_lng),
-          title: this.disasterEvent.type,
-          snippet: "MMI = "+this.disasterEvent.mmi,
-        };
-
-        console.log("Before moveCamera 2 =======");
-
-        // Move to the position with animation
-        this.map.moveCamera(animationProps);
-
-        console.log("Before addMarker =======");
-        // Add a maker
-        this.map.addMarker(markerProps, (marker) => {
-          console.log("addMarker =======");
-
-          // Show the info window
-          marker.showInfoWindow();
-        });
-
-      }
-
-    }
-  }
-
 class EarthquakePage extends React.Component {
 
   constructor(props){
     super(props);
+    if( this.props.phenomena && this.validatePhenomena()){
+      this.quake = this.props.phenomena;
+      this.quake.epicenter = {lat: this.quake.epicenter_lat, lng: this.quake.epicenter_lng};
+    }
+  }
+
+  validatePhenomena(){
+    const phenomena = this.props.phenomena;
+    if( !phenomena.epicenter_lat ){
+      console.error("epicenter_lat is not defined");
+      return false;
+    }
+    if( !phenomena.epicenter_lng ){
+      console.error("epicenter_lng is not defined");
+      return false;
+    }
+    if( !phenomena.mw ){
+      console.error("mw is not defined");
+      return false;
+    }
+    if( !phenomena.depth ){
+      console.error("depth is not defined");
+      return false;
+    }
+    return true;
   }
 
   render(){
-    console.log("EarthquakePage.disasterEvent = "+this.props.disasterEvent);
-    return(
-      <GoogleMap disasterEvent={this.props.disasterEvent} />
-    );
+    if( this.quake ){
+      return(
+        <GoogleMap mapCenter={this.quake.epicenter} zoom={3} onMapReady={(map)=>{ this.drawEpicenter(map);}}/>
+      );
+    }
+    else{
+      return(
+        <GoogleMap mapCenter={Apia} zoom={3} />
+      );
+    }
+  }
+
+  drawEpicenter(map){
+
+    let radius = this.getIntensityCircleRadius(this.quake.mw, this.quake.depth) * 1000;
+    let mwColor = this.getMagnitudeColor(this.quake.mw);
+
+    map.addMarker(this.quake.epicenter, "Earthquake", "Magnitude = "+this.quake.mw);
+    map.addCircle(this.quake.epicenter, radius, mwColor);
+  }
+
+  /**
+  * Return the radius of the circle in which the mmi is greater than 3.
+  * The unit is km.
+  */
+  getIntensityCircleRadius(mw, depth){
+    let radiusResolution = 100;
+    let maximumRadius = 1000;
+    let radius = 0;
+    for(let sx= radiusResolution; sx<= maximumRadius; sx += radiusResolution){
+      let mmi = this.getMMI(this.calculatePGV(mw, depth, sx));
+      if( mmi < 4 ){
+        return radius;
+      }
+      radius = sx;
+    }
+    return radius;
+  }
+
+  /**
+   * According to the table in http://earthquake.usgs.gov/earthquakes/shakemap/background.php#wald99b.
+   * MMI=2 is skipped.
+   */
+  getMMI(pgv){
+    if( pgv < 0.1 ) return 1;
+    else if( pgv < 1.1 ) return 3;
+    else if( pgv < 3.4 ) return 4;
+    else if( pgv < 8.1 ) return 5;
+    else if( pgv < 16  ) return 6;
+    else if( pgv < 31  ) return 7;
+    else if( pgv < 60  ) return 8;
+    else if( pgv < 116 ) return 9;
+    else return 10;
+  }
+  /**
+  * Calculate PGV at the surface distance sx from the epicenter.
+  * According to http://www.data.jma.go.jp/svd/eew/data/nc/katsuyou/reference.pdf
+  */
+  calculatePGV(mw, depth, sx){
+    let l = Math.pow(10, 0.5*mw-1.85);
+    let x = Math.max(sx / Math.cos(Math.atan2(depth, sx)) - l * 0.5, 3);
+    let pgv600 = Math.pow(10, 0.58*mw+0.0038*depth-1.29-this.log10(x+0.0028*Math.pow(10,0.5*mw)-0.002*x));
+    let pgv700 = pgv600 * 0.9;
+    let avs = 600;
+    let arv = Math.pow(10, 1.83-0.66*this.log10(avs));
+    let pgv = arv*pgv700;
+
+    return pgv;
+  }
+
+  /**
+   * Math.log10 seems not yet supported by all devices, so we define it here.
+   */
+  log10(value){
+    return Math.log(value) / Math.log(10);
+  }
+
+  /**
+   * Vivid red color for a strong magnitude, mild yellow color for a weak magnitude.
+   */
+  getMagnitudeColor(mw){
+    if( mw < 3 ){
+      return '#FFFF00';
+    }
+    else if( mw < 4 ){
+      return '#FFCC00';
+    }
+    else if( mw < 5 ){
+      return '#FF9900';
+    }
+    else if( mw < 6 ){
+      return '#FF6600';
+    }
+    else if( mw < 7 ){
+      return '#FF3300';
+    }
+    return '#FF0000';
   }
 }
 
