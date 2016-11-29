@@ -1,27 +1,32 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import RaisedButton from 'material-ui/RaisedButton';
+
+/* Imports from the material-ui */
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
-import FlatButton from 'material-ui/FlatButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import Dialog from 'material-ui/Dialog';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import MenuIcon from 'material-ui/svg-icons/navigation/menu';
-
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import injectTapEventPlugin from 'react-tap-event-plugin';
-
 import {GridList, GridTile} from 'material-ui/GridList';
 import List from 'material-ui/List/List';
 
-import {WarningsMenuTile, WarningList} from './WarningList.jsx';
-import {WeatherMenuTile, WeatherPage} from './Weather.jsx';
+/* This plugin captures the tap event in React. This is slow and to be replaced in future.*/
+import injectTapEventPlugin from 'react-tap-event-plugin';
+
+/* i18n */
+import { translate } from 'react-i18next';
+
+/* Imports the mhews's components */
+import {WarningList, WarningsMenuTile} from './WarningList.jsx';
+import {WeatherPage, WeatherMenuTile} from './Weather.jsx';
 import CyclonePage from './Cyclone.jsx';
 import EarthquakePage from './Earthquake.jsx';
 import AboutSMDPage from './AboutSMD.jsx';
 
+/* Key to lookup the next page. Also this strings are used as the key for translation */
 const indexPage = 'IndexPage';
 const weatherPage = 'Weather';
 const earthquakePage = 'Earthquake';
@@ -36,7 +41,6 @@ const disasterNotificationTopic = 'disaster';
  */
 injectTapEventPlugin();
 
-
 const TopLeftMenu = (props) => (
   <IconMenu
     {...props}
@@ -47,16 +51,14 @@ const TopLeftMenu = (props) => (
     anchorOrigin={{horizontal: 'right', vertical: 'top'}}
     onItemTouchTap={(event, child) => { event.preventDefault(); props.onClick(indexPage)}}
     >
-    <MenuItem primaryText="Menu" />
-    <MenuItem primaryText="Disaster Warning" />
-    <MenuItem primaryText="Help" />
-    <MenuItem primaryText="About" />
+    <MenuItem primaryText={props.t("menu.language")} />
+    <MenuItem primaryText={props.t("menu.about")} />
   </IconMenu>
 );
 
 class App extends React.Component {
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
     this.state = {
       page: indexPage
     }
@@ -108,13 +110,13 @@ class App extends React.Component {
 
     this.fcmdata = data;
     if( this.fcmdata.type == 'earthquake'){
-      this.setState({page: 'Earthquake'});
+      this.setState({page: earthquakePage});
     }
     else if( this.fcmdata.type == 'cyclone'){
-      this.setState({page: 'Cyclone'});
+      this.setState({page: cyclonePage});
     }
     else if( this.fcmdata.type == 'weather'){
-      this.setState({page: 'Weather'});
+      this.setState({page: weatherPage});
     }
     else {
       console.error("Received unknown data type "+this.fcmdata.type);
@@ -126,22 +128,22 @@ class App extends React.Component {
   */
   renderContents(){
     if( this.state.page == indexPage ){
-      return <IndexPage onClick={(page) => { this.handlePageSelection(page); }}/>
+      return <IndexPage {...this.props} onClick={(page) => { this.handlePageSelection(page); }}/>
     }
     else if( this.state.page == weatherPage ){
-      return <WeatherPage phenomena={this.fcmdata} />
+      return <WeatherPage {...this.props} phenomena={this.fcmdata} />
     }
     else if( this.state.page == earthquakePage ){
-      return <EarthquakePage phenomena={this.fcmdata} />
+      return <EarthquakePage {...this.props} phenomena={this.fcmdata} />
     }
     else if( this.state.page == cyclonePage ){
-      return <CyclonePage phenomena={this.fcmdata} />
+      return <CyclonePage {...this.props} phenomena={this.fcmdata} />
     }
     else if( this.state.page == aboutSMDPage ){
-      return <AboutSMDPage />
+      return <AboutSMDPage {...this.props} />
     }
     else if( this.state.page == warningListPage ){
-      return <WarningList />
+      return <WarningList {...this.props} />
     }
     else {
       console.error("Unknown page state:" + this.state.page);
@@ -150,13 +152,14 @@ class App extends React.Component {
   }
 
   render(){
+    const t = this.props.t;
 
     return (
       <MuiThemeProvider>
         <div>
           <AppBar
-            title={this.state.page}
-            iconElementLeft={<TopLeftMenu onClick={(page) => this.setState({page: page})}/>}
+            title={t(this.state.page)}
+            iconElementLeft={<TopLeftMenu {...this.props} onClick={(page) => this.setState({page: page})}/>}
             />
           {this.renderContents()}
         </div>
@@ -182,20 +185,20 @@ const styles = {
 const tilesData = [
 {
   img: 'images/earthquake_menu.jpg',
-  title: 'Earthquake and Tsunami',
-  page: 'Earthquake',
+  title: 'title.eqtsunami',
+  page: earthquakePage,
   contents: <EarthquakePage />
 },
 {
   img: 'images/cyclone_menu.jpg',
-  title: 'Cyclone',
-  page: 'Cyclone',
+  title: 'title.cyclone',
+  page: cyclonePage,
   contents: <CyclonePage />
 },
 {
   img: 'images/samet_icon.jpg',
-  title: 'About Samoa MET',
-  page: 'AboutSMD',
+  title: 'title.about',
+  page: aboutSMDPage,
   contents: <AboutSMDPage />
 },
 ];
@@ -203,11 +206,13 @@ const tilesData = [
 class IndexPage extends React.Component {
 
   render(){
+    const t = this.props.t;
+
     return(
       <div>
         <List>
-          <WeatherMenuTile onClick={() => this.props.onClick(weatherPage)} />
-          <WarningsMenuTile onClick={() => this.props.onClick(warningListPage)} />
+          <WeatherMenuTile {...this.props} onClick={() => this.props.onClick(weatherPage)} />
+          <WarningsMenuTile {...this.props} onClick={() => this.props.onClick(warningListPage)} />
         </List>
 
         <GridList
@@ -219,7 +224,7 @@ class IndexPage extends React.Component {
           {tilesData.map((tile) => (
             <GridTile
               key={tile.title}
-              title={tile.title}
+              title={t(tile.title)}
               >
               <img src={tile.img} onClick={() => this.props.onClick(tile.page)}/>
             </GridTile>
@@ -230,4 +235,4 @@ class IndexPage extends React.Component {
   }
 }
 
-export default App;
+export default translate(['common'])(App);

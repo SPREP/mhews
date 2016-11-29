@@ -6,42 +6,6 @@ import ListItem from 'material-ui/List/ListItem';
 import Divider from 'material-ui/Divider';
 import Subheader from 'material-ui/Subheader';
 
-/**
- * Usage: <WarningsGridTile onClick={callback} />
- * This GridTile requires two columns to display the latest warning in effect.
- */
-export class WarningsMenuTile extends React.Component {
-  constructor(props){
-    super(props);
-  }
-
-  retrieveLatestWarningInEffect(){
-    // TODO This should be cached to avoid unnecessary server access.
-    return {type: 'heavyRain', level: 'Warning', region: 'North Apia'}
-  }
-
-  getWarningMessage(warning){
-    if( warning ){
-      return warning.type + " " + warning.level + " is in effect in " + warning.region;
-    }
-    else{
-      return "Currently no warning is in effect.";
-    }
-  }
-
-  render(){
-    const latestWarning = this.retrieveLatestWarningInEffect();
-
-    return (
-      <ListItem
-        leftAvatar={<Avatar src="images/warning.png"></Avatar>}
-        primaryText={this.getWarningMessage(latestWarning)}
-        onClick={() => this.props.onClick()}
-        />
-    );
-  }
-}
-
 export class WarningList extends React.Component {
   constructor(props){
     super(props);
@@ -55,7 +19,9 @@ export class WarningList extends React.Component {
   }
 
   getWarningSummary(warning){
-    return warning.type + " " + warning.level;
+    const t = this.props.t;
+
+    return t(warning.type) + " " + t(warning.level);
   }
 
   getWarningDetails(warning){
@@ -100,5 +66,43 @@ export class WarningList extends React.Component {
         </List>
     );
 
+  }
+}
+
+/**
+ * Usage: <WarningsGridTile onClick={callback} />
+ * This GridTile requires two columns to display the latest warning in effect.
+ */
+export class WarningsMenuTile extends React.Component {
+  constructor(props){
+    super(props);
+  }
+
+  retrieveLatestWarningInEffect(){
+    // TODO This should be cached to avoid unnecessary server access.
+    return {type: 'heavyRain', level: 'Warning', region: 'North Apia'}
+  }
+
+  getWarningMessage(warning){
+    const t = this.props.t;
+
+    if( warning ){
+      return t(warning.type) + " " + t(warning.level) + " " + t("is in effect in") + " " + warning.region;
+    }
+    else{
+      return t("no_warning_in_effect");
+    }
+  }
+
+  render(){
+    const latestWarning = this.retrieveLatestWarningInEffect();
+
+    return (
+      <ListItem
+        leftAvatar={<Avatar src="images/warning.png"></Avatar>}
+        primaryText={this.getWarningMessage(latestWarning)}
+        onClick={() => this.props.onClick()}
+        />
+    );
   }
 }

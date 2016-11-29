@@ -1,6 +1,9 @@
 import React from 'react';
 import GoogleMap from './GoogleMap.jsx';
 
+/* i18n */
+import { translate } from 'react-i18next';
+
 const Apia = {
   lat: -13.815605,
   lng: -171.780512
@@ -138,4 +141,4 @@ class EarthquakePage extends React.Component {
   }
 }
 
-export default EarthquakePage;
+export default translate(['common'])(EarthquakePage);

@@ -1,11 +1,14 @@
 import React from 'react';
 
+/* i18n */
+import { translate } from 'react-i18next';
+
 /**
  * If the Cyclone forecast is updated, users should get the notification and be routed to the latest Cyclone forecast.
  * The Cyclone forecast product is published to the SMD web site. So this class just displays it.
  * On top, the warning or watch information is displayed.
  */
-export default class CyclonePage extends React.Component {
+class CyclonePage extends React.Component {
 
   constructor(props){
     super(props);
@@ -44,3 +47,5 @@ export default class CyclonePage extends React.Component {
     }
   }
 }
+
+export default translate(['common'])(CyclonePage);

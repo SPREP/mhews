@@ -8,7 +8,7 @@ import Avatar from 'material-ui/Avatar';
  * The latest forecast should be retrieved from the SmartMet product.
  */
 
- export class WeatherPage extends React.Component {
+export class WeatherPage extends React.Component {
 
    constructor(props){
      super(props);
@@ -22,8 +22,11 @@ import Avatar from 'material-ui/Avatar';
    }
 
    render(){
+     const t = this.props.t;
+
      return(
        <div>
+         <h1>{t("Weather")}</h1>
          <img src="images/weather/WeatherForecastBackground.png"/>
        </div>
      );
@@ -31,37 +34,37 @@ import Avatar from 'material-ui/Avatar';
  }
 
 
- /**
-  * Usage: <WeatherTile onClick={callback} />
-  * This GridTile requires two columns to display the latest weather observation.
-  */
- export class WeatherMenuTile extends React.Component {
-   constructor(props){
-     super(props);
-   }
+  /**
+   * Usage: <WeatherTile onClick={callback} />
+   * This GridTile requires two columns to display the latest weather observation.
+   */
+export class WeatherMenuTile extends React.Component {
+    constructor(props){
+      super(props);
+    }
 
-   retrieveWeatherObservation(){
-     // TODO This should be cached to avoid unnecessary server access.
-     return {city: 'Apia', weather: 'Sunny', temperature: 25.3};
-   }
+    retrieveWeatherObservation(){
+      // TODO This should be cached to avoid unnecessary server access.
+      return {city: 'Apia', weather: 'Sunny', temperature: 25.3};
+    }
 
-   generateTitle(observation){
-     return observation.city + " " + observation.temperature + "C";
-   }
+    generateTitle(observation){
+      return observation.city + " " + observation.temperature + "C";
+    }
 
-   getImageName(observation){
-       return "images/weather/Sunny.png";
-   }
+    getImageName(observation){
+        return "images/weather/Sunny.png";
+    }
 
-   render(){
-     const observation = this.retrieveWeatherObservation();
+    render(){
+      const observation = this.retrieveWeatherObservation();
 
-     return (
-       <ListItem
-         leftAvatar={<Avatar src={this.getImageName(observation)}></Avatar>}
-         primaryText={this.generateTitle(observation)}
-         onClick={() => this.props.onClick()}
-         />
-     )
-   }
- }
+      return (
+        <ListItem
+          leftAvatar={<Avatar src={this.getImageName(observation)}></Avatar>}
+          primaryText={this.generateTitle(observation)}
+          onClick={() => this.props.onClick()}
+          />
+      )
+    }
+  }
