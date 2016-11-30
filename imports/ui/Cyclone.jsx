@@ -1,4 +1,5 @@
 import React from 'react';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -22,29 +23,38 @@ class CyclonePage extends React.Component {
   }
 
   retrieveCycloneInformation(){
+    const cyclone = {
+      name: "Evan",
+      category: 3,
+      warningLevel: "Warning",
+      description: "Very dangerous. Stay at home.",
+      district: "Upolu South",
+      issuedAt: new Date()
+    }
 
+    return cyclone;
   }
 
   render(){
-    const style = {'max-width': 100+'%'};
+    const cyclone = this.retrieveCycloneInformation();
+    const name = cyclone.name;
+    const category = cyclone.category;
+    const district = cyclone.district;
+    const description = cyclone.description;
+    const issuedAt = cyclone.issuedAt;
+    const title = "Category " + cyclone.category + " " + cyclone.warningLevel;
 
-    if( this.cyclone ){
-      this.retrieveCycloneInformation();
-
-      return(
-        <div style={style}>
-          <img style={style} src="http://www.samet.gov.ws/TCModule/IDV60001.gif?1477450290515"/>
-        </div>
-      );
-    }
-    else{
-      return(
-        <div style={style}>
-          <img style={style} src="http://www.samet.gov.ws/TCModule/IDV60001.gif?1477450290515"/>
-        </div>
-      );
-
-    }
+    return(
+      <Card>
+        <CardMedia
+          overlay={<CardTitle title={title} subtitle={name} />}
+          >
+          <img src="http://www.samet.gov.ws/TCModule/IDV60001.gif?1477450290515" />
+        </CardMedia>
+        <CardTitle title={issuedAt.toDateString()} subtitle={district} />
+        <CardText>{description}</CardText>
+      </Card>
+    );
   }
 }
 

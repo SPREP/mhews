@@ -6,16 +6,13 @@ import ListItem from 'material-ui/List/ListItem';
 import Divider from 'material-ui/Divider';
 import Subheader from 'material-ui/Subheader';
 
-import {Warnings} from '../api/warnings.js';
+import {Warnings, HazardType} from '../api/warnings.js';
+import {Pages} from './App.jsx';
 
 export class WarningList extends React.Component {
+
   constructor(props){
     super(props);
-  }
-
-  retrieveWarningsInEffect(){
-    // List the effective warnings in descending order of the issued time.
-    return Warnings.find({in_effect: true}, {sort: [["issued_time", "desc"]]}).fetch();
   }
 
   getWarningSummary(warning){
@@ -29,10 +26,10 @@ export class WarningList extends React.Component {
   }
 
   getWarningTypeIcon(type){
-    if( type == 'Cyclone' ){
+    if( type == HazardType.cyclone ){
       return "images/warnings/tornade.png";
     }
-    else if( type == 'HeavyRain') {
+    else if( type == HazardType.heavyRain ) {
       return "images/warnings/storm.png";
     }
     return null;
@@ -53,18 +50,21 @@ export class WarningList extends React.Component {
   }
 
   render(){
-    const warnings = this.retrieveWarningsInEffect();
+    const warnings = Warnings.findWarningsInEffect();
     const t = this.props.t;
 
+    // FIXME The ListItem needs the key property set.
     if( warnings && warnings.length > 0 ){
       return (
         <List>
           {warnings.map((warning) => {
-            return (<ListItem
-              leftAvatar={this.renderAvatar(warning)}
-              primaryText={this.getWarningSummary(warning)}
-              secondaryText={this.getWarningDetails(warning)}
-              />);
+            return (
+              <ListItem
+                leftAvatar={this.renderAvatar(warning)}
+                primaryText={this.getWarningSummary(warning)}
+                secondaryText={this.getWarningDetails(warning)}
+                onTouchTap={()=>{this.renderWarningDetailsPage(warning)}}
+                />);
             })}
           </List>
         );
@@ -73,7 +73,20 @@ export class WarningList extends React.Component {
     else{
       return <p>{t('no_warning_in_effect')}</p>
     }
-
+  }
+  renderWarningDetailsPage(warning){
+    if( warning.type == HazardType.cyclone ){
+      this.props.onPageSelection(Pages.cyclonePage);
+    }
+    else if( warning.type == HazardType.heavyRain ){
+      // TODO: To be implemented
+    }
+    else if( warning.type == HazardType.tsunami ){
+      this.props.onPageSelection(Pages.earthquakePage);
+    }
+    else if( warning.type == HazardType.earthquake ){
+      this.props.onPageSelection(Pages.earthquakePage);
+    }
   }
 }
 
@@ -84,11 +97,6 @@ export class WarningList extends React.Component {
 export class WarningsMenuTile extends React.Component {
   constructor(props){
     super(props);
-  }
-
-  retrieveLatestWarningInEffect(){
-//    return Warnings.findOne({in_effect: true}, {sort: [["issued_time", "desc"]]}).fetch();
-  return null;
   }
 
   getWarningMessage(warning){
@@ -103,13 +111,13 @@ export class WarningsMenuTile extends React.Component {
   }
 
   render(){
-    const latestWarning = this.retrieveLatestWarningInEffect();
+    const latestWarning = Warnings.findLatestWarningInEffect();
 
     return (
       <ListItem
         leftAvatar={<Avatar src="images/warning.png"></Avatar>}
         primaryText={this.getWarningMessage(latestWarning)}
-        onTouchTap={() => this.props.onTouchTap()}
+        onTouchTap={(event) => {event.preventDefault(); this.props.onTouchTap()}}
         />
     );
   }

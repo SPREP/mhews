@@ -13,6 +13,9 @@ Meteor.startup(() => {
   // To receive the data from the weatherForecast collection
   Meteor.subscribe('weatherForecast');
 
+  // To receive the data from the warnings collection
+  Meteor.subscribe('warnings');
+
   render(
     <I18nextProvider i18n={ i18n }><App /></I18nextProvider>,
     document.getElementById('render-target'));

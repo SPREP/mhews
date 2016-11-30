@@ -26,15 +26,21 @@ import CyclonePage from './Cyclone.jsx';
 import EarthquakePage from './Earthquake.jsx';
 import AboutSMDPage from './AboutSMD.jsx';
 
-/* Key to lookup the next page. Also this strings are used as the key for translation */
-const indexPage = 'IndexPage';
-const weatherPage = 'Weather';
-const earthquakePage = 'Earthquake';
-const cyclonePage = 'Cyclone';
-const aboutSMDPage = 'AboutSMD';
-const warningListPage = 'Warnings';
-
 const disasterNotificationTopic = 'disaster';
+
+/* Key to lookup the next page. Also this strings are used as the key for translation */
+
+export const Pages = {
+  indexPage : 'IndexPage',
+  weatherPage : 'Weather',
+  earthquakePage : 'Earthquake',
+  cyclonePage : 'Cyclone',
+  aboutSMDPage : 'AboutSMD',
+  warningListPage : 'Warnings',
+  aboutApp: 'AboutApp',
+  language: 'Language'
+}
+
 
 /**
  * This is needed for the material-ui components handle click event.
@@ -50,18 +56,21 @@ const TopLeftMenu = (props) => (
     targetOrigin={{horizontal: 'right', vertical: 'top'}}
     anchorOrigin={{horizontal: 'right', vertical: 'top'}}
     // FIXME props.onClick is not defined.
-    onItemTouchTap={(event, child) => { event.preventDefault(); props.onClick(indexPage)}}
+    onItemTouchTap={(event, menuItem) => {
+      event.preventDefault(); props.onPageSelection(menuItem.value)
+    }}
     >
-    <MenuItem primaryText={props.t("menu.language")} />
-    <MenuItem primaryText={props.t("menu.about")} />
+    <MenuItem primaryText={props.t("menu.language")} value={Pages.language} />
+    <MenuItem primaryText={props.t("menu.about")} value={Pages.aboutSMDPage} />
   </IconMenu>
 );
 
 class App extends React.Component {
+
   constructor(props){
     super(props);
     this.state = {
-      page: indexPage
+      page: Pages.indexPage
     }
     this.fcmdata = null;
 
@@ -74,11 +83,11 @@ class App extends React.Component {
     this.setState({page: page});
   }
   onBackKeyDown(){
-    if( this.state.page == indexPage){
+    if( this.state.page == Pages.indexPage){
       navigator.app.exitApp();
     }
     else{
-      this.handlePageSelection(indexPage);
+      this.handlePageSelection(Pages.indexPage);
     }
   }
 
@@ -111,13 +120,13 @@ class App extends React.Component {
 
     this.fcmdata = data;
     if( this.fcmdata.type == 'earthquake'){
-      this.setState({page: earthquakePage});
+      this.setState({page: Pages.earthquakePage});
     }
     else if( this.fcmdata.type == 'cyclone'){
-      this.setState({page: cyclonePage});
+      this.setState({page: Pages.cyclonePage});
     }
     else if( this.fcmdata.type == 'weather'){
-      this.setState({page: weatherPage});
+      this.setState({page: Pages.weatherPage});
     }
     else {
       console.error("Received unknown data type "+this.fcmdata.type);
@@ -128,23 +137,23 @@ class App extends React.Component {
   * Handle state change caused by the user choosing a menu.
   */
   renderContents(){
-    if( this.state.page == indexPage ){
+    if( this.state.page == Pages.indexPage ){
       return <IndexPage {...this.props} onPageSelection={(page) => { this.handlePageSelection(page); }}/>
     }
-    else if( this.state.page == weatherPage ){
+    else if( this.state.page == Pages.weatherPage ){
       return <WeatherPage {...this.props} phenomena={this.fcmdata} />
     }
-    else if( this.state.page == earthquakePage ){
+    else if( this.state.page == Pages.earthquakePage ){
       return <EarthquakePage {...this.props} phenomena={this.fcmdata} />
     }
-    else if( this.state.page == cyclonePage ){
+    else if( this.state.page == Pages.cyclonePage ){
       return <CyclonePage {...this.props} phenomena={this.fcmdata} />
     }
-    else if( this.state.page == aboutSMDPage ){
+    else if( this.state.page == Pages.aboutSMDPage ){
       return <AboutSMDPage {...this.props} />
     }
-    else if( this.state.page == warningListPage ){
-      return <WarningList {...this.props} />
+    else if( this.state.page == Pages.warningListPage ){
+      return <WarningList {...this.props} onPageSelection={(page) => { this.handlePageSelection(page); }}/>
     }
     else {
       console.error("Unknown page state:" + this.state.page);
@@ -188,19 +197,19 @@ const tilesData = [
 {
   img: 'images/earthquake_menu.jpg',
   title: 'title.eqtsunami',
-  page: earthquakePage,
+  page: Pages.earthquakePage,
   contents: <EarthquakePage />
 },
 {
   img: 'images/cyclone_menu.jpg',
   title: 'title.cyclone',
-  page: cyclonePage,
+  page: Pages.cyclonePage,
   contents: <CyclonePage />
 },
 {
   img: 'images/samet_icon.jpg',
   title: 'title.about',
-  page: aboutSMDPage,
+  page: Pages.aboutSMDPage,
   contents: <AboutSMDPage />
 },
 ];
@@ -213,8 +222,8 @@ class IndexPage extends React.Component {
     return(
       <div>
         <List>
-          <WeatherMenuTile {...this.props} onTouchTap={() => this.props.onPageSelection(weatherPage)} />
-          <WarningsMenuTile {...this.props} onTouchTap={() => this.props.onPageSelection(warningListPage)} />
+          <WeatherMenuTile {...this.props} onTouchTap={() => {this.props.onPageSelection(Pages.weatherPage)}} />
+          <WarningsMenuTile {...this.props} onTouchTap={() => {this.props.onPageSelection(Pages.warningListPage)}} />
         </List>
 
         <GridList
@@ -227,7 +236,7 @@ class IndexPage extends React.Component {
             <GridTile
               key={tile.title}
               title={t(tile.title)}
-              onTouchTap={() => this.props.onPageSelection(tile.page)}
+              onTouchTap={() => {this.props.onPageSelection(tile.page)}}
               >
               <img src={tile.img} />
             </GridTile>

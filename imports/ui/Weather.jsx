@@ -52,7 +52,10 @@ export class WeatherPage extends React.Component {
         <CardActions>
           {
             dates.map((date) => (
-              <FlatButton label={this.getShortDateStr(date)} onTouchTap={()=>{this.changeDisplayDate(date)}}/>
+              <FlatButton
+                key={this.getShortDateStr(date)}
+                label={this.getShortDateStr(date)}
+                onTouchTap={()=>{this.changeDisplayDate(date)}}/>
             ))
           }
         </CardActions>
@@ -67,7 +70,7 @@ export class WeatherPage extends React.Component {
   getShortDateStr(date){
     const t = this.props.t;
 
-    return t(Months[date.getMonth()]) + "-" + date.getDate();
+    return t("month."+Months[date.getMonth()]) + "-" + date.getDate();
   }
 
   renderNoForecast(){

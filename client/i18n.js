@@ -28,18 +28,21 @@ i18n
           no_warning_in_effect: "Currently no warning is in effect.",
           no_weather_forecast_error: "Sorry there is no forecast... Perhaps the app failed to contact the server.",
           situation: "Situation",
-          "Jan": "Jan",
-          "Feb": "Feb",
-          "Mar": "Mar",
-          "Apr": "Apr",
-          "May": "May",
-          "Jun": "Jun",
-          "Jul": "Jul",
-          "Aug": "Aug",
-          "Sep": "Sep",
-          "Oct": "Oct",
-          "Nov": "Nov",
-          "Dec": "Dec"
+          month:{
+            "Jan": "Jan",
+            "Feb": "Feb",
+            "Mar": "Mar",
+            "Apr": "Apr",
+            "May": "May",
+            "Jun": "Jun",
+            "Jul": "Jul",
+            "Aug": "Aug",
+            "Sep": "Sep",
+            "Oct": "Oct",
+            "Nov": "Nov",
+            "Dec": "Dec"
+          },
+          HeavyRain: "Heavy Rain"
         }
       },
       ws: {
@@ -65,18 +68,21 @@ i18n
           no_warning_in_effect: "E leai se lapataiga i aafiaga nei.",
           no_weather_forecast_error: "Tulou e leai forecast...",
           situation: "Tulaga",
-          "Jan": "Jan",
-          "Feb": "Feb",
-          "Mar": "Mar",
-          "Apr": "Apr",
-          "May": "May",
-          "Jun": "Jun",
-          "Jul": "Jul",
-          "Aug": "Aug",
-          "Sep": "Sep",
-          "Oct": "Oct",
-          "Nov": "Nov",
-          "Dec": "Dec"
+          month: {
+            "Jan": "Ian",
+            "Feb": "Fep",
+            "Mar": "Mat",
+            "Apr": "Ape",
+            "May": "Ma",
+            "Jun": "Iun",
+            "Jul": "Iul",
+            "Aug": "Auk",
+            "Sep": "Set",
+            "Oct": "Oke",
+            "Nov": "Nov",
+            "Dec": "Tes"
+          },
+          HeavyRain: "Heavy Rain"          
         }
       }
     },
