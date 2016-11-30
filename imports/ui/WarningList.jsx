@@ -6,16 +6,16 @@ import ListItem from 'material-ui/List/ListItem';
 import Divider from 'material-ui/Divider';
 import Subheader from 'material-ui/Subheader';
 
+import {Warnings} from '../api/warnings.js';
+
 export class WarningList extends React.Component {
   constructor(props){
     super(props);
   }
 
   retrieveWarningsInEffect(){
-      return [
-        {type: 'Cyclone', level: 'Warning', description: 'TC Evan is approaching Apia. Maximum wind speed is 15m/s'},
-        {type: 'HeavyRain', level: 'Watch', description: 'Strong down pour will be caused by TC Evan. Watch the water level.'},
-      ]
+    // List the effective warnings in descending order of the issued time.
+    return Warnings.find({in_effect: true}, {sort: [["issued_time", "desc"]]}).fetch();
   }
 
   getWarningSummary(warning){
@@ -42,29 +42,37 @@ export class WarningList extends React.Component {
     return string.slice(0,0);
   }
 
+  renderAvatar(warning){
+    const avatarImage = this.getWarningTypeIcon(warning.type);
+    if( avatarImage ){
+      return (<Avatar src={avatarImage}></Avatar>);
+    }
+    else {
+      return (<Avatar>{this.getCapitalLetter(warning.type)}</Avatar>)
+    }
+  }
+
   render(){
     const warnings = this.retrieveWarningsInEffect();
+    const t = this.props.t;
 
-    return (
+    if( warnings && warnings.length > 0 ){
+      return (
         <List>
-          <Subheader inset={true}>Warnings currently in effect</Subheader>
           {warnings.map((warning) => {
-            const avatarImage = this.getWarningTypeIcon(warning.type);
-            let avatar;
-            if( avatarImage ){
-              avatar = (<Avatar src={avatarImage}></Avatar>);
-            }
-            else {
-              avatar = (<Avatar>{this.getCapitalLetter(warning.type)}</Avatar>)
-            }
             return (<ListItem
-              leftAvatar={avatar}
+              leftAvatar={this.renderAvatar(warning)}
               primaryText={this.getWarningSummary(warning)}
               secondaryText={this.getWarningDetails(warning)}
               />);
-          })}
-        </List>
-    );
+            })}
+          </List>
+        );
+
+    }
+    else{
+      return <p>{t('no_warning_in_effect')}</p>
+    }
 
   }
 }
@@ -79,8 +87,8 @@ export class WarningsMenuTile extends React.Component {
   }
 
   retrieveLatestWarningInEffect(){
-    // TODO This should be cached to avoid unnecessary server access.
-    return {type: 'heavyRain', level: 'Warning', region: 'North Apia'}
+//    return Warnings.findOne({in_effect: true}, {sort: [["issued_time", "desc"]]}).fetch();
+  return null;
   }
 
   getWarningMessage(warning){
@@ -101,7 +109,7 @@ export class WarningsMenuTile extends React.Component {
       <ListItem
         leftAvatar={<Avatar src="images/warning.png"></Avatar>}
         primaryText={this.getWarningMessage(latestWarning)}
-        onClick={() => this.props.onClick()}
+        onTouchTap={() => this.props.onTouchTap()}
         />
     );
   }

@@ -7,9 +7,11 @@ import App from '../imports/ui/App.jsx';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n.js'; // initialized i18next instance
 
-import TranslatableView from '../imports/ui/TranslatableView.jsx';
-
 Meteor.startup(() => {
+
+
+  // To receive the data from the weatherForecast collection
+  Meteor.subscribe('weatherForecast');
 
   render(
     <I18nextProvider i18n={ i18n }><App /></I18nextProvider>,

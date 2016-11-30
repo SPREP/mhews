@@ -49,6 +49,7 @@ const TopLeftMenu = (props) => (
     }
     targetOrigin={{horizontal: 'right', vertical: 'top'}}
     anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+    // FIXME props.onClick is not defined.
     onItemTouchTap={(event, child) => { event.preventDefault(); props.onClick(indexPage)}}
     >
     <MenuItem primaryText={props.t("menu.language")} />
@@ -128,7 +129,7 @@ class App extends React.Component {
   */
   renderContents(){
     if( this.state.page == indexPage ){
-      return <IndexPage {...this.props} onClick={(page) => { this.handlePageSelection(page); }}/>
+      return <IndexPage {...this.props} onPageSelection={(page) => { this.handlePageSelection(page); }}/>
     }
     else if( this.state.page == weatherPage ){
       return <WeatherPage {...this.props} phenomena={this.fcmdata} />
@@ -147,19 +148,20 @@ class App extends React.Component {
     }
     else {
       console.error("Unknown page state:" + this.state.page);
-      return <IndexPage onClick={(page) => { this.handlePageSelection(page); }}/>
+      return <IndexPage {...this.props} onPageSelection={(page) => { this.handlePageSelection(page); }}/>
     }
   }
 
   render(){
     const t = this.props.t;
+    const title = this.state.page;
 
     return (
       <MuiThemeProvider>
         <div>
           <AppBar
-            title={t(this.state.page)}
-            iconElementLeft={<TopLeftMenu {...this.props} onClick={(page) => this.setState({page: page})}/>}
+            title={t(title)}
+            iconElementLeft={<TopLeftMenu {...this.props} />}
             />
           {this.renderContents()}
         </div>
@@ -211,8 +213,8 @@ class IndexPage extends React.Component {
     return(
       <div>
         <List>
-          <WeatherMenuTile {...this.props} onClick={() => this.props.onClick(weatherPage)} />
-          <WarningsMenuTile {...this.props} onClick={() => this.props.onClick(warningListPage)} />
+          <WeatherMenuTile {...this.props} onTouchTap={() => this.props.onPageSelection(weatherPage)} />
+          <WarningsMenuTile {...this.props} onTouchTap={() => this.props.onPageSelection(warningListPage)} />
         </List>
 
         <GridList
@@ -225,8 +227,9 @@ class IndexPage extends React.Component {
             <GridTile
               key={tile.title}
               title={t(tile.title)}
+              onTouchTap={() => this.props.onPageSelection(tile.page)}
               >
-              <img src={tile.img} onClick={() => this.props.onClick(tile.page)}/>
+              <img src={tile.img} />
             </GridTile>
           ))}
         </GridList>

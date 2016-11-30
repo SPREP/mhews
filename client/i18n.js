@@ -25,7 +25,21 @@ i18n
             about: "About this app"
           },
           "is in effect in": "is in effect in",
-          no_warning_in_effect: "Currently no warning is in effect."
+          no_warning_in_effect: "Currently no warning is in effect.",
+          no_weather_forecast_error: "Sorry there is no forecast... Perhaps the app failed to contact the server.",
+          situation: "Situation",
+          "Jan": "Jan",
+          "Feb": "Feb",
+          "Mar": "Mar",
+          "Apr": "Apr",
+          "May": "May",
+          "Jun": "Jun",
+          "Jul": "Jul",
+          "Aug": "Aug",
+          "Sep": "Sep",
+          "Oct": "Oct",
+          "Nov": "Nov",
+          "Dec": "Dec"
         }
       },
       ws: {
@@ -48,7 +62,21 @@ i18n
             about: "Faatatau ia le app"
           },
           "is in effect in": "i aafiaga i le",
-          no_warning_in_effect: "E leai se lapataiga i aafiaga nei."
+          no_warning_in_effect: "E leai se lapataiga i aafiaga nei.",
+          no_weather_forecast_error: "Tulou e leai forecast...",
+          situation: "Tulaga",
+          "Jan": "Jan",
+          "Feb": "Feb",
+          "Mar": "Mar",
+          "Apr": "Apr",
+          "May": "May",
+          "Jun": "Jun",
+          "Jul": "Jul",
+          "Aug": "Aug",
+          "Sep": "Sep",
+          "Oct": "Oct",
+          "Nov": "Nov",
+          "Dec": "Dec"
         }
       }
     },
