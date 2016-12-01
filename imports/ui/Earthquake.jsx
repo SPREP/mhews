@@ -1,5 +1,5 @@
 import React from 'react';
-import GoogleMap from './GoogleMap.jsx';
+import GoogleMap from './GoogleMapJs.jsx';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -8,6 +8,17 @@ const Apia = {
   lat: -13.815605,
   lng: -171.780512
 };
+
+function  handleOnReady(name) {
+  console.log("handleOnReady called.");
+  
+    GoogleMaps.ready(name, map => {
+      const marker = new google.maps.Marker({
+        position: map.options.center,
+        map: map.instance,
+      });
+    });
+  }
 
 class EarthquakePage extends React.Component {
 
@@ -42,13 +53,20 @@ class EarthquakePage extends React.Component {
 
   render(){
     if( this.quake ){
+      if( this.quake.epicenter ){
+        console.log("epicenter = "+this.quake.epicenter);
+
+      }
+      else{
+        console.error("epicenter is not defined!!!!!");
+      }
       return(
-        <GoogleMap mapCenter={this.quake.epicenter} zoom={3} onMapReady={(map)=>{ this.drawEpicenter(map);}}/>
+        <GoogleMap mapCenter={this.quake.epicenter} zoom={3} onReady={handleOnReady}/>
       );
     }
     else{
       return(
-        <GoogleMap mapCenter={Apia} zoom={3} />
+        <GoogleMap mapCenter={Apia} zoom={3} onReady={handleOnReady}/>
       );
     }
   }

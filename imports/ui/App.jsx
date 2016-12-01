@@ -77,7 +77,9 @@ class App extends React.Component {
     // Change the back-button behavior
     document.addEventListener("backbutton", () => { this.onBackKeyDown() });
 
-    this.initfcm();
+    if( Meteor.isCordova ){
+      this.initfcm();
+    }
   }
   handlePageSelection(page){
     this.setState({page: page});

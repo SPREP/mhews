@@ -16,5 +16,5 @@ App.launchScreens({
 });
 
 App.configurePlugin('cordova-plugin-googlemaps', {
-  'API_KEY_FOR_ANDROID': 'AIzaSyBwHyTZ7cOOfBTSiVX314bLE1UbwqBVURA'
+  'API_KEY_FOR_ANDROID': 'AIzaSyAU8GJceF2q71UkbwDkFbl7Hzx9Y6mcFAU'
 });
