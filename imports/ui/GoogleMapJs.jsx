@@ -4,6 +4,10 @@ import { createContainer } from 'meteor/react-meteor-data';
 
 const map_div_id = "map_canvas";
 
+function googleLatLng(position){
+  return new google.maps.LatLng(position.lat, position.lng);
+}
+
 class GoogleMap extends React.Component {
   componentDidMount() {
 //    GoogleMaps.load(this.props.options || {});
@@ -41,7 +45,7 @@ class GoogleMap extends React.Component {
   }
 
   addMarker(position, title, snippet){
-    let latlng = this.googleLatLng(position);
+    let latlng = googleLatLng(position);
     let marker = new google.maps.Marker( {
       map: this.map.instance,
       position: latlng
@@ -54,13 +58,17 @@ class GoogleMap extends React.Component {
 
     this.marker = marker;
   }
-  googleLatLng(position){
-    return new google.maps.LatLng(position.lat, position.lng);
+  addInfoWindow(position, title, snippet){
+    let latlng = googleLatLng(position);
+    let infoWindow = new google.maps.InfoWindow({
+      content: title + " " + snippet,
+      position: latlng
+    })
+    infoWindow.open(this.map.instance);
   }
-
   addCircle(position, radius, color){
     let circleOption = {
-      center: this.googleLatLng(position),
+      center: googleLatLng(position),
       radius: radius,
       map: this.map.instance,
       strokeColor: color,
@@ -72,6 +80,24 @@ class GoogleMap extends React.Component {
     let circle = new google.maps.Circle(circleOption);
 
     this.circle = circle;
+  }
+
+  addPolygon(polygon, color){
+    const path = polygon.map((point) => {
+      return googleLatLng(point);
+    });
+    const option = {
+      path: path,
+      map: this.map.instance,
+      geodesic: true,
+
+      strokeColor: color,
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: color,
+      fillOpacity: 0.35,
+    }
+    this.polygon = new google.maps.Polygon(option);
   }
 
   render() {

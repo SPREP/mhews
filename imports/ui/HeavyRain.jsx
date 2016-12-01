@@ -1,37 +1,52 @@
 import React from 'react';
 import GoogleMap from './GoogleMapJs.jsx';
+import * as GeoUtils from '../api/geoutils.js';
+import * as HazardArea from '../api/hazardArea.js';
 
 /* i18n */
 import { translate } from 'react-i18next';
 
-const Apia = {
-  lat: -13.815605,
-  lng: -171.780512
+const HeavyRainAreaNames = ["Samoa", "Upolu Island", "Savaii Island", "Manono Island", "Apolima Island"];
+const HeavyRainDirection = ["North", "East", "South", "West", "Town Area", "Highlands"];
+
+const Samoa = {
+  center: {
+    lat: -13.814706,
+    lng: -172.118862,
+  },
+  area:[
+    {lat: -13.26, lng: -172.89},
+    {lat: -14.13, lng: -172.89},
+    {lat: -14.13, lng: -171.32},
+    {lat: -13.26, lng: -171.32}
+  ]
 };
 
 class HeavyRainPage extends React.Component {
 
   constructor(props){
     super(props);
-    if( this.props.phenomena && this.validatePhenomena()){
-      this.heavyRain = this.props.phenomena;
-    }
-    else{
-      // For test
-      this.heavyRain = {
+
+    let heavyRain = this.props.phenomena;
+
+    const test = true;
+    if( test ){
+      heavyRain = {
         "type": "heavyRain",
-        "area": [
-          {lat: -13.956028, lng: -171.724296},
-          {lat: -14.026653, lng: -171.422172},
-          {lat: -13.856050, lng: -171.695457}
-        ],
+        "area": "Manono Island",
+        "direction": "North",
         "level": "warning"
       };
     }
+
+    if( heavyRain && this.validatePhenomena(heavyRain)){
+      this.heavyRain = heavyRain;
+      const longestDiagonal = GeoUtils.getLongestDiagonal(Samoa.area);
+      this.zoom = GeoUtils.getZoomLevel(longestDiagonal);
+    }
   }
 
-  validatePhenomena(){
-    const phenomena = this.props.phenomena;
+  validatePhenomena(phenomena){
     if( !phenomena.area ){
       console.error("area is not defined");
       return false;
@@ -47,7 +62,7 @@ class HeavyRainPage extends React.Component {
     if( this.heavyRain ){
       if( this.heavyRain.area ){
         return(
-          <GoogleMap mapCenter={Apia} zoom={3} onReady={(map) => {this.handleOnReady(map)}}/>
+          <GoogleMap mapCenter={Samoa.center} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}/>
         );
       }
       else{
@@ -56,7 +71,7 @@ class HeavyRainPage extends React.Component {
     }
 
     return(
-      <GoogleMap mapCenter={Apia} zoom={3} />
+      <GoogleMap mapCenter={Samoa.center} zoom={this.zoom} />
     );
   }
 
@@ -65,12 +80,30 @@ class HeavyRainPage extends React.Component {
   }
 
   getWarningColor() {
-    return '#FFFF00';
+    return '#FF0000';
   }
 
   drawWarningArea(map){
+    const heavyRain = this.heavyRain;
+    const hazardArea = HazardArea.getHazardArea(heavyRain.area, heavyRain.direction);
+    const title = "HeavyRain "+heavyRain.level+" in effect";
+    const snippet = "Warning for the people in "+heavyRain.area;
+    let infoWindowPosition = Samoa.center;
 
-    map.addPolygon(this.heavyRain.area, this.getWarningColor());
+    if( hazardArea ){
+      if( hazardArea.shape == HazardArea.Shape.polygon ){
+        map.addPolygon(hazardArea.vertices, this.getWarningColor());
+        infoWindowPosition = hazardArea.vertices[0];
+      }
+      else if( hazardArea.shape == HazardArea.Shape.circle ){
+        map.addCircle(hazardArea.center, hazardArea.radius, this.getWarningColor());
+        infoWindowPosition = hazardArea.center;
+      }
+    }
+    else{
+      console.log("hazardArea is undefined.");
+    }
+    map.addInfoWindow(infoWindowPosition, title, snippet);
   }
 }
 

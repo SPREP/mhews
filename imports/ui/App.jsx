@@ -24,6 +24,7 @@ import {WarningList, WarningsMenuTile} from './WarningList.jsx';
 import {WeatherPage, WeatherMenuTile} from './Weather.jsx';
 import CyclonePage from './Cyclone.jsx';
 import EarthquakePage from './Earthquake.jsx';
+import HeavyRainPage from './HeavyRain.jsx';
 import AboutSMDPage from './AboutSMD.jsx';
 
 const disasterNotificationTopic = 'disaster';
@@ -35,6 +36,7 @@ export const Pages = {
   weatherPage : 'Weather',
   earthquakePage : 'Earthquake',
   cyclonePage : 'Cyclone',
+  heavyRainPage: 'HeavyRain',
   aboutSMDPage : 'AboutSMD',
   warningListPage : 'Warnings',
   aboutApp: 'AboutApp',
@@ -57,7 +59,7 @@ const TopLeftMenu = (props) => (
     anchorOrigin={{horizontal: 'right', vertical: 'top'}}
     // FIXME props.onClick is not defined.
     onItemTouchTap={(event, menuItem) => {
-      event.preventDefault(); props.onPageSelection(menuItem.value)
+      event.preventDefault(); props.onPageSelection(menuItem.props.value)
     }}
     >
     <MenuItem primaryText={props.t("IndexPage")} value={Pages.indexPage} />
@@ -148,6 +150,9 @@ class App extends React.Component {
     }
     else if( this.state.page == Pages.earthquakePage ){
       return <EarthquakePage {...this.props} phenomena={this.fcmdata} />
+    }
+    else if( this.state.page == Pages.heavyRainPage ){
+      return <HeavyRainPage {...this.props} phenomena={this.fcmdata} />
     }
     else if( this.state.page == Pages.cyclonePage ){
       return <CyclonePage {...this.props} phenomena={this.fcmdata} />

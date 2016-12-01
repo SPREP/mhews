@@ -79,7 +79,7 @@ export class WarningList extends React.Component {
       this.props.onPageSelection(Pages.cyclonePage);
     }
     else if( warning.type == HazardType.heavyRain ){
-      // TODO: To be implemented
+      this.props.onPageSelection(Pages.heavyRainPage);
     }
     else if( warning.type == HazardType.tsunami ){
       this.props.onPageSelection(Pages.earthquakePage);

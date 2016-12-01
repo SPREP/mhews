@@ -1,5 +1,7 @@
 import React from 'react';
 import GoogleMap from './GoogleMapJs.jsx';
+import * as GeoUtils from '../api/geoutils.js';
+
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -9,30 +11,93 @@ const Apia = {
   lng: -171.780512
 };
 
+/**
+* Return the radius of the circle in which the mmi is greater than 3.
+* The unit is km.
+*/
+function getIntensityCircleRadius(mw, depth){
+  let radiusResolution = 100;
+  let maximumRadius = 1000;
+  let radius = 0;
+  for(let sx= radiusResolution; sx<= maximumRadius; sx += radiusResolution){
+    let mmi = getMMI(calculatePGV(mw, depth, sx));
+    if( mmi < 4 ){
+      return radius;
+    }
+    radius = sx;
+  }
+  return radius;
+}
+
+/**
+* According to the table in http://earthquake.usgs.gov/earthquakes/shakemap/background.php#wald99b.
+* MMI=2 is skipped.
+*/
+function getMMI(pgv){
+  if( pgv < 0.1 ) return 1;
+  else if( pgv < 1.1 ) return 3;
+  else if( pgv < 3.4 ) return 4;
+  else if( pgv < 8.1 ) return 5;
+  else if( pgv < 16  ) return 6;
+  else if( pgv < 31  ) return 7;
+  else if( pgv < 60  ) return 8;
+  else if( pgv < 116 ) return 9;
+  else return 10;
+}
+/**
+* Calculate PGV at the surface distance sx from the epicenter.
+* According to http://www.data.jma.go.jp/svd/eew/data/nc/katsuyou/reference.pdf
+*/
+function calculatePGV(mw, depth, sx){
+  let l = Math.pow(10, 0.5*mw-1.85);
+  let x = Math.max(sx / Math.cos(Math.atan2(depth, sx)) - l * 0.5, 3);
+  let pgv600 = Math.pow(10, 0.58*mw+0.0038*depth-1.29-log10(x+0.0028*Math.pow(10,0.5*mw)-0.002*x));
+  let pgv700 = pgv600 * 0.9;
+  let avs = 600;
+  let arv = Math.pow(10, 1.83-0.66*log10(avs));
+  let pgv = arv*pgv700;
+
+  return pgv;
+}
+
+/**
+* Math.log10 seems not yet supported by all devices, so we define it here.
+*/
+function log10(value){
+  return Math.log(value) / Math.log(10);
+}
+
 class EarthquakePage extends React.Component {
 
   constructor(props){
     super(props);
-    if( this.props.phenomena && this.validatePhenomena()){
-      this.quake = this.props.phenomena;
-      this.quake.epicenter = {lat: this.quake.epicenter_lat, lng: this.quake.epicenter_lng};
-    }
-    else{
-      // For test
-      this.quake = {
+    const test = true;
+
+    let quake = this.props.phenomena;
+    if( test ){
+      quake = {
         "type": "earthquake",
         "epicenter_lat": -13.814213,
         "epicenter_lng": -171.779657,
-        "mw": 8.0,
+        "mw": 4.0,
         "depth": 10
       };
-      this.quake.epicenter = {lat: this.quake.epicenter_lat, lng: this.quake.epicenter_lng};
-
     }
+
+    if( quake && this.validatePhenomena(quake)){
+      quake.epicenter = {lat: quake.epicenter_lat, lng: quake.epicenter_lng};
+      this.quake = quake;
+      const radiusKm = getIntensityCircleRadius(quake.mw, quake.depth);
+      this.radius = radiusKm * 1000;
+      this.mwColor = this.getMagnitudeColor(quake.mw);
+
+      const diameterKm = radiusKm * 2;
+      this.zoom = GeoUtils.getZoomLevel(diameterKm * 1.5) - 2; // -2 is an ugly hack to adjust the zoom leve.
+    }
+
   }
 
-  validatePhenomena(){
-    const phenomena = this.props.phenomena;
+  validatePhenomena(phenomena){
     if( !phenomena.epicenter_lat ){
       console.error("epicenter_lat is not defined");
       return false;
@@ -56,7 +121,7 @@ class EarthquakePage extends React.Component {
     if( this.quake ){
       if( this.quake.epicenter ){
         return(
-          <GoogleMap mapCenter={this.quake.epicenter} zoom={3} onReady={(map) => {this.handleOnReady(map)}}/>
+          <GoogleMap mapCenter={this.quake.epicenter} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}/>
         );
       }
       else{
@@ -74,68 +139,8 @@ class EarthquakePage extends React.Component {
   }
 
   drawEpicenter(map){
-
-    let radius = this.getIntensityCircleRadius(this.quake.mw, this.quake.depth) * 1000;
-    let mwColor = this.getMagnitudeColor(this.quake.mw);
-
     map.addMarker(this.quake.epicenter, "Earthquake", "Magnitude = "+this.quake.mw);
-    map.addCircle(this.quake.epicenter, radius, mwColor);
-  }
-
-  /**
-  * Return the radius of the circle in which the mmi is greater than 3.
-  * The unit is km.
-  */
-  getIntensityCircleRadius(mw, depth){
-    let radiusResolution = 100;
-    let maximumRadius = 1000;
-    let radius = 0;
-    for(let sx= radiusResolution; sx<= maximumRadius; sx += radiusResolution){
-      let mmi = this.getMMI(this.calculatePGV(mw, depth, sx));
-      if( mmi < 4 ){
-        return radius;
-      }
-      radius = sx;
-    }
-    return radius;
-  }
-
-  /**
-   * According to the table in http://earthquake.usgs.gov/earthquakes/shakemap/background.php#wald99b.
-   * MMI=2 is skipped.
-   */
-  getMMI(pgv){
-    if( pgv < 0.1 ) return 1;
-    else if( pgv < 1.1 ) return 3;
-    else if( pgv < 3.4 ) return 4;
-    else if( pgv < 8.1 ) return 5;
-    else if( pgv < 16  ) return 6;
-    else if( pgv < 31  ) return 7;
-    else if( pgv < 60  ) return 8;
-    else if( pgv < 116 ) return 9;
-    else return 10;
-  }
-  /**
-  * Calculate PGV at the surface distance sx from the epicenter.
-  * According to http://www.data.jma.go.jp/svd/eew/data/nc/katsuyou/reference.pdf
-  */
-  calculatePGV(mw, depth, sx){
-    let l = Math.pow(10, 0.5*mw-1.85);
-    let x = Math.max(sx / Math.cos(Math.atan2(depth, sx)) - l * 0.5, 3);
-    let pgv600 = Math.pow(10, 0.58*mw+0.0038*depth-1.29-this.log10(x+0.0028*Math.pow(10,0.5*mw)-0.002*x));
-    let pgv700 = pgv600 * 0.9;
-    let avs = 600;
-    let arv = Math.pow(10, 1.83-0.66*this.log10(avs));
-    let pgv = arv*pgv700;
-
-    return pgv;
-  }
-
-  /**
-   * Math.log10 seems not yet supported by all devices, so we define it here.
-   */
-  log10(value){
-    return Math.log(value) / Math.log(10);
+    map.addCircle(this.quake.epicenter, this.radius, this.mwColor);
   }
 
   /**
