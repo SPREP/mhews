@@ -60,6 +60,7 @@ const TopLeftMenu = (props) => (
       event.preventDefault(); props.onPageSelection(menuItem.value)
     }}
     >
+    <MenuItem primaryText={props.t("IndexPage")} value={Pages.indexPage} />
     <MenuItem primaryText={props.t("menu.language")} value={Pages.language} />
     <MenuItem primaryText={props.t("menu.about")} value={Pages.aboutSMDPage} />
   </IconMenu>
@@ -172,7 +173,7 @@ class App extends React.Component {
         <div>
           <AppBar
             title={t(title)}
-            iconElementLeft={<TopLeftMenu {...this.props} />}
+            iconElementLeft={<TopLeftMenu {...this.props} onPageSelection={(page) => {this.handlePageSelection(page); }}/>}
             />
           {this.renderContents()}
         </div>

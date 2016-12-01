@@ -50,10 +50,6 @@ class GoogleMapNative extends React.Component {
     // To be implemented
   }
 
-  googleLatLng(position){
-    return new google.maps.LatLng(position.lat, position.lng);
-  }
-
   onMapReady(){
     if( !this.map ){
       console.error("Map is empty.");

@@ -7,6 +7,7 @@ const map_div_id = "map_canvas";
 class GoogleMap extends React.Component {
   componentDidMount() {
 //    GoogleMaps.load(this.props.options || {});
+// FIXME: The API key should not be hardcoded here.
     GoogleMaps.load({v: '3', key: 'AIzaSyARRdFTy8sB6r94FgWHv0Ke_69MdBKkuoQ'});
   }
 
@@ -18,14 +19,17 @@ class GoogleMap extends React.Component {
         name: this.name,
         element: this.container,
         options: {
-//          center: this.props.mapCenter,
-//          zoom: this.props.zoom,
-          center: new google.maps.LatLng(-37.8136, 144.9631),
-          zoom: 8,
+          center: this.props.mapCenter,
+          zoom: this.props.zoom,
         }
       });
 
-      this.props.onReady(this.name);
+      if( this.props.onReady ){
+        GoogleMaps.ready(this.name, map => {
+          this.map = map;
+          this.props.onReady(this);
+        });
+      }
     }
   }
 
@@ -39,21 +43,26 @@ class GoogleMap extends React.Component {
   addMarker(position, title, snippet){
     let latlng = this.googleLatLng(position);
     let marker = new google.maps.Marker( {
-      map: this.map,
+      map: this.map.instance,
       position: latlng
     });
     let infoWindow = new google.maps.InfoWindow({
       content: title + " " + snippet,
       position: latlng
     })
-    infoWindow.open(map);
+    infoWindow.open(this.map.instance, marker);
+
+    this.marker = marker;
+  }
+  googleLatLng(position){
+    return new google.maps.LatLng(position.lat, position.lng);
   }
 
   addCircle(position, radius, color){
     let circleOption = {
       center: this.googleLatLng(position),
       radius: radius,
-      map: this.map,
+      map: this.map.instance,
       strokeColor: color,
       strokeOpacity: 0.8,
       strokeWeight: 2,
@@ -61,6 +70,8 @@ class GoogleMap extends React.Component {
       fillOpacity: 0.35,
     }
     let circle = new google.maps.Circle(circleOption);
+
+    this.circle = circle;
   }
 
   render() {

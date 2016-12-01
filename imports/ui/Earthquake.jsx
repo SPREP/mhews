@@ -9,17 +9,6 @@ const Apia = {
   lng: -171.780512
 };
 
-function  handleOnReady(name) {
-  console.log("handleOnReady called.");
-  
-    GoogleMaps.ready(name, map => {
-      const marker = new google.maps.Marker({
-        position: map.options.center,
-        map: map.instance,
-      });
-    });
-  }
-
 class EarthquakePage extends React.Component {
 
   constructor(props){
@@ -27,6 +16,18 @@ class EarthquakePage extends React.Component {
     if( this.props.phenomena && this.validatePhenomena()){
       this.quake = this.props.phenomena;
       this.quake.epicenter = {lat: this.quake.epicenter_lat, lng: this.quake.epicenter_lng};
+    }
+    else{
+      // For test
+      this.quake = {
+        "type": "earthquake",
+        "epicenter_lat": -13.814213,
+        "epicenter_lng": -171.779657,
+        "mw": 8.0,
+        "depth": 10
+      };
+      this.quake.epicenter = {lat: this.quake.epicenter_lat, lng: this.quake.epicenter_lng};
+
     }
   }
 
@@ -54,21 +55,22 @@ class EarthquakePage extends React.Component {
   render(){
     if( this.quake ){
       if( this.quake.epicenter ){
-        console.log("epicenter = "+this.quake.epicenter);
-
+        return(
+          <GoogleMap mapCenter={this.quake.epicenter} zoom={3} onReady={(map) => {this.handleOnReady(map)}}/>
+        );
       }
       else{
         console.error("epicenter is not defined!!!!!");
       }
-      return(
-        <GoogleMap mapCenter={this.quake.epicenter} zoom={3} onReady={handleOnReady}/>
-      );
     }
-    else{
-      return(
-        <GoogleMap mapCenter={Apia} zoom={3} onReady={handleOnReady}/>
-      );
-    }
+
+    return(
+      <GoogleMap mapCenter={Apia} zoom={3} />
+    );
+  }
+
+  handleOnReady(map) {
+    this.drawEpicenter(map);
   }
 
   drawEpicenter(map){
