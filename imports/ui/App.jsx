@@ -26,6 +26,7 @@ import CyclonePage from './Cyclone.jsx';
 import EarthquakePage from './Earthquake.jsx';
 import HeavyRainPage from './HeavyRain.jsx';
 import AboutSMDPage from './AboutSMD.jsx';
+import LanguageSetting from './LanguageSetting.jsx';
 
 const disasterNotificationTopic = 'disaster';
 
@@ -40,7 +41,7 @@ export const Pages = {
   aboutSMDPage : 'AboutSMD',
   warningListPage : 'Warnings',
   aboutApp: 'AboutApp',
-  language: 'Language'
+  languagePage: 'Language'
 }
 
 
@@ -59,11 +60,12 @@ const TopLeftMenu = (props) => (
     anchorOrigin={{horizontal: 'right', vertical: 'top'}}
     // FIXME props.onClick is not defined.
     onItemTouchTap={(event, menuItem) => {
-      event.preventDefault(); props.onPageSelection(menuItem.props.value)
+      event.preventDefault();
+      props.onPageSelection(menuItem.props.value);
     }}
     >
     <MenuItem primaryText={props.t("IndexPage")} value={Pages.indexPage} />
-    <MenuItem primaryText={props.t("menu.language")} value={Pages.language} />
+    <MenuItem primaryText={props.t("menu.language")} value={Pages.languagePage} />
     <MenuItem primaryText={props.t("menu.about")} value={Pages.aboutSMDPage} />
   </IconMenu>
 );
@@ -105,7 +107,8 @@ class App extends React.Component {
       (data) => {
         if(data.wasTapped){
           console.log("data received in the background!");
-        }else{
+        }
+        else{
           console.log("data received in the foreground!");
         }
         this.triggerPageChangeBasedOnFcmData(data);
@@ -156,6 +159,9 @@ class App extends React.Component {
     }
     else if( this.state.page == Pages.cyclonePage ){
       return <CyclonePage {...this.props} phenomena={this.fcmdata} />
+    }
+    else if( this.state.page == Pages.languagePage ){
+      return <LanguageSetting {...this.props} onPageSelection={(page) => {this.handlePageSelection(page);}}/>
     }
     else if( this.state.page == Pages.aboutSMDPage ){
       return <AboutSMDPage {...this.props} />
