@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Random } from 'meteor/random';
 import { createContainer } from 'meteor/react-meteor-data';
+import RefreshIndicator from 'material-ui/RefreshIndicator';
 
 const map_div_id = "map_canvas";
 
@@ -51,6 +52,7 @@ class GoogleMap extends React.Component {
       position: latlng
     });
     let infoWindow = new google.maps.InfoWindow({
+      // TODO Make a better presentation of the title and snippet.
       content: title + " " + snippet,
       position: latlng
     })
@@ -101,11 +103,20 @@ class GoogleMap extends React.Component {
   }
 
   render() {
-    return (
-      <div className="map-container" ref={c => (this.container = c)}>
-        {this.props.children}
-      </div>
-    );
+    if( GoogleMaps.loaded() ){
+      return (
+        <div className="map-container" ref={c => (this.container = c)}>
+          {this.props.children}
+        </div>
+      );
+    }
+    else{
+      return (
+        <div className="map-container" ref={c => (this.container = c)}>
+          Loading map ...
+        </div>
+      );
+    }
   }
 };
 /*

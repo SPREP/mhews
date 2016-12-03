@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Meteor } from 'meteor/meteor';
 
 /* Imports from the material-ui */
 import AppBar from 'material-ui/AppBar';
@@ -43,7 +44,6 @@ export const Pages = {
   aboutApp: 'AboutApp',
   languagePage: 'Language'
 }
-
 
 /**
  * This is needed for the material-ui components handle click event.
@@ -110,6 +110,7 @@ class App extends React.Component {
         }
         else{
           console.log("data received in the foreground!");
+          playSound("sounds/tsunami_warning.wav");
         }
         this.triggerPageChangeBasedOnFcmData(data);
       },
@@ -192,6 +193,30 @@ class App extends React.Component {
 
     );
 
+  }
+}
+
+function playSound(file){
+  // TODO It seems the code below does not work well with iOS
+  // http://stackoverflow.com/questions/36291748/play-local-audio-on-cordova-in-meteor-1-3
+  
+  const url = document.location.origin+"/"+file;
+  console.log("url = "+url);
+  let media = new Media(url,
+    ()=>{
+      console.log("Media success.");
+      media.release();
+    },
+    (err)=>{
+      console.error("Media error: "+err.message);
+    }
+  );
+
+  if( media ){
+    media.play();
+  }
+  else{
+    console.error("media is not defined or null.");
   }
 }
 

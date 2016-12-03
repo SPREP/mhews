@@ -4,3 +4,9 @@
   max-width: 100%;
   height: 500px;
 }
+
+.refresh-indicator {
+  display: 'inline-block';
+  position: 'relative';
+  margin: 0 auto;
+}
