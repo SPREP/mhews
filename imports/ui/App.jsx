@@ -85,12 +85,12 @@ const notificationConfig = {
   "cyclone" : {
     sound: "sounds/tsunami_warning.wav",
     page: Pages.cyclonePage,
-    useLocation: true,
+    useLocation: false,
   },
   "heavyRain" : {
     sound: "sounds/tsunami_warning.wav",
     page: Pages.heavyRainPage,
-    useLocation: true,
+    useLocation: false,
   }
 }
 
