@@ -69,34 +69,6 @@ function log10(value){
 
 class EarthquakePage extends React.Component {
 
-  constructor(props){
-    super(props);
-    const test = true;
-
-    let quake = this.props.phenomena;
-    if( test ){
-      quake = {
-        "type": "earthquake",
-        "epicenter_lat": -13.814213,
-        "epicenter_lng": -171.779657,
-        "mw": 4.0,
-        "depth": 10
-      };
-    }
-
-    if( quake && this.validatePhenomena(quake)){
-      quake.epicenter = {lat: quake.epicenter_lat, lng: quake.epicenter_lng};
-      this.quake = quake;
-      const radiusKm = getIntensityCircleRadius(quake.mw, quake.depth);
-      this.radius = radiusKm * 1000;
-      this.mwColor = this.getMagnitudeColor(quake.mw);
-
-      const diameterKm = radiusKm * 2;
-      this.zoom = GeoUtils.getZoomLevel(diameterKm * 1.5) - 2; // -2 is an ugly hack to adjust the zoom leve.
-    }
-
-  }
-
   validatePhenomena(phenomena){
     if( !phenomena.epicenter_lat ){
       console.error("epicenter_lat is not defined");
@@ -118,14 +90,32 @@ class EarthquakePage extends React.Component {
   }
 
   render(){
-    if( this.quake ){
-      if( this.quake.epicenter ){
+    let quake = this.props.phenomena;
+    this.quake = quake;
+
+    if( quake ){
+      if( quake && this.validatePhenomena(quake)){
+        // Stupid FCM changes the numbers into string... have to get them back.
+        quake.epicenter = {
+          lat: parseFloat(quake.epicenter_lat),
+          lng: parseFloat(quake.epicenter_lng)
+        };
+        quake.mw = parseFloat(quake.mw);
+        quake.depth = parseFloat(quake.depth);
+
+        const radiusKm = getIntensityCircleRadius(quake.mw, quake.depth);
+        this.radius = radiusKm * 1000;
+        this.mwColor = this.getMagnitudeColor(quake.mw);
+
+        const diameterKm = radiusKm * 2;
+        this.zoom = GeoUtils.getZoomLevel(diameterKm * 1.5) - 2; // -2 is an ugly hack to adjust the zoom leve.
+
         return(
-          <GoogleMap mapCenter={this.quake.epicenter} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}/>
+          <GoogleMap mapCenter={quake.epicenter} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}/>
         );
       }
       else{
-        console.error("epicenter is not defined!!!!!");
+        console.error("The received notification contains invalid phenomena data.");
       }
     }
 

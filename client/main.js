@@ -10,21 +10,17 @@ import i18n from 'i18next';
 
 Meteor.startup(() => {
 
-
-  // To receive the data from the weatherForecast collection
-  Meteor.subscribe('weatherForecast');
-
-  // To receive the data from the warnings collection
-  Meteor.subscribe('warnings');
-
   // Retrieve the language setting from the local collection
   if (typeof(Storage) !== "undefined") {
+    console.log("Loading language preference.");
     const lang = localStorage.getItem("language")
     if( lang ){
       i18nConfig.lng = lang;
     }
   }
+  console.log("Calling i18n.init");
   i18n.init(i18nConfig);
+  console.log("Start rendering App.");
   renderApp();
 
   });

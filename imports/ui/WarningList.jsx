@@ -97,6 +97,14 @@ export class WarningList extends React.Component {
 export class WarningsMenuTile extends React.Component {
   constructor(props){
     super(props);
+    this.state = {
+      latestWarning: null
+    };
+  }
+
+  componentDidMount(){
+    const latestWarning = Warnings.findLatestWarningInEffect();
+    this.setState({latestWarning: latestWarning});
   }
 
   getWarningMessage(warning){
@@ -111,7 +119,7 @@ export class WarningsMenuTile extends React.Component {
   }
 
   render(){
-    const latestWarning = Warnings.findLatestWarningInEffect();
+    const latestWarning = this.state.latestWarning;
 
     return (
       <ListItem

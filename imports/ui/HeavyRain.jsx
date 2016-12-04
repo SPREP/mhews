@@ -24,28 +24,6 @@ const Samoa = {
 
 class HeavyRainPage extends React.Component {
 
-  constructor(props){
-    super(props);
-
-    let heavyRain = this.props.phenomena;
-
-    const test = false;
-    if( test ){
-      heavyRain = {
-        "type": "heavyRain",
-        "area": "Manono Island",
-        "direction": "North",
-        "level": "warning"
-      };
-    }
-
-    if( heavyRain && this.validatePhenomena(heavyRain)){
-      this.heavyRain = heavyRain;
-      const longestDiagonal = GeoUtils.getLongestDiagonal(Samoa.area);
-      this.zoom = GeoUtils.getZoomLevel(longestDiagonal);
-    }
-  }
-
   validatePhenomena(phenomena){
     if( !phenomena.area ){
       console.error("area is not defined");
@@ -59,6 +37,14 @@ class HeavyRainPage extends React.Component {
   }
 
   render(){
+    let heavyRain = this.props.phenomena;
+
+    if( heavyRain && this.validatePhenomena(heavyRain)){
+      this.heavyRain = heavyRain;
+      const longestDiagonal = GeoUtils.getLongestDiagonal(Samoa.area);
+      this.zoom = GeoUtils.getZoomLevel(longestDiagonal);
+    }
+
     if( this.heavyRain ){
       if( this.heavyRain.area ){
         return(

@@ -105,11 +105,24 @@ class App extends React.Component {
 
     // Change the back-button behavior
     document.addEventListener("backbutton", () => { this.onBackKeyDown() });
+  }
 
+  componentDidMount(){
     if( Meteor.isCordova ){
-      this.initfcm();
+//      navigator.splashscreen.hide();
+      Meteor.defer(()=>{ this.initfcm();});
+    }
+    if( Meteor.isClient ){
+      Meteor.defer(()=>{
+        // To receive the data from the weatherForecast collection
+        Meteor.subscribe('weatherForecast');
+
+        // To receive the data from the warnings collection
+        Meteor.subscribe('warnings');
+      });
     }
   }
+
   handlePageSelection(page){
     this.setState({page: page});
   }
