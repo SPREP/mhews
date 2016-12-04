@@ -29,7 +29,7 @@ class HeavyRainPage extends React.Component {
 
     let heavyRain = this.props.phenomena;
 
-    const test = true;
+    const test = false;
     if( test ){
       heavyRain = {
         "type": "heavyRain",
@@ -85,12 +85,12 @@ class HeavyRainPage extends React.Component {
 
   drawWarningArea(map){
     const heavyRain = this.heavyRain;
-    const hazardArea = HazardArea.getHazardArea(heavyRain.area, heavyRain.direction);
+    const hazardAreas = HazardArea.findAreas(heavyRain.area, heavyRain.direction);
     const title = "HeavyRain "+heavyRain.level+" in effect";
-    const snippet = "Warning for the people in "+heavyRain.area;
+    const snippet = "Warning for the people in "+heavyRain.area+" "+heavyRain.direction;
     let infoWindowPosition = Samoa.center;
 
-    if( hazardArea ){
+    hazardAreas.forEach((hazardArea) =>{
       if( hazardArea.shape == HazardArea.Shape.polygon ){
         map.addPolygon(hazardArea.vertices, this.getWarningColor());
         infoWindowPosition = hazardArea.vertices[0];
@@ -99,10 +99,8 @@ class HeavyRainPage extends React.Component {
         map.addCircle(hazardArea.center, hazardArea.radius, this.getWarningColor());
         infoWindowPosition = hazardArea.center;
       }
-    }
-    else{
-      console.log("hazardArea is undefined.");
-    }
+
+    });
     map.addInfoWindow(infoWindowPosition, title, snippet);
   }
 }

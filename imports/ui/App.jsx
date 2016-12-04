@@ -14,7 +14,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import {GridList, GridTile} from 'material-ui/GridList';
 import List from 'material-ui/List/List';
 
-/* This plugin captures the tap event in React. This is slow and to be replaced in future.*/
+/* This plugin captures the tap event in React. */
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
 /* i18n */
@@ -28,6 +28,7 @@ import EarthquakePage from './Earthquake.jsx';
 import HeavyRainPage from './HeavyRain.jsx';
 import AboutSMDPage from './AboutSMD.jsx';
 import LanguageSetting from './LanguageSetting.jsx';
+import * as HazardArea from '../api/hazardArea.js';
 
 const disasterNotificationTopic = 'disaster';
 
@@ -70,6 +71,29 @@ const TopLeftMenu = (props) => (
   </IconMenu>
 );
 
+const notificationConfig = {
+  "earthquake" : {
+    sound: "sounds/tsunami_warning.wav",
+    page: Pages.earthquakePage,
+    useLocation: false,
+  },
+  "tsunami" : {
+    sound: "sounds/tsunami_warning.wav",
+    page: Pages.earthquakePage,
+    useLocation: false,
+  },
+  "cyclone" : {
+    sound: "sounds/tsunami_warning.wav",
+    page: Pages.cyclonePage,
+    useLocation: true,
+  },
+  "heavyRain" : {
+    sound: "sounds/tsunami_warning.wav",
+    page: Pages.heavyRainPage,
+    useLocation: true,
+  }
+}
+
 class App extends React.Component {
 
   constructor(props){
@@ -105,14 +129,7 @@ class App extends React.Component {
 
     FCMPlugin.onNotification(
       (data) => {
-        if(data.wasTapped){
-          console.log("data received in the background!");
-        }
-        else{
-          console.log("data received in the foreground!");
-          playSound("sounds/tsunami_warning.wav");
-        }
-        this.triggerPageChangeBasedOnFcmData(data);
+        this.handleFcmNotification(data);
       },
       (msg) => {
         console.log('onNotification callback successfully registered: ' + msg);
@@ -122,24 +139,44 @@ class App extends React.Component {
         // TODO Need to handle this error. Try to re-subscribe to the topic until it succeeds?
       }
     );
-    console.log('After onNotification');
   }
 
-  triggerPageChangeBasedOnFcmData(data){
-
+  handleFcmNotification(data){
+    console.log("FCM data received.");
     this.fcmdata = data;
-    if( this.fcmdata.type == 'earthquake'){
-      this.setState({page: Pages.earthquakePage});
+
+    const config = notificationConfig[data.type];
+    if( !config ){
+      console.error("Unknown hazard type "+data.type);
+      return;
     }
-    else if( this.fcmdata.type == 'cyclone'){
-      this.setState({page: Pages.cyclonePage});
+
+    if( config.useLocation ){
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          if( HazardArea.maybeInHazardArea(pos, data)){
+            this.notifyUserAndChangePage(config);
+          }
+        },
+        (error) => {
+          console.error("Failed to obtain the current location.");
+          // Notify the user just in case, as the user may be in the hazard area.
+          this.notifyUserAndChangePage(config);
+        },
+        { maximumAge: 10*60*1000, // Cached position within 10min is accepted.
+          timeout: 30000, // 30 seconds to wait for the positioning.
+          enableHighAccuray: true
+        }
+      );
     }
-    else if( this.fcmdata.type == 'weather'){
-      this.setState({page: Pages.weatherPage});
+    else{
+      this.notifyUserAndChangePage(config);
     }
-    else {
-      console.error("Received unknown data type "+this.fcmdata.type);
-    }
+  }
+
+  notifyUserAndChangePage(config){
+    if( !this.fcmdata.wasTapped ){ playSound(config.sound);}
+    this.setState({page: config.page});
   }
 
   /**
@@ -199,7 +236,7 @@ class App extends React.Component {
 function playSound(file){
   // TODO It seems the code below does not work well with iOS
   // http://stackoverflow.com/questions/36291748/play-local-audio-on-cordova-in-meteor-1-3
-  
+
   const url = document.location.origin+"/"+file;
   console.log("url = "+url);
   let media = new Media(url,

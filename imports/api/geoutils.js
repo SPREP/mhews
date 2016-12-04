@@ -25,26 +25,8 @@ export function getLongestDiagonal(points){
   return maxDistance;
 }
 
-/*
-Google maps also has the method for calculating spherical distance named
-google.maps.geometry.spherical.computeDistanceBetween().
-However, this function will be called before the google map is loaded,
-so I decided not to use it.
-This function were taken from a question on the stackoverflow.
-http://stackoverflow.com/questions/18883601/function-to-calculate-distance-between-two-coordinates-shows-wrong
-*/
 export function getDistanceFromLatLonInKm(point1, point2) {
-  var R = 6371; // Radius of the earth in km
-  var dLat = deg2rad(point2.lat-point1.lat);  // deg2rad below
-  var dLon = deg2rad(point2.lng-point1.lng);
-  var a =
-  Math.sin(dLat/2) * Math.sin(dLat/2) +
-  Math.cos(deg2rad(point1.lat)) * Math.cos(deg2rad(point2.lat)) *
-  Math.sin(dLon/2) * Math.sin(dLon/2)
-  ;
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  var d = R * c; // Distance in km
-  return d;
+  return geolib.getDistanceSimple(point1, point2) / 1000;
 }
 
 function deg2rad(deg) {

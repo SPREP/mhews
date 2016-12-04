@@ -1,45 +1,5 @@
 const HazardAreaMap = {
   "Samoa": {
-    "North": {
-      shape: "polygon",
-      vertices: [
-        {lng: -172.858887,lat: -13.459080},
-        {lng: -172.320557,lat: -13.346865},
-        {lng:-171.644897, lat: -13.747389},
-        {lng:-171.342773,lat: -14.056659}
-      ]
-    },
-    "East":{
-      shape: "polygon",
-      vertices: [
-        {lng: -172.128296,lat:-13.816744},
-        {lng:-171.754761,lat:-13.715372},
-        {lng:-171.331787,lat:-14.019356},
-        {lng:-171.809692,lat:-14.104613},
-        {lng:-172.073364,lat:-13.955392},
-        {lng:-172.139282,lat:-13.827412}
-      ]
-    },
-    "South": {
-      shape: "polygon",
-      vertices: [
-        {lng: -172.875366,lat:-13.496473},
-        {lng: -171.326294,lat:-14.046002},
-        {lng:-171.743774,lat:-14.109940},
-        {lng:-172.617188,lat:-13.822078},
-        {lng:-172.886353,lat:-13.496473}
-      ]
-    },
-    "West":{
-      shape: "polygon",
-      vertices:  [
-        {lng: -172.847900,lat:-13.448395},
-        {lng:-172.348022,lat:-13.330830},
-        {lng:-172.100830,lat:-13.736717},
-        {lng:-172.529297,lat:-13.864747},
-        {lng:-172.792969,lat:-13.656663},
-      ]
-    }
   },
   "Upolu Island": {
     "North":{
@@ -82,8 +42,9 @@ const HazardAreaMap = {
         {lng:-172.081604,lat:-13.899410},
       ]
     },
-    "Town Area": {},
-    "Highlands": {},
+    // FIXME: To be defined.
+//    "Town Area": {},
+//    "Highlands": {},
   },
   "Savaii Island": {
     "North": {
@@ -121,8 +82,9 @@ const HazardAreaMap = {
         {lng:-172.523804,lat:-13.835413}
       ]
     },
-    "Town Area": {},
-    "Highlands": {},
+    // FIXME: To be defined.
+//    "Town Area": {},
+//    "Highlands": {},
   },
   // Assuming that a warning is valid to entier Manono Island
   "Manono Island": {
@@ -137,13 +99,76 @@ const HazardAreaMap = {
   },
 }
 
-export function getHazardArea(areaName, direction){
+export function findAreas(areaName, direction){
+  if( !areaName ){
+    console.error("areaName must be specified.");
+    return [];
+  }
+  if( areaName == "Samoa"){
+    let areas = [];
+    if( direction == "North" || direction == "South") {
+      ["Upolu Island", "Savaii Island"].forEach((areaName) => {
+        areas.push(findAreas(areaName, direction));
+      });
+    }
+    else if( direction == "East"){
+      areas.push(findAreas("Upolu Island"));
+    }
+    else if( direction == "West"){
+      areas.push(findAreas("Savaii Island"));
+    }
+    // Always include Manono and Apolima just in case.
+    ["Manono Island", "Apolima Island"].forEach((areaName) => {
+        areas.push(findAreas(areaName));
+    });
+
+    return areas;
+  }
   if( areaName == "Manono Island" || areaName == "Apolima Island"){
-    return HazardAreaMap[areaName];
+    return [HazardAreaMap[areaName]];
   }
-  else{
-    return HazardAreaMap[areaName][direction];
+  else {
+    const area = HazardAreaMap[areaName];
+    if( area ){
+      if( direction ){
+        return [area[direction]];
+      }
+      else{
+        let areas = [];
+        for(let direction in area){
+          areas.push(area[direction]);
+        }
+        return areas;
+      }
+    }
   }
+}
+
+export function maybeInHazardArea(position, data){
+  if( !data.area ){
+    console.error("data does not have the area property. Returning true for safety.");
+    return true;
+  }
+  const areaList = findAreas(data.area, data.direction);
+  for(let i= 0; i< areaList.length; i++){
+    let area = areaList[i];
+    if(area.shape == Shape.circle){
+      if(geolib.isPointInCircle(position, area.center, area.radius)){
+        return true;
+      }
+    }
+    else if(area.shape == Shape.polygon){
+      if(geolib.isPointInside(position, area.vertices)){
+        return true;
+      }
+    }
+    else{
+      console.error("Unknown shape "+area.shape);
+      return true;
+    }
+  }
+  // Either areaList is empty, or position is not in any of the areas.
+  return false;
 }
 
 export const Shape = {
