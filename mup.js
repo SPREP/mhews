@@ -11,7 +11,7 @@ module.exports = {
 
   meteor: {
     name: 'mhews',
-    path: '../',
+    path: '../mhews',
     docker: {
       image: 'abernix/meteord:base'
     },
