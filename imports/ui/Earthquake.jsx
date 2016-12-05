@@ -94,7 +94,7 @@ class EarthquakePage extends React.Component {
     this.quake = quake;
 
     if( quake ){
-      if( quake && this.validatePhenomena(quake)){
+      if(this.validatePhenomena(quake)){
         // Stupid FCM changes the numbers into string... have to get them back.
         quake.epicenter = {
           lat: parseFloat(quake.epicenter_lat),
@@ -118,7 +118,6 @@ class EarthquakePage extends React.Component {
         console.error("The received notification contains invalid phenomena data.");
       }
     }
-
     return(
       <GoogleMap mapCenter={Apia} zoom={3} />
     );

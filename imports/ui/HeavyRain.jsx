@@ -57,7 +57,7 @@ class HeavyRainPage extends React.Component {
     }
 
     return(
-      <GoogleMap mapCenter={Samoa.center} zoom={this.zoom} />
+      <GoogleMap mapCenter={Samoa.center} zoom={3} />
     );
   }
 
