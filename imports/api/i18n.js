@@ -5,7 +5,9 @@ const i18nConfig = {
   resources: {
     en: {
       common: {
-        "IndexPage": "Index page",
+        "Warnings": "Warnings",
+        "Warning": "Warning",
+        "Watch": "Watch",
         "Weather": "Weather",
         "Earthquake": "Earthquake",
         "Cyclone": "Cyclone",
@@ -14,13 +16,14 @@ const i18nConfig = {
         "Warning": "Warning",
         "Watch": "Watch",
         title : {
+          index: "Index",
+          weather: "Weather",
+          heavyRain: "Heavy Rain",
+          warnings: "Warnings",
+          language: "Language",
           eqtsunami: "Earthquake And Tsunami",
           cyclone: "Cyclone",
           about: "About SMD"
-        },
-        menu : {
-          language: "Gagana",
-          about: "About this app"
         },
         "is in effect in": "is in effect in",
         no_warning_in_effect: "Currently no warning is in effect.",
@@ -54,13 +57,15 @@ const i18nConfig = {
         "Warning": "Lapataiga",
         "Watch": "Tausi",
         title : {
+          index: "Index",
+          weather: "Tau",
+          heavyRain: "Heavy Rain",
+          warnings: "Lapataiga",
+          language: "Language",
+
           eqtsunami: "Mafui'e ma Sunami",
           cyclone: "Afa",
           about: "Faatautau ia SMD"
-        },
-        menu : {
-          language: "Language",
-          about: "Faatatau ia le app"
         },
         "is in effect in": "i aafiaga i le",
         no_warning_in_effect: "E leai se lapataiga i aafiaga nei.",

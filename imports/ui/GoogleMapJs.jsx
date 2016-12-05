@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random';
 import { createContainer } from 'meteor/react-meteor-data';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
@@ -11,9 +12,14 @@ function googleLatLng(position){
 
 class GoogleMap extends React.Component {
   componentDidMount() {
-//    GoogleMaps.load(this.props.options || {});
-// FIXME: The API key should not be hardcoded here.
-    GoogleMaps.load({v: '3', key: 'AIzaSyARRdFTy8sB6r94FgWHv0Ke_69MdBKkuoQ'});
+    const apiKey = Meteor.settings.public.googleMapsApiKey;
+    if( apiKey ){
+      GoogleMaps.load({v: '3', key: apiKey});
+    }
+    else{
+      console.error("API key for the Google Maps hasn't been configured in the settings.json file.");
+      console.error("Cannot load the google map.");
+    }
   }
 
   componentDidUpdate() {

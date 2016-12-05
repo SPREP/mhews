@@ -18,9 +18,7 @@ Meteor.startup(() => {
       i18nConfig.lng = lang;
     }
   }
-  console.log("Calling i18n.init");
   i18n.init(i18nConfig);
-  console.log("Start rendering App.");
   renderApp();
 
   });

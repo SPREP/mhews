@@ -1,5 +1,75 @@
 {
   "public": {
-
+    "googleMapsApiKey": "AIzaSyARRdFTy8sB6r94FgWHv0Ke_69MdBKkuoQ",
+    "notificationConfig" : {
+      "earthquake" : {
+        "sound": "sounds/tsunami_warning.wav",
+        "icon": "images/warnings/tornade.png",
+        "page": "earthquakePage",
+        "useLocation": false
+      },
+      "tsunami" : {
+        "sound": "sounds/tsunami_warning.wav",
+        "icon": "images/warnings/tornade.png",
+        "page": "earthquakePage",
+        "useLocation": false
+      },
+      "cyclone" : {
+        "sound": "sounds/tsunami_warning.wav",
+        "icon": "images/warnings/tornade.png",
+        "page": "cyclonePage",
+        "useLocation": false
+      },
+      "heavyRain" : {
+        "sound": "sounds/tsunami_warning.wav",
+        "icon": "images/warnings/storm.png",
+        "page": "heavyRainPage",
+        "useLocation": false
+      }
+    },
+    "pages": {
+      "indexPage" : {
+        "component": "IndexPage",
+        "title": "title.index"
+      },
+      "weatherPage" : {
+        "component": "WeatherPage",
+        "title": "title.weather"
+      },
+      "heavyRain": {
+        "component": "HeavyRainPage",
+        "title": "title.heavyRain"
+      },
+      "warningListPage" : {
+        "component": "WarningList",
+        "title": "title.warnings"
+      },
+      "aboutApp":{
+        "component": "AboutAppPage",
+        "title": "title.aboutApp"
+      },
+      "language": {
+        "component": "LanguageSetting",
+        "title": "title.language"
+      },
+      "earthquakePage" : {
+        "img": "images/earthquake_menu.jpg",
+        "title": "title.eqtsunami",
+        "component": "EarthquakePage",
+        "useGrid": true
+      },
+      "cyclonePage" : {
+        "img": "images/cyclone_menu.jpg",
+        "title": "title.cyclone",
+        "component": "CyclonePage",
+        "useGrid": true
+      },
+      "aboutSMDPage" : {
+        "img": "images/samet_icon.jpg",
+        "title": "title.about",
+        "component": "AboutSMDPage",
+        "useGrid": true
+      }
+    }
   }
 }

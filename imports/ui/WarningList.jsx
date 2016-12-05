@@ -1,4 +1,5 @@
 import React from 'react';
+import { Meteor } from 'meteor/meteor';
 import {GridList, GridTile} from 'material-ui/GridList';
 import Avatar from 'material-ui/Avatar';
 import List from 'material-ui/List/List';
@@ -7,7 +8,6 @@ import Divider from 'material-ui/Divider';
 import Subheader from 'material-ui/Subheader';
 
 import {Warnings, HazardType} from '../api/warnings.js';
-import {Pages} from './App.jsx';
 
 export class WarningList extends React.Component {
 
@@ -26,13 +26,14 @@ export class WarningList extends React.Component {
   }
 
   getWarningTypeIcon(type){
-    if( type == HazardType.cyclone ){
-      return "images/warnings/tornade.png";
+    const config = Meteor.settings.public.notificationConfig[type];
+    if(config){
+      return config.icon;
     }
-    else if( type == HazardType.heavyRain ) {
+    else{
+      // FIXME Set a generic warning icon
       return "images/warnings/storm.png";
     }
-    return null;
   }
 
   getCapitalLetter(string){
@@ -75,18 +76,14 @@ export class WarningList extends React.Component {
     }
   }
   renderWarningDetailsPage(warning){
-    if( warning.type == HazardType.cyclone ){
-      this.props.onPageSelection(Pages.cyclonePage);
+    const config = Meteor.settings.notificationConfig;
+    for(let hazardType in config){
+      if( warning.type == hazardType ){
+        this.props.onPageSelection(config[hazardType].page);
+        return;
+      }
     }
-    else if( warning.type == HazardType.heavyRain ){
-      this.props.onPageSelection(Pages.heavyRainPage);
-    }
-    else if( warning.type == HazardType.tsunami ){
-      this.props.onPageSelection(Pages.earthquakePage);
-    }
-    else if( warning.type == HazardType.earthquake ){
-      this.props.onPageSelection(Pages.earthquakePage);
-    }
+    console.error("Unknown hazard type "+warning.type);
   }
 }
 

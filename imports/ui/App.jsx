@@ -32,20 +32,6 @@ import * as HazardArea from '../api/hazardArea.js';
 
 const disasterNotificationTopic = 'disaster';
 
-/* Key to lookup the next page. Also this strings are used as the key for translation */
-
-export const Pages = {
-  indexPage : 'IndexPage',
-  weatherPage : 'Weather',
-  earthquakePage : 'Earthquake',
-  cyclonePage : 'Cyclone',
-  heavyRainPage: 'HeavyRain',
-  aboutSMDPage : 'AboutSMD',
-  warningListPage : 'Warnings',
-  aboutApp: 'AboutApp',
-  languagePage: 'Language'
-}
-
 /**
  * This is needed for the material-ui components handle click event.
  */
@@ -59,47 +45,24 @@ const TopLeftMenu = (props) => (
     }
     targetOrigin={{horizontal: 'right', vertical: 'top'}}
     anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-    // FIXME props.onClick is not defined.
+
     onItemTouchTap={(event, menuItem) => {
       event.preventDefault();
       props.onPageSelection(menuItem.props.value);
     }}
     >
-    <MenuItem primaryText={props.t("IndexPage")} value={Pages.indexPage} />
-    <MenuItem primaryText={props.t("menu.language")} value={Pages.languagePage} />
-    <MenuItem primaryText={props.t("menu.about")} value={Pages.aboutSMDPage} />
+    <MenuItem primaryText={props.t("title.index")} value="indexPage" />
+    <MenuItem primaryText={props.t("title.language")} value="language" />
+    <MenuItem primaryText={props.t("title.about")} value="aboutSMDPage" />
   </IconMenu>
 );
-
-const notificationConfig = {
-  "earthquake" : {
-    sound: "sounds/tsunami_warning.wav",
-    page: Pages.earthquakePage,
-    useLocation: false,
-  },
-  "tsunami" : {
-    sound: "sounds/tsunami_warning.wav",
-    page: Pages.earthquakePage,
-    useLocation: false,
-  },
-  "cyclone" : {
-    sound: "sounds/tsunami_warning.wav",
-    page: Pages.cyclonePage,
-    useLocation: false,
-  },
-  "heavyRain" : {
-    sound: "sounds/tsunami_warning.wav",
-    page: Pages.heavyRainPage,
-    useLocation: false,
-  }
-}
 
 class App extends React.Component {
 
   constructor(props){
     super(props);
     this.state = {
-      page: Pages.indexPage
+      page: "indexPage"
     }
     this.fcmdata = null;
 
@@ -109,7 +72,6 @@ class App extends React.Component {
 
   componentDidMount(){
     if( Meteor.isCordova ){
-//      navigator.splashscreen.hide();
       Meteor.defer(()=>{ this.initfcm();});
     }
     if( Meteor.isClient ){
@@ -158,7 +120,7 @@ class App extends React.Component {
     console.log("FCM data received.");
     this.fcmdata = data;
 
-    const config = notificationConfig[data.type];
+    const config = Meteor.settings.public.notificationConfig[data.type];
     if( !config ){
       console.error("Unknown hazard type "+data.type);
       return;
@@ -196,46 +158,37 @@ class App extends React.Component {
   * Handle state change caused by the user choosing a menu.
   */
   renderContents(){
-    if( this.state.page == Pages.indexPage ){
-      return <IndexPage {...this.props} onPageSelection={(page) => { this.handlePageSelection(page); }}/>
+    const page = this.state.page;
+    const pageConfig = getPageConfig(page);
+    if( pageConfig ){
+      if( pageConfig.component ){
+        return React.createElement(
+          getReactComponentByName(pageConfig.component),
+          {...this.props, onPageSelection: (page) => { this.handlePageSelection(page)}}
+        );
+      }
+      else{
+        console.error("Config for page " + page +" does not contain component property. Check your settings.json.");
+      }
     }
-    else if( this.state.page == Pages.weatherPage ){
-      return <WeatherPage {...this.props} phenomena={this.fcmdata} />
-    }
-    else if( this.state.page == Pages.earthquakePage ){
-      return <EarthquakePage {...this.props} phenomena={this.fcmdata} />
-    }
-    else if( this.state.page == Pages.heavyRainPage ){
-      return <HeavyRainPage {...this.props} phenomena={this.fcmdata} />
-    }
-    else if( this.state.page == Pages.cyclonePage ){
-      return <CyclonePage {...this.props} phenomena={this.fcmdata} />
-    }
-    else if( this.state.page == Pages.languagePage ){
-      return <LanguageSetting {...this.props} onPageSelection={(page) => {this.handlePageSelection(page);}}/>
-    }
-    else if( this.state.page == Pages.aboutSMDPage ){
-      return <AboutSMDPage {...this.props} />
-    }
-    else if( this.state.page == Pages.warningListPage ){
-      return <WarningList {...this.props} onPageSelection={(page) => { this.handlePageSelection(page); }}/>
-    }
-    else {
+    else{
       console.error("Unknown page state:" + this.state.page);
-      return <IndexPage {...this.props} onPageSelection={(page) => { this.handlePageSelection(page); }}/>
     }
+    return <IndexPage {...this.props} onPageSelection={(page) => { this.handlePageSelection(page); }}/>
   }
 
   render(){
     const t = this.props.t;
-    const title = this.state.page;
+    const pageConfig = getPageConfig(this.state.page);
+    const title = pageConfig.title;
 
     return (
       <MuiThemeProvider>
         <div>
           <AppBar
             title={t(title)}
-            iconElementLeft={<TopLeftMenu {...this.props} onPageSelection={(page) => {this.handlePageSelection(page); }}/>}
+            iconElementLeft={<TopLeftMenu {...this.props}
+            onPageSelection={(page) => {this.handlePageSelection(page); }}/>}
             />
           {this.renderContents()}
         </div>
@@ -282,52 +235,73 @@ const styles = {
   },
 };
 
-const tilesData = [
-{
-  img: 'images/earthquake_menu.jpg',
-  title: 'title.eqtsunami',
-  page: Pages.earthquakePage,
-  contents: <EarthquakePage />
-},
-{
-  img: 'images/cyclone_menu.jpg',
-  title: 'title.cyclone',
-  page: Pages.cyclonePage,
-  contents: <CyclonePage />
-},
-{
-  img: 'images/samet_icon.jpg',
-  title: 'title.about',
-  page: Pages.aboutSMDPage,
-  contents: <AboutSMDPage />
-},
-];
+function getPageConfigsForGrid(){
+  const configs = getPageConfigs();
+  let configsForGrid = [];
+
+  configs.forEach((config)=>{
+    if( config.useGrid ){
+      configsForGrid.push(config);
+    }
+  });
+  return configsForGrid;
+}
+
+function getPageConfig(page){
+  const config = Meteor.settings.public.pages[page];
+  config.key = page;
+  return config;
+}
+
+function getPageConfigs(){
+  const pages = Meteor.settings.public.pages;
+  let configs = [];
+
+  for(let key in pages){
+    let page = pages[key];
+    page.key = key;
+    configs.push(page);
+  }
+
+  return configs;
+}
+
+function getReactComponentByName(componentName){
+  return eval(componentName);
+}
 
 class IndexPage extends React.Component {
 
   render(){
     const t = this.props.t;
+    const tilesData = getPageConfigsForGrid();
+    const pages = getPageConfigs();
 
     return(
       <div>
         <List>
-          <WeatherMenuTile {...this.props} onTouchTap={() => {this.props.onPageSelection(Pages.weatherPage)}} />
-          <WarningsMenuTile {...this.props} onTouchTap={() => {this.props.onPageSelection(Pages.warningListPage)}} />
+          <WeatherMenuTile
+            {...this.props}
+            onTouchTap={() => {this.props.onPageSelection("weatherPage")}} />
+
+          <WarningsMenuTile
+            {...this.props}
+            onTouchTap={() => {this.props.onPageSelection("warningListPage")}} />
         </List>
 
         <GridList
           cellHeight={100}
           cols={2}
-          style={styles.gridList}
+          className=".app-gridList"
           >
 
-          {tilesData.map((tile) => (
+          {tilesData.map((page) => (
             <GridTile
-              key={tile.title}
-              title={t(tile.title)}
-              onTouchTap={() => {this.props.onPageSelection(tile.page)}}
+              key={page.title}
+              title={t(page.title)}
+              onTouchTap={() => {this.props.onPageSelection(page.key)}}
               >
-              <img src={tile.img} />
+              <img src={page.img} />
             </GridTile>
           ))}
         </GridList>

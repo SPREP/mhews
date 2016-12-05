@@ -1,7 +1,6 @@
 import React from 'react';
 import {List, ListItem} from 'material-ui/List';
 import i18n from 'i18next';
-import {Pages} from './App.jsx';
 
 class LanguageSetting extends React.Component {
 
@@ -25,7 +24,7 @@ class LanguageSetting extends React.Component {
           localStorage.setItem("language", lang);
         }
       }
-      this.props.onPageSelection(Pages.indexPage);
+      this.props.onPageSelection("indexPage");
     })
   }
 }

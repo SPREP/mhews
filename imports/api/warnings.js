@@ -10,10 +10,15 @@ Warnings.findLatestWarningInEffect = () => {
     return Warnings.findOne({in_effect: true}, {sort: [["issued_time", "desc"]]});
 };
 
-export const HazardType = {
-  cyclone: 'Cyclone',
-  heavyRain: 'HeavyRain',
-  tsunami: 'Tsunami'
+Warnings.getHazardTypes = () => {
+  let hazardTypes = [];
+
+  const config = Meteor.settings.notificationConfig;
+  for(let key in config){
+    hazardTypes.push(key);
+  }
+
+  return hazardTypes;
 }
 
 if( Meteor.isServer ){
