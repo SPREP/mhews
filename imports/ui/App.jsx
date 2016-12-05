@@ -89,11 +89,11 @@ class App extends React.Component {
     this.setState({page: page});
   }
   onBackKeyDown(){
-    if( this.state.page == Pages.indexPage){
+    if( this.state.page == "indexPage"){
       navigator.app.exitApp();
     }
     else{
-      this.handlePageSelection(Pages.indexPage);
+      this.handlePageSelection("indexPage");
     }
   }
 

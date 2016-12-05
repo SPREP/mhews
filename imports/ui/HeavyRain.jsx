@@ -48,7 +48,9 @@ class HeavyRainPage extends React.Component {
     if( this.heavyRain ){
       if( this.heavyRain.area ){
         return(
-          <GoogleMap mapCenter={Samoa.center} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}/>
+          <GoogleMap mapCenter={Samoa.center} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
+            Loading...
+          </GoogleMap>
         );
       }
       else{
@@ -57,7 +59,9 @@ class HeavyRainPage extends React.Component {
     }
 
     return(
-      <GoogleMap mapCenter={Samoa.center} zoom={3} />
+      <GoogleMap mapCenter={Samoa.center} zoom={3} >
+        Loading...
+      </GoogleMap>
     );
   }
 

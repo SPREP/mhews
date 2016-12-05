@@ -111,7 +111,9 @@ class EarthquakePage extends React.Component {
         this.zoom = GeoUtils.getZoomLevel(diameterKm * 1.5) - 2; // -2 is an ugly hack to adjust the zoom leve.
 
         return(
-          <GoogleMap mapCenter={quake.epicenter} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}/>
+          <GoogleMap mapCenter={quake.epicenter} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
+            Loading...
+          </GoogleMap>
         );
       }
       else{
@@ -119,7 +121,9 @@ class EarthquakePage extends React.Component {
       }
     }
     return(
-      <GoogleMap mapCenter={Apia} zoom={3} />
+      <GoogleMap mapCenter={Apia} zoom={3} >
+        Loading...
+      </GoogleMap>
     );
   }
 

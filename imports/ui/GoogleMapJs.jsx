@@ -15,6 +15,11 @@ class GoogleMap extends React.Component {
     const apiKey = Meteor.settings.public.googleMapsApiKey;
     if( apiKey ){
       GoogleMaps.load({v: '3', key: apiKey});
+
+      if (this.props.loaded) {
+        // Draw the google map here, because the componentDidUpdate() won't be called.
+        this.createGoogleMaps();
+      }
     }
     else{
       console.error("API key for the Google Maps hasn't been configured in the settings.json file.");
@@ -22,26 +27,29 @@ class GoogleMap extends React.Component {
     }
   }
 
-  componentDidUpdate() {
-    if (this.props.loaded) {
-      this.name = Random.id();
+  createGoogleMaps(){
 
-      GoogleMaps.create({
-        name: this.name,
-        element: this.container,
-        options: {
-          center: this.props.mapCenter,
-          zoom: this.props.zoom,
-        }
-      });
+    this.name = this.props.name;
 
-      if( this.props.onReady ){
-        GoogleMaps.ready(this.name, map => {
-          this.map = map;
-          this.props.onReady(this);
-        });
+    GoogleMaps.create({
+      name: this.name,
+      element: this.container,
+      options: {
+        center: this.props.mapCenter,
+        zoom: this.props.zoom,
       }
+    });
+
+    if( this.props.onReady ){
+      GoogleMaps.ready(this.name, map => {
+        this.map = map;
+        this.props.onReady(this);
+      });
     }
+  }
+
+  componentDidUpdate() {
+    this.createGoogleMaps();
   }
 
   componentWillUnmount() {
@@ -109,20 +117,11 @@ class GoogleMap extends React.Component {
   }
 
   render() {
-    if( GoogleMaps.loaded() ){
-      return (
-        <div className="map-container" ref={c => (this.container = c)}>
-          {this.props.children}
-        </div>
-      );
-    }
-    else{
-      return (
-        <div className="map-container" ref={c => (this.container = c)}>
-          Loading map ...
-        </div>
-      );
-    }
+    return (
+      <div className="map-container" ref={c => (this.container = c)}>
+        {this.props.children}
+      </div>
+    );
   }
 };
 /*
@@ -135,6 +134,6 @@ GoogleMap.propTypes = {
 };
 */
 
-GoogleMapContainer = createContainer(() => ({ loaded: GoogleMaps.loaded() }), GoogleMap);
+GoogleMapContainer = createContainer(() => ({loaded: GoogleMaps.loaded(),name: Random.id()}), GoogleMap);
 
 export default GoogleMapContainer;
