@@ -1,4 +1,6 @@
 import React from 'react';
+import { Meteor } from 'meteor/meteor';
+
 import {List, ListItem} from 'material-ui/List';
 import i18n from 'i18next';
 
@@ -14,6 +16,7 @@ class LanguageSetting extends React.Component {
     );
   }
   changeLanguage(lang) {
+    const topPageName = Meteor.settings.public.topPage;
     i18n.changeLanguage(lang, (error, t) => {
       console.log("Callback from i18n.changeLanguage");
       if( error ){
@@ -24,7 +27,7 @@ class LanguageSetting extends React.Component {
           localStorage.setItem("language", lang);
         }
       }
-      this.props.onPageSelection("indexPage");
+      this.props.onPageSelection(topPageName);
     })
   }
 }

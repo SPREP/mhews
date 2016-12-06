@@ -36,6 +36,7 @@
       "language",
       "aboutApp"
     ],
+    "topPage": "weatherPage",
     "pages": {
       "indexPage" : {
         "component": "IndexPage",
@@ -57,7 +58,7 @@
         "component": "AboutAppPage",
         "title": "title.aboutApp",
         "component": "AboutSMDPage",
-        "useGrid": true        
+        "useGrid": true
       },
       "language": {
         "component": "LanguageSetting",

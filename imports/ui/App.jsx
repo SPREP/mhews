@@ -38,26 +38,6 @@ const disasterNotificationTopic = 'disaster';
  */
 injectTapEventPlugin();
 
-const TopLeftMenu = (props) => (
-  <IconMenu
-    {...props}
-    iconButtonElement={
-      <IconButton><MenuIcon /></IconButton>
-    }
-    targetOrigin={{horizontal: 'right', vertical: 'top'}}
-    anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-
-    onItemTouchTap={(event, menuItem) => {
-      event.preventDefault();
-      props.onPageSelection(menuItem.props.value);
-    }}
-    >
-    <MenuItem primaryText={props.t("title.index")} value="indexPage" />
-    <MenuItem primaryText={props.t("title.language")} value="language" />
-    <MenuItem primaryText={props.t("title.about")} value="aboutSMDPage" />
-  </IconMenu>
-);
-
 class DrawerMenu extends React.Component {
   constructor(props){
     super(props);
@@ -103,7 +83,7 @@ class App extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      page: "indexPage",
+      page: Meteor.settings.public.topPage,
       drawerOpen: false
     }
     this.fcmdata = null;
@@ -131,11 +111,13 @@ class App extends React.Component {
     this.setState({page: page});
   }
   onBackKeyDown(){
-    if( this.state.page == "indexPage"){
+    const topPageName = Meteor.settings.public.topPage;
+
+    if( this.state.page == topPageName){
       navigator.app.exitApp();
     }
     else{
-      this.handlePageSelection("indexPage");
+      this.handlePageSelection(topPageName);
     }
   }
 
@@ -219,7 +201,7 @@ class App extends React.Component {
     else{
       console.error("Unknown page state:" + this.state.page);
     }
-    return <IndexPage {...this.props} onPageSelection={(page) => { this.handlePageSelection(page); }}/>
+    return (<div>Choose a content from the top-left menu</div>);
   }
 
   toggleDrawerOpen(){
@@ -327,46 +309,6 @@ function getPageConfigs(){
 
 function getReactComponentByName(componentName){
   return eval(componentName);
-}
-
-class IndexPage extends React.Component {
-
-  render(){
-    const t = this.props.t;
-    const tilesData = getPageConfigsForGrid();
-    const pages = getPageConfigs();
-
-    return(
-      <div>
-        <List>
-          <WeatherMenuTile
-            {...this.props}
-            onTouchTap={() => {this.props.onPageSelection("weatherPage")}} />
-
-          <WarningsMenuTile
-            {...this.props}
-            onTouchTap={() => {this.props.onPageSelection("warningListPage")}} />
-        </List>
-
-        <GridList
-          cellHeight={100}
-          cols={2}
-          className=".app-gridList"
-          >
-
-          {tilesData.map((page) => (
-            <GridTile
-              key={page.title}
-              title={t(page.title)}
-              onTouchTap={() => {this.props.onPageSelection(page.key)}}
-              >
-              <img className=".grid-img" src={page.img} />
-            </GridTile>
-          ))}
-        </GridList>
-      </div>
-    );
-  }
 }
 
 export default translate(['common'])(App);
