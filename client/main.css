@@ -21,3 +21,8 @@
   width: 300;
   overflowY: 'auto';
 }
+
+.grid-image {
+  width: 150px;
+  height: 100px;
+}

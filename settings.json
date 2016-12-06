@@ -4,13 +4,13 @@
     "notificationConfig" : {
       "earthquake" : {
         "sound": "sounds/tsunami_warning.wav",
-        "icon": "images/warnings/tornade.png",
+        "icon": "images/warnings/earthquake.png",
         "page": "earthquakePage",
         "useLocation": false
       },
       "tsunami" : {
         "sound": "sounds/tsunami_warning.wav",
-        "icon": "images/warnings/tornade.png",
+        "icon": "images/warnings/tsunami.png",
         "page": "earthquakePage",
         "useLocation": false
       },

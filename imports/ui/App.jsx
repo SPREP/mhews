@@ -164,7 +164,10 @@ class App extends React.Component {
       if( pageConfig.component ){
         return React.createElement(
           getReactComponentByName(pageConfig.component),
-          {...this.props, onPageSelection: (page) => { this.handlePageSelection(page)}}
+          {...this.props,
+            phenomena: this.fcmdata,
+            onPageSelection: (page) => { this.handlePageSelection(page)}
+          }
         );
       }
       else{
@@ -301,7 +304,7 @@ class IndexPage extends React.Component {
               title={t(page.title)}
               onTouchTap={() => {this.props.onPageSelection(page.key)}}
               >
-              <img src={page.img} />
+              <img className=".grid-img" src={page.img} />
             </GridTile>
           ))}
         </GridList>

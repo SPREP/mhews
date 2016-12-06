@@ -1,5 +1,6 @@
 import React from 'react';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {Warnings} from '../api/warnings.js';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -23,20 +24,15 @@ class CyclonePage extends React.Component {
   }
 
   retrieveCycloneInformation(){
-    const cyclone = {
-      name: "Evan",
-      category: 3,
-      warningLevel: "Warning",
-      description: "Very dangerous. Stay at home.",
-      district: "Upolu South",
-      issuedAt: new Date()
+    if( this.cyclone ){
+      return this.cyclone;
     }
-
-    return cyclone;
+    else{
+      return Warnings.findLatestWarningInEffect("cyclone");
+    }
   }
 
-  render(){
-    const cyclone = this.retrieveCycloneInformation();
+  renderCyclone(cyclone){
     const name = cyclone.name;
     const category = cyclone.category;
     const district = cyclone.district;
@@ -55,6 +51,31 @@ class CyclonePage extends React.Component {
         <CardText>{description}</CardText>
       </Card>
     );
+  }
+
+  renderNoCyclone(){
+
+    const title = "No Cylone Warning in effect";
+    return(
+      <Card>
+        <CardMedia
+          overlay={<CardTitle title={title} subtitle={name} />}
+          >
+          <img src="images/samoa-6792.jpg" />
+        </CardMedia>
+        <CardText>{"Are you prepared for the food and waters?"}</CardText>
+      </Card>
+    );
+  }
+
+  render(){
+    const cyclone = this.retrieveCycloneInformation();
+    if( cyclone ){
+      return this.renderCyclone();
+    }
+    else{
+      return this.renderNoCyclone();
+    }
   }
 }
 

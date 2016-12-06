@@ -16,7 +16,7 @@ const i18nConfig = {
         "Warning": "Warning",
         "Watch": "Watch",
         title : {
-          index: "Index",
+          index: "Samoa MET MHEWS",
           weather: "Weather",
           heavyRain: "Heavy Rain",
           warnings: "Warnings",
@@ -57,7 +57,7 @@ const i18nConfig = {
         "Warning": "Lapataiga",
         "Watch": "Tausi",
         title : {
-          index: "Index",
+          index: "Samoa MET MHEWS",
           weather: "Tau",
           heavyRain: "Heavy Rain",
           warnings: "Lapataiga",

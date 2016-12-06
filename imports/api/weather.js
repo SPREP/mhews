@@ -1,23 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 
-/*
-    schema:
-    {
-      issued_at: Date & Time string,
-      lang: [en|ws],
-      situation: text,
-      forecasts: [
-        {
-          district: text,
-          date: text,
-          forecast: text
-      }
-    ]
-  }
-
-*/
-
 export const WeatherForecasts = new Mongo.Collection("weatherForecast");
 
 WeatherForecasts.getLatestForecast = (lng)=>{

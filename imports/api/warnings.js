@@ -2,12 +2,20 @@ import { Mongo } from 'meteor/mongo';
 
 export const Warnings = new Mongo.Collection("warnings");
 
-Warnings.findWarningsInEffect = () => {
-    return Warnings.find({in_effect: true}, {sort: [["issued_time", "desc"]]}).fetch();
+Warnings.findWarningsInEffect = (type) => {
+  let selector = {in_effect: true};
+  if(type){
+    selector.type = type;
+  }
+  return Warnings.find(selector, {sort: [["issued_time", "desc"]]}).fetch();
 };
 
-Warnings.findLatestWarningInEffect = () => {
-    return Warnings.findOne({in_effect: true}, {sort: [["issued_time", "desc"]]});
+Warnings.findLatestWarningInEffect = (type) => {
+  let selector = {in_effect: true};
+  if(type){
+    selector.type = type;
+  }
+  return Warnings.findOne(selector, {sort: [["issued_time", "desc"]]});
 };
 
 Warnings.getHazardTypes = () => {
