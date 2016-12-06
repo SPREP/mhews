@@ -13,6 +13,7 @@ import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import {GridList, GridTile} from 'material-ui/GridList';
 import List from 'material-ui/List/List';
+import Drawer from 'material-ui/Drawer';
 
 /* This plugin captures the tap event in React. */
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -57,12 +58,53 @@ const TopLeftMenu = (props) => (
   </IconMenu>
 );
 
+class DrawerMenu extends React.Component {
+  constructor(props){
+    super(props);
+  }
+
+  render(){
+    const menu = Meteor.settings.public.menu;
+    const pages = Meteor.settings.public.pages;
+    const children = menu.map((pageName) => {
+      const page = pages[pageName];
+      const title = page.title;
+      return (
+        <MenuItem
+          onTouchTap={
+            (event, menuItem) => {
+              event.preventDefault();
+              this.props.onRequestChange(false);
+              this.props.onPageSelection(pageName);
+            }
+          }
+          primaryText={this.props.t(title)}
+          value={pageName}
+          />);
+    });
+
+    console.log("DrawerMenu.render(): drawerOpen = "+this.props.drawerOpen);
+
+    return React.createElement(
+      Drawer,
+      {
+        docked: false,
+        open: this.props.drawerOpen,
+        onRequestChange: this.props.onRequestChange
+      },
+      children
+    );
+
+  }
+}
+
 class App extends React.Component {
 
   constructor(props){
     super(props);
     this.state = {
-      page: "indexPage"
+      page: "indexPage",
+      drawerOpen: false
     }
     this.fcmdata = null;
 
@@ -180,6 +222,14 @@ class App extends React.Component {
     return <IndexPage {...this.props} onPageSelection={(page) => { this.handlePageSelection(page); }}/>
   }
 
+  toggleDrawerOpen(){
+    this.setDrawerOpen(!this.state.drawerOpen);
+  }
+
+  setDrawerOpen(open){
+    console.log("toggle drawer open from "+this.state.drawerOpen+" to "+open);
+    this.setState({drawerOpen: open});
+  }
   render(){
     const t = this.props.t;
     const pageConfig = getPageConfig(this.state.page);
@@ -190,9 +240,15 @@ class App extends React.Component {
         <div>
           <AppBar
             title={t(title)}
-            iconElementLeft={<TopLeftMenu {...this.props}
-            onPageSelection={(page) => {this.handlePageSelection(page); }}/>}
+            onLeftIconButtonTouchTap={()=>{this.toggleDrawerOpen()}}
+            iconElementLeft={<IconButton><MenuIcon /></IconButton>}
             />
+          <DrawerMenu {...this.props}
+            drawerOpen={this.state.drawerOpen}
+            onRequestChange={(open)=>{this.setDrawerOpen(open);}}
+            onPageSelection={(page) => {this.handlePageSelection(page);}}
+            />
+
           {this.renderContents()}
         </div>
       </MuiThemeProvider>

@@ -23,7 +23,8 @@ const i18nConfig = {
           language: "Language",
           eqtsunami: "Earthquake And Tsunami",
           cyclone: "Cyclone",
-          about: "About SMD"
+          about: "About SMD",
+          aboutApp: "About this App"
         },
         "is in effect in": "is in effect in",
         no_warning_in_effect: "Currently no warning is in effect.",
@@ -65,7 +66,8 @@ const i18nConfig = {
 
           eqtsunami: "Mafui'e ma Sunami",
           cyclone: "Afa",
-          about: "Faatautau ia SMD"
+          about: "Faatautau ia SMD",
+          aboutApp: "Faatautau ia App"
         },
         "is in effect in": "i aafiaga i le",
         no_warning_in_effect: "E leai se lapataiga i aafiaga nei.",
