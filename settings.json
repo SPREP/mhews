@@ -48,7 +48,7 @@
         "title": "title.heavyRain"
       },
       "warningListPage" : {
-        "component": "WarningList",
+        "component": "WarningListContainer",
         "title": "title.warnings"
       },
       "aboutApp":{

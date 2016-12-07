@@ -22,8 +22,9 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import { translate } from 'react-i18next';
 
 /* Imports the mhews's components */
-import {WarningList, WarningsMenuTile} from './WarningList.jsx';
-import {WeatherPage, WeatherMenuTile} from './Weather.jsx';
+//import {WarningList, WarningsMenuTile} from './WarningList.jsx';
+import WarningListContainer from './WarningList.jsx';
+//import {WeatherPage, WeatherMenuTile} from './Weather.jsx';
 import WeatherPageContainer from './Weather.jsx';
 import CyclonePage from './Cyclone.jsx';
 import EarthquakePage from './Earthquake.jsx';

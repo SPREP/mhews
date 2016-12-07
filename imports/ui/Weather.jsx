@@ -79,11 +79,6 @@ export class WeatherPage extends React.Component {
     )
   }
 
-  /* Get the current language setting */
-  getLanguage(){
-    return i18n.language;
-  }
-
   getDisplayDate(dates){
     return this.state.displayDate ? this.state.displayDate : dates[0];
   }
@@ -93,7 +88,6 @@ export class WeatherPage extends React.Component {
   }
 
   render(){
-//    const forecast = WeatherForecasts.getLatestForecast(this.getLanguage());
     const forecast = this.props.forecast;
 
     if( this.props.loading ){
