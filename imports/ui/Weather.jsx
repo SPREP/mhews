@@ -5,7 +5,8 @@ import ListItem from 'material-ui/List/ListItem';
 import Avatar from 'material-ui/Avatar';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
-
+import i18n from 'i18next';
+import { createContainer } from 'meteor/react-meteor-data';
 
 import {WeatherForecasts} from '../api/weather.js';
 
@@ -19,9 +20,6 @@ export class WeatherPage extends React.Component {
 
   constructor(props){
     super(props);
-    if( this.props.phenomena && this.validatePhenomena()){
-      this.weather = this.props.phenomena;
-    }
     this.state = {displayDate: null};
   }
 
@@ -83,7 +81,7 @@ export class WeatherPage extends React.Component {
 
   /* Get the current language setting */
   getLanguage(){
-    return "ws";
+    return i18n.language;
   }
 
   getDisplayDate(dates){
@@ -95,11 +93,41 @@ export class WeatherPage extends React.Component {
   }
 
   render(){
-    const forecast = WeatherForecasts.getLatestForecast(this.getLanguage());
+//    const forecast = WeatherForecasts.getLatestForecast(this.getLanguage());
+    const forecast = this.props.forecast;
 
-    return forecast ? this.renderForecast(forecast) : this.renderNoForecast();
+    if( this.props.loading ){
+      return (
+        <p>{"Loading ..."}</p>
+      )
+    }
+    else if( forecast ){
+      return this.renderForecast(forecast);
+    }
+    else{
+      return this.renderNoForecast();
+    }
   }
 }
+
+WeatherPage.propTypes = {
+  loading: React.PropTypes.bool,
+  forecast: React.PropTypes.object,
+  t: React.PropTypes.func
+}
+
+export default WeatherPageContainer = createContainer(({t})=>{
+  const handle = Meteor.subscribe('weatherForecast');
+  const loading = !handle.ready();
+  const district = "upolu-north-northwest";
+  const language = i18n.language;
+
+  return {
+    loading,
+    t,
+    forecast: loading? null : WeatherForecasts.getLatestForecast(language),
+  }
+}, WeatherPage);
 
 /**
 * Usage: <WeatherTile onClick={callback} />

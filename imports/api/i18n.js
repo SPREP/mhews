@@ -17,10 +17,10 @@ const i18nConfig = {
         "Watch": "Watch",
         title : {
           index: "Samoa MET MHEWS",
-          weather: "Weather",
+          weather: "Weather Forecast",
           heavyRain: "Heavy Rain",
-          warnings: "Warnings",
-          language: "Language",
+          warnings: "Effective Warnings",
+          language: "Language Setting",
           eqtsunami: "Earthquake And Tsunami",
           cyclone: "Cyclone",
           about: "About SMD",

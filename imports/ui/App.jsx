@@ -24,6 +24,7 @@ import { translate } from 'react-i18next';
 /* Imports the mhews's components */
 import {WarningList, WarningsMenuTile} from './WarningList.jsx';
 import {WeatherPage, WeatherMenuTile} from './Weather.jsx';
+import WeatherPageContainer from './Weather.jsx';
 import CyclonePage from './Cyclone.jsx';
 import EarthquakePage from './Earthquake.jsx';
 import HeavyRainPage from './HeavyRain.jsx';
@@ -63,8 +64,6 @@ class DrawerMenu extends React.Component {
           />);
     });
 
-    console.log("DrawerMenu.render(): drawerOpen = "+this.props.drawerOpen);
-
     return React.createElement(
       Drawer,
       {
@@ -99,7 +98,7 @@ class App extends React.Component {
     if( Meteor.isClient ){
       Meteor.defer(()=>{
         // To receive the data from the weatherForecast collection
-        Meteor.subscribe('weatherForecast');
+//        Meteor.subscribe('weatherForecast');
 
         // To receive the data from the warnings collection
         Meteor.subscribe('warnings');
@@ -209,7 +208,6 @@ class App extends React.Component {
   }
 
   setDrawerOpen(open){
-    console.log("toggle drawer open from "+this.state.drawerOpen+" to "+open);
     this.setState({drawerOpen: open});
   }
   render(){

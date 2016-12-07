@@ -30,9 +30,6 @@
     "menu": [
       "weatherPage",
       "warningListPage",
-      "heavyRain",
-      "earthquakePage",
-      "cyclonePage",
       "language",
       "aboutApp"
     ],
@@ -43,7 +40,7 @@
         "title": "title.index"
       },
       "weatherPage" : {
-        "component": "WeatherPage",
+        "component": "WeatherPageContainer",
         "title": "title.weather"
       },
       "heavyRain": {

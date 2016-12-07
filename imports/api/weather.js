@@ -18,12 +18,12 @@ WeatherForecasts.getLatestForecast = (lng)=>{
 
 if( Meteor.isServer ){
 
+  // The 2nd argument must use "function", not the arrow notations.
+  // See this guide https://guide.meteor.com/data-loading.html
   Meteor.publish('weatherForecast', function weatherForecastPublication() {
     const forecasts = WeatherForecasts.find();
-    console.log("forecasts = "+forecasts.fetch());
-    if( forecasts ){
-      console.log("forecasts count = "+forecasts.fetch().length);
-    }
+
+    // Returns the Cursor, not each document.
     return forecasts;
   });
 }
