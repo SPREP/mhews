@@ -139,14 +139,16 @@ class App extends React.Component {
     this.phenomena = data;
   }
 
-  handleFcmNotification(data){
+  handleFcmNotification(fcmData){
     console.log("FCM data received.");
 
-    const config = Meteor.settings.public.notificationConfig[data.type];
+    const config = Meteor.settings.public.notificationConfig[fcmData.type];
     if( !config ){
-      console.error("Unknown hazard type "+data.type);
+      console.error("Unknown hazard type "+fcmData.type);
       return;
     }
+    const data = convertFcmDataToHazardDataStructure(fcmData);
+
     this.setPhenomena(data);
 
     if( config.useLocation ){
@@ -256,6 +258,19 @@ class App extends React.Component {
     );
 
   }
+}
+
+// FCM cannot deliver layered JSON, so epicenter is represented by two attributes.
+// This function put them back into the same data structure as a client publishes to the server.
+function convertFcmDataToHazardDataStructure(data){
+  data.epicenter = {
+    lat: parseFloat(data.epicenter_lat),
+    lng: parseFloat(data.epicenter_lng),
+  }
+  data.mw = parseFloat(data.mw);
+  data.depth = parseFloat(data.depth);
+
+  return data;
 }
 
 function playSound(file){

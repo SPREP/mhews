@@ -23,10 +23,16 @@ function checkWarningType(type){
 function publishWarning(warning){
 
   check(warning.type, Match.Where(checkWarningType));
-  check(warning.level, String);
   check(warning.in_effect, Match.OneOf(true, false));
   check(warning.issued_at, Date);
+  check(warning.level, String);
   check(warning.description, String);
+
+  if( warning.type == "tsunami"){
+    check(warning.epicenter, {lat: Number, lng: Number});
+    check(warning.mw, Number);
+    check(warning.depth, Number);
+  }
 
   return Warnings.insert(warning);
 }

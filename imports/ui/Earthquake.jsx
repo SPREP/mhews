@@ -70,12 +70,12 @@ function log10(value){
 class EarthquakePage extends React.Component {
 
   validatePhenomena(phenomena){
-    if( !phenomena.epicenter_lat ){
-      console.error("epicenter_lat is not defined");
+    if( !phenomena.epicenter.lat ){
+      console.error("epicenter.lat is not defined");
       return false;
     }
-    if( !phenomena.epicenter_lng ){
-      console.error("epicenter_lng is not defined");
+    if( !phenomena.epicenter.lng ){
+      console.error("epicenter.lng is not defined");
       return false;
     }
     if( !phenomena.mw ){
@@ -95,13 +95,6 @@ class EarthquakePage extends React.Component {
 
     if( quake ){
       if(this.validatePhenomena(quake)){
-        // Stupid FCM changes the numbers into string... have to get them back.
-        quake.epicenter = {
-          lat: parseFloat(quake.epicenter_lat),
-          lng: parseFloat(quake.epicenter_lng)
-        };
-        quake.mw = parseFloat(quake.mw);
-        quake.depth = parseFloat(quake.depth);
 
         const radiusKm = getIntensityCircleRadius(quake.mw, quake.depth);
         this.radius = radiusKm * 1000;
