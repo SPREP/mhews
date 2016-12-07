@@ -21,7 +21,7 @@ Warnings.findLatestWarningInEffect = (type) => {
 Warnings.getHazardTypes = () => {
   let hazardTypes = [];
 
-  const config = Meteor.settings.notificationConfig;
+  const config = Meteor.settings.public.notificationConfig;
   for(let key in config){
     hazardTypes.push(key);
   }

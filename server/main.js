@@ -12,13 +12,20 @@ Meteor.startup(() => {
   })
 });
 
+function checkWarningType(type){
+  const hazardTypes = Warnings.getHazardTypes();
+  for(let i= 0; i< hazardTypes.length; i++ ){
+    if( hazardTypes[i] == type ) return true;
+  }
+  return false;
+}
+
 function publishWarning(warning){
 
-  check(warning.type, Match.OneOf(Warnings.getHazardTypes()));
+  check(warning.type, Match.Where(checkWarningType));
   check(warning.level, String);
-  check(warning.region, String);
   check(warning.in_effect, Match.OneOf(true, false));
-  check(warning.issued_time, Date);
+  check(warning.issued_at, Date);
   check(warning.description, String);
 
   return Warnings.insert(warning);

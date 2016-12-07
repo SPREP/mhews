@@ -50,10 +50,19 @@ function addUtilityMethods(forecast){
   }
 
   forecast.listForecastDates = () => {
+    const dates = [];
 
-    return forecast.forecasts.map((districtForecast, index, array) => {
-      return districtForecast.date;
-    })
+    // Add the dates from the districtForecast, but remove duplicates.
+    forecast.forecasts.forEach((districtForecast, index, array) => {
+      const date = districtForecast.date;
+      if( !dates.find(function(element){
+        return element.getTime() == date.getTime();
+      })){
+        dates.push(date);
+      }
+    });
+
+    return dates;
   }
 
   return forecast;

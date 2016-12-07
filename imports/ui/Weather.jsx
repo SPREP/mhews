@@ -110,8 +110,12 @@ WeatherPage.propTypes = {
   t: React.PropTypes.func
 }
 
-export default WeatherPageContainer = createContainer(({t})=>{
-  const handle = Meteor.subscribe('weatherForecast');
+export default WeatherPageContainer = createContainer(({t, handles})=>{
+  const handle = handles["weatherForecast"];
+  if( !handle ){
+    console.error("handle for weatherForecast was not given!");
+    return;
+  }
   const loading = !handle.ready();
   const district = "upolu-north-northwest";
   const language = i18n.language;

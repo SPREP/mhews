@@ -53,6 +53,7 @@ class DrawerMenu extends React.Component {
       const title = page.title;
       return (
         <MenuItem
+          key={title}
           onTouchTap={
             (event, menuItem) => {
               event.preventDefault();
@@ -86,7 +87,10 @@ class App extends React.Component {
       page: Meteor.settings.public.topPage,
       drawerOpen: false
     }
-    this.fcmdata = null;
+    // Phenomena to be displayed by the Earthquake and HeavyRain page.
+    // The phonomena is set by the FCM or by the user's selection in the WarningList page.
+    this.phenomena = null;
+    this.handles = null;
 
     // Change the back-button behavior
     document.addEventListener("backbutton", () => { this.onBackKeyDown() });
@@ -95,15 +99,6 @@ class App extends React.Component {
   componentDidMount(){
     if( Meteor.isCordova ){
       Meteor.defer(()=>{ this.initfcm();});
-    }
-    if( Meteor.isClient ){
-      Meteor.defer(()=>{
-        // To receive the data from the weatherForecast collection
-//        Meteor.subscribe('weatherForecast');
-
-        // To receive the data from the warnings collection
-        Meteor.subscribe('warnings');
-      });
     }
   }
 
@@ -140,15 +135,19 @@ class App extends React.Component {
     );
   }
 
+  setPhenomena(data){
+    this.phenomena = data;
+  }
+
   handleFcmNotification(data){
     console.log("FCM data received.");
-    this.fcmdata = data;
 
     const config = Meteor.settings.public.notificationConfig[data.type];
     if( !config ){
       console.error("Unknown hazard type "+data.type);
       return;
     }
+    this.setPhenomena(data);
 
     if( config.useLocation ){
       navigator.geolocation.getCurrentPosition(
@@ -174,7 +173,7 @@ class App extends React.Component {
   }
 
   notifyUserAndChangePage(config){
-    if( !this.fcmdata.wasTapped ){ playSound(config.sound);}
+    if( !this.phenomena.wasTapped ){ playSound(config.sound);}
     this.setState({page: config.page});
   }
 
@@ -186,12 +185,20 @@ class App extends React.Component {
     const pageConfig = getPageConfig(page);
     if( pageConfig ){
       if( pageConfig.component ){
+        const props = {
+          ...this.props,
+          phenomena: this.phenomena,
+          handles: this.handles,
+          onPageSelection: (page, phenomena) => {
+            if( phenomena ){
+              this.setPhenomena(phenomena);
+            }
+            this.handlePageSelection(page);
+          }
+        };
         return React.createElement(
           getReactComponentByName(pageConfig.component),
-          {...this.props,
-            phenomena: this.fcmdata,
-            onPageSelection: (page) => { this.handlePageSelection(page)}
-          }
+          props
         );
       }
       else{
@@ -215,6 +222,18 @@ class App extends React.Component {
     const t = this.props.t;
     const pageConfig = getPageConfig(this.state.page);
     const title = pageConfig.title;
+
+    // TODO This code should be moved to a container wrapping the App.
+    if( Meteor.isClient ){
+      if( this.handles == null ){
+        this.handles = {};
+        // To receive the data from the weatherForecast collection
+        this.handles.weatherForecast = Meteor.subscribe('weatherForecast');
+
+        // To receive the data from the warnings collection
+        this.handles.warnings = Meteor.subscribe('warnings');
+      }
+    }
 
     return (
       <MuiThemeProvider>

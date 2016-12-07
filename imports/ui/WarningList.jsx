@@ -83,10 +83,10 @@ export class WarningList extends React.Component {
     }
   }
   renderWarningDetailsPage(warning){
-    const config = Meteor.settings.notificationConfig;
+    const config = Meteor.settings.public.notificationConfig;
     for(let hazardType in config){
       if( warning.type == hazardType ){
-        this.props.onPageSelection(config[hazardType].page);
+        this.props.onPageSelection(config[hazardType].page, warning);
         return;
       }
     }
@@ -100,8 +100,12 @@ WarningList.propTypes = {
   t: React.PropTypes.func
 }
 
-export default WarningListContainer = createContainer(({t})=>{
-  const handle = Meteor.subscribe('warnings');
+export default WarningListContainer = createContainer(({t, handles})=>{
+  const handle = handles["warnings"];
+  if( !handle ){
+    console.error("handle for warnings was not given!");
+    return;
+  }
   const loading = !handle.ready();
   const language = i18n.language;
 
@@ -147,6 +151,7 @@ export class WarningsMenuTile extends React.Component {
 
     return (
       <ListItem
+        key={latestWarning._id}
         leftAvatar={<Avatar src="images/warning.png"></Avatar>}
         primaryText={this.getWarningMessage(latestWarning)}
         onTouchTap={(event) => {event.preventDefault(); this.props.onTouchTap()}}
