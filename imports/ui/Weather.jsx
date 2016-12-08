@@ -12,6 +12,8 @@ import {WeatherForecasts} from '../api/weather.js';
 
 const Months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+const WeekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
 const surfaceChartUrl = "http://www.samet.gov.ws/images/081216_PM.png";
 
 /**
@@ -56,7 +58,7 @@ export class WeatherPage extends React.Component {
               <img src={surfaceChartUrl} />
             </CardMedia>)
         }
-        <CardTitle title={displayDate.toDateString()} subtitle={district} />
+        <CardTitle title={this.dateToString(displayDate)} subtitle={district} />
         <CardText>{forecastText}</CardText>
         <CardActions>
           {
@@ -120,7 +122,23 @@ export class WeatherPage extends React.Component {
       return this.renderNoForecast();
     }
   }
+  // Convert a date object into string depending on the set language.
+  dateToString(date){
+    const lang = i18n.language;
+    const t = this.props.t;
+
+    if( lang == "ws"){
+      const day = t("weekdays."+WeekDays[date.getDay()]);
+      const month = t("month."+Months[date.getMonth()]);
+      return day+" "+month+" "+date.getDate()+" "+date.getFullYear();
+    }
+    else{
+      return date.toDateString();
+    }
+  }
+
 }
+
 
 WeatherPage.propTypes = {
   loading: React.PropTypes.bool,

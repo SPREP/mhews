@@ -54,6 +54,15 @@ const i18nConfig = {
           "Nov": "Nov",
           "Dec": "Dec"
         },
+        weekdays:{
+          "Mon": "Mon",
+          "Tue": "Tue",
+          "Wed": "Wed",
+          "Thu": "Thu",
+          "Fri": "Fri",
+          "Sat": "Sat",
+          "Sun": "Sun"
+        },
         HeavyRain: "Heavy Rain"
       }
     },
@@ -106,6 +115,15 @@ const i18nConfig = {
           "Oct": "Oke",
           "Nov": "Nov",
           "Dec": "Tes"
+        },
+        weekdays:{
+          "Mon": "Aso Gafua",
+          "Tue": "Aso Lua",
+          "Wed": "Aso Lulu",
+          "Thu": "Aso Tofi",
+          "Fri": "Aso Faraile",
+          "Sat": "Aso To'anai",
+          "Sun": "Aso Sa"
         },
         HeavyRain: "Heavy Rain"
       }
