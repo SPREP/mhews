@@ -18,7 +18,7 @@ const i18nConfig = {
         "warning": "warning",
         "heavyRain": "heavyRain",
         title : {
-          index: "Samoa MET MHEWS",
+          index: "Samoa MET",
           weather: "Weather Forecast",
           heavyRain: "Heavy Rain",
           warnings: "Effective Warnings",
@@ -59,7 +59,7 @@ const i18nConfig = {
     },
     ws: {
       common: {
-        "IndexPage": "Index itulau",
+        "IndexPage": "Samoa MET",
         "Weather": "Tau",
         "Earthquake": "Mafui'e",
         "Cyclone": "Afa",

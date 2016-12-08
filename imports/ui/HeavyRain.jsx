@@ -2,6 +2,7 @@ import React from 'react';
 import GoogleMap from './GoogleMapJs.jsx';
 import * as GeoUtils from '../api/geoutils.js';
 import * as HazardArea from '../api/hazardArea.js';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -48,20 +49,22 @@ class HeavyRainPage extends React.Component {
     if( this.heavyRain ){
       if( this.heavyRain.area ){
         return(
-          <GoogleMap mapCenter={Samoa.center} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
-            Loading...
-          </GoogleMap>
+          <Card>
+            <GoogleMap mapCenter={Samoa.center} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
+              Loading...
+            </GoogleMap>
+            <CardTitle title={"Heavy Rain"+" "+heavyRain.level} subtitle={heavyRain.issued_at.toDateString()} />
+            <CardText>{heavyRain.description}</CardText>
+          </Card>
         );
       }
       else{
-        console.error("epicenter is not defined!!!!!");
+        console.error("heavyRain.area is not defined.");
       }
     }
 
     return(
-      <GoogleMap mapCenter={Samoa.center} zoom={3} >
-        Loading...
-      </GoogleMap>
+      <p>{"No heavyRain warning is in effect."}</p>
     );
   }
 
@@ -78,20 +81,15 @@ class HeavyRainPage extends React.Component {
     const hazardAreas = HazardArea.findAreas(heavyRain.area, heavyRain.direction);
     const title = "HeavyRain "+heavyRain.level+" in effect";
     const snippet = "Warning for the people in "+heavyRain.area+" "+heavyRain.direction;
-    let infoWindowPosition = Samoa.center;
 
     hazardAreas.forEach((hazardArea) =>{
       if( hazardArea.shape == HazardArea.Shape.polygon ){
         map.addPolygon(hazardArea.vertices, this.getWarningColor());
-        infoWindowPosition = hazardArea.vertices[0];
       }
       else if( hazardArea.shape == HazardArea.Shape.circle ){
         map.addCircle(hazardArea.center, hazardArea.radius, this.getWarningColor());
-        infoWindowPosition = hazardArea.center;
       }
-
     });
-    map.addInfoWindow(infoWindowPosition, title, snippet);
   }
 }
 

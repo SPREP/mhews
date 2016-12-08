@@ -65,12 +65,14 @@ class GoogleMap extends React.Component {
       map: this.map.instance,
       position: latlng
     });
-    let infoWindow = new google.maps.InfoWindow({
-      // TODO Make a better presentation of the title and snippet.
-      content: title + " " + snippet,
-      position: latlng
-    })
-    infoWindow.open(this.map.instance, marker);
+    if( title ){
+      let infoWindow = new google.maps.InfoWindow({
+        // TODO Make a better presentation of the title and snippet.
+        content: title + " " + snippet,
+        position: latlng
+      })
+      infoWindow.open(this.map.instance, marker);
+    }
 
     this.marker = marker;
   }

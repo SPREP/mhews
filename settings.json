@@ -28,15 +28,16 @@
       }
     },
     "menu": [
+      "topPage",
       "weatherPage",
       "warningListPage",
       "settings",
       "aboutApp"
     ],
-    "topPage": "weatherPage",
+    "topPage": "topPage",
     "pages": {
-      "indexPage" : {
-        "component": "IndexPage",
+      "topPage" : {
+        "component": "TopPage",
         "title": "title.index"
       },
       "weatherPage" : {

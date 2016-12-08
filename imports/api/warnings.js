@@ -7,7 +7,7 @@ Warnings.findWarningsInEffect = (type) => {
   if(type){
     selector.type = type;
   }
-  return Warnings.find(selector, {sort: [["issued_time", "desc"]]}).fetch();
+  return Warnings.find(selector, {sort: [["issued_at", "desc"]]}).fetch();
 };
 
 Warnings.findLatestWarningInEffect = (type) => {
@@ -15,7 +15,7 @@ Warnings.findLatestWarningInEffect = (type) => {
   if(type){
     selector.type = type;
   }
-  return Warnings.findOne(selector, {sort: [["issued_time", "desc"]]});
+  return Warnings.findOne(selector, {sort: [["issued_at", "desc"]]});
 };
 
 Warnings.getHazardTypes = () => {

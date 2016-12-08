@@ -6,16 +6,14 @@ import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
 import Divider from 'material-ui/Divider';
 import Subheader from 'material-ui/Subheader';
+import Paper from 'material-ui/Paper';
+
 import { createContainer } from 'meteor/react-meteor-data';
 import i18n from 'i18next';
 
 import {Warnings, HazardType} from '../api/warnings.js';
 
 export class WarningList extends React.Component {
-
-  constructor(props){
-    super(props);
-  }
 
   getWarningSummary(warning){
     const t = this.props.t;
@@ -33,8 +31,7 @@ export class WarningList extends React.Component {
       return config.icon;
     }
     else{
-      // FIXME Set a generic warning icon
-      return "images/warnings/storm.png";
+      return "images/warning.png";
     }
   }
 
@@ -61,21 +58,23 @@ export class WarningList extends React.Component {
     }
     else if( warnings && warnings.length > 0 ){
       return (
-        <List>
-          {
-            warnings.map((warning) => {
-              return (
-                // FIXME The ListItem needs the key property set.
-                <ListItem
-                  leftAvatar={this.renderAvatar(warning)}
-                  primaryText={this.getWarningSummary(warning)}
-                  secondaryText={this.getWarningDetails(warning)}
-                  onTouchTap={()=>{this.renderWarningDetailsPage(warning)}}
-                  />
-              );
-            })
-          }
-        </List>
+        <Paper zDepth={1}>
+          <List>
+            {
+              warnings.map((warning) => {
+                return (
+                  // FIXME The ListItem needs the key property set.
+                  <ListItem
+                    leftAvatar={this.renderAvatar(warning)}
+                    primaryText={this.getWarningSummary(warning)}
+                    secondaryText={this.getWarningDetails(warning)}
+                    onTouchTap={()=>{this.renderWarningDetailsPage(warning)}}
+                    />
+                );
+              })
+            }
+          </List>
+      </Paper>
       );
     }
     else{

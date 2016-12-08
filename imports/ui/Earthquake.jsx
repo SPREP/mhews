@@ -1,7 +1,7 @@
 import React from 'react';
 import GoogleMap from './GoogleMapJs.jsx';
 import * as GeoUtils from '../api/geoutils.js';
-
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -104,9 +104,13 @@ class EarthquakePage extends React.Component {
         this.zoom = GeoUtils.getZoomLevel(diameterKm * 1.5) - 2; // -2 is an ugly hack to adjust the zoom leve.
 
         return(
-          <GoogleMap mapCenter={quake.epicenter} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
-            Loading...
-          </GoogleMap>
+          <Card>
+            <GoogleMap mapCenter={quake.epicenter} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
+              Loading...
+            </GoogleMap>
+            <CardTitle title={"Earthquake"+" "+quake.level} subtitle={quake.issued_at.toDateString()}/>
+            <CardText>{quake.description}</CardText>
+          </Card>
         );
       }
       else{
@@ -114,9 +118,7 @@ class EarthquakePage extends React.Component {
       }
     }
     return(
-      <GoogleMap mapCenter={Apia} zoom={3} >
-        Loading...
-      </GoogleMap>
+      <p>No earthquake / Tsunami warning in effect.</p>
     );
   }
 
@@ -125,7 +127,8 @@ class EarthquakePage extends React.Component {
   }
 
   drawEpicenter(map){
-    map.addMarker(this.quake.epicenter, "Earthquake", "Magnitude = "+this.quake.mw);
+//    map.addMarker(this.quake.epicenter, "Earthquake", "Magnitude = "+this.quake.mw);
+    map.addMarker(this.quake.epicenter);
     map.addCircle(this.quake.epicenter, this.radius, this.mwColor);
   }
 

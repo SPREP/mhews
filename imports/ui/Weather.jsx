@@ -12,6 +12,8 @@ import {WeatherForecasts} from '../api/weather.js';
 
 const Months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+const surfaceChartUrl = "http://www.samet.gov.ws/images/081216_PM.png";
+
 /**
 * This page should show the latest weather forecast.
 * The latest forecast should be retrieved from the SmartMet product.
@@ -36,15 +38,24 @@ export class WeatherPage extends React.Component {
     const displayDate = this.getDisplayDate(dates);
     const district = this.getDisplayDistrict();
     const districtForecast = forecast.getDistrictForecast(district, displayDate);
-    const forecastText = districtForecast.forecast;
+    let forecastText;
+    if( districtForecast ){
+      forecastText = districtForecast.forecast;
+    }
+    else{
+      forecastText = "No forecast is available for district = "+district+" on "+displayDate.toDateString();
+    }
+    const compact = this.props.compact;
 
     return (
       <Card>
-        <CardMedia
-          overlay={<CardTitle title="Situation" subtitle={situation} />}
-          >
-          <img src="images/samoa-6792.jpg" />
-        </CardMedia>
+        {
+            compact ? "" : (<CardMedia
+              overlay={<CardTitle title="Situation" subtitle={situation} />}
+              >
+              <img src={surfaceChartUrl} />
+            </CardMedia>)
+        }
         <CardTitle title={displayDate.toDateString()} subtitle={district} />
         <CardText>{forecastText}</CardText>
         <CardActions>
@@ -84,12 +95,14 @@ export class WeatherPage extends React.Component {
   }
 
   getDisplayDistrict(){
+    let district;
     if( typeof(Storage) !== 'undefined'){
-      return localStorage.getItem("district");
+      district = localStorage.getItem("district");
     }
-    else{
-      return "upolu-north-northwest";
+    if( !district ){
+      district = "upolu-north-northwest";
     }
+    return district;
   }
 
   render(){
