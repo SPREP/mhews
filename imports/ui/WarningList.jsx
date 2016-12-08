@@ -62,12 +62,15 @@ export class WarningList extends React.Component {
           <List>
             {
               warnings.map((warning) => {
+                const style = getWarningStyle(warning.level);
+
                 return (
                   // FIXME The ListItem needs the key property set.
                   <ListItem
                     leftAvatar={this.renderAvatar(warning)}
                     primaryText={this.getWarningSummary(warning)}
                     secondaryText={this.getWarningDetails(warning)}
+                    style={style}
                     onTouchTap={()=>{this.renderWarningDetailsPage(warning)}}
                     />
                 );
@@ -91,6 +94,16 @@ export class WarningList extends React.Component {
     }
     console.error("Unknown hazard type "+warning.type);
   }
+}
+
+function getWarningStyle(level){
+  if( level == "warning" ){
+    return {color: "#ff0000"};
+  }
+  else if( level == "watch"){
+    return {color: "#ffff00"};
+  }
+  return {color: "#000000"};
 }
 
 WarningList.propTypes = {
