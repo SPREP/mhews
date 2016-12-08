@@ -41,11 +41,16 @@ const disasterNotificationTopic = 'disaster';
  * This is needed for the material-ui components handle click event.
  * shouldRejectClick disables the onClick, but this is needed to avoid ghost click.
  */
-injectTapEventPlugin({
-  shouldRejectClick: function (lastTouchEventTimestamp, clickEventTimestamp) {
-    return true;
-  }
-});
+if( Meteor.isCordova ){
+  injectTapEventPlugin({
+    shouldRejectClick: function (lastTouchEventTimestamp, clickEventTimestamp) {
+      return true;
+    }
+  });
+}
+else{
+  injectTapEventPlugin();
+}
 
 class DrawerMenu extends React.Component {
   constructor(props){

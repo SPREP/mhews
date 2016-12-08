@@ -19,6 +19,7 @@ class SettingPage extends React.Component {
 
     const lang = getCurrentLanguage();
     const district = getCurrentDistrict();
+    console.log("lang = "+lang);
 
     return(
       <div>
