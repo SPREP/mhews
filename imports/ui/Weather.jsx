@@ -84,7 +84,12 @@ export class WeatherPage extends React.Component {
   }
 
   getDisplayDistrict(){
-    return "upolu-north-northwest";
+    if( typeof(Storage) !== 'undefined'){
+      return localStorage.getItem("district");
+    }
+    else{
+      return "upolu-north-northwest";
+    }
   }
 
   render(){

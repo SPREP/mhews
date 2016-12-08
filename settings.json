@@ -30,7 +30,7 @@
     "menu": [
       "weatherPage",
       "warningListPage",
-      "language",
+      "settings",
       "aboutApp"
     ],
     "topPage": "weatherPage",
@@ -54,12 +54,11 @@
       "aboutApp":{
         "component": "AboutAppPage",
         "title": "title.aboutApp",
-        "component": "AboutSMDPage",
         "useGrid": true
       },
-      "language": {
-        "component": "LanguageSetting",
-        "title": "title.language"
+      "settings": {
+        "component": "SettingPage",
+        "title": "title.settings"
       },
       "earthquakePage" : {
         "img": "images/earthquake_menu.jpg",

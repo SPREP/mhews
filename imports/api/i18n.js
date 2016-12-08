@@ -23,10 +23,18 @@ const i18nConfig = {
           heavyRain: "Heavy Rain",
           warnings: "Effective Warnings",
           language: "Language Setting",
+          settings: "Settings",
           eqtsunami: "Earthquake And Tsunami",
           cyclone: "Cyclone",
           about: "About SMD",
           aboutApp: "About this App"
+        },
+        district: {
+          "upolu-north-northwest": "Upolu North Northwest",
+          "upolu-east-southwest": "Upolu East Southwest",
+          "savaii-east-northeast": "Savaii East Northeast",
+          "savaii-northwest": "Savaii Northwest",
+          "savaii-south": "Savaii South"
         },
         "is in effect in": "is in effect in",
         no_warning_in_effect: "Currently no warning is in effect.",
@@ -67,11 +75,19 @@ const i18nConfig = {
           heavyRain: "Heavy Rain",
           warnings: "Lapataiga",
           language: "Language",
+          settings: "Settings",
 
           eqtsunami: "Mafui'e ma Sunami",
           cyclone: "Afa",
           about: "Faatautau ia SMD",
           aboutApp: "Faatautau ia App"
+        },
+        district: {
+          "upolu-north-northwest": "Upolu North Northwest",
+          "upolu-east-southwest": "Upolu East Southwest",
+          "savaii-east-northeast": "Savaii East Northeast",
+          "savaii-northwest": "Savaii Northwest",
+          "savaii-south": "Savaii South"
         },
         "is in effect in": "i aafiaga i le",
         no_warning_in_effect: "E leai se lapataiga i aafiaga nei.",
