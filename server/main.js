@@ -36,7 +36,7 @@ function publishWarning(warning){
     check(warning.depth, Number);
   }
 
-  Meteor.defer(function(){    
+  Meteor.defer(function(){
     sendFcmNotification(warning);
   })
 
@@ -54,6 +54,8 @@ function publishWeatherForecast(forecast){
     date: Date,
     forecast: String
   }]);
+
+  forecast.in_effect = true;
 
   return WeatherForecasts.insert(forecast);
 }
