@@ -1,4 +1,5 @@
 {
+  "fcmApiKey": "AIzaSyAhAL9Bp83Rl-8f9R7dgomcuBfTUxxXy_o",
   "public": {
     "googleMapsApiKey": "AIzaSyARRdFTy8sB6r94FgWHv0Ke_69MdBKkuoQ",
     "notificationConfig" : {
@@ -53,7 +54,7 @@
         "title": "title.warnings"
       },
       "aboutApp":{
-        "component": "AboutAppPage",
+        "component": "AboutSMDPage",
         "title": "title.aboutApp",
         "useGrid": true
       },

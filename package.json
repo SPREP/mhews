@@ -5,7 +5,10 @@
     "start": "meteor run"
   },
   "dependencies": {
+    "babel-code-frame": "^6.16.0",
+    "babel-core": "^6.16.0",
     "babel-runtime": "6.18.0",
+    "d": "^0.1.1",
     "geolib": "^2.0.22",
     "i18next": "^4.1.0",
     "material-ui": "^0.16.1",
@@ -17,14 +20,5 @@
     "react-tap-event-plugin": "^2.0.0",
     "request": "^2.79.0"
   },
-  "devDependencies": {
-    "babel-eslint": "^7.1.1",
-    "eslint": "^3.11.1",
-    "eslint-config-airbnb": "^13.0.0",
-    "eslint-import-resolver-meteor": "^0.3.4",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^3.0.1",
-    "eslint-plugin-meteor": "^4.0.1",
-    "eslint-plugin-react": "^6.8.0"
-  }
+  "devDependencies": {}
 }

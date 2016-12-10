@@ -275,6 +275,7 @@ class App extends React.Component {
 // FCM cannot deliver layered JSON, so epicenter is represented by two attributes.
 // This function put them back into the same data structure as a client publishes to the server.
 function convertFcmDataToHazardDataStructure(data){
+  data.issued_at = moment(data.issued_at).toDate();
   data.epicenter = {
     lat: parseFloat(data.epicenter_lat),
     lng: parseFloat(data.epicenter_lng),

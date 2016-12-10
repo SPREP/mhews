@@ -25,9 +25,9 @@ function checkWarningType(type){
 function publishWarning(warning){
 
   check(warning.type, Match.Where(checkWarningType));
+  check(warning.level, String);
   check(warning.in_effect, Match.OneOf(true, false));
   check(warning.issued_at, Date);
-  check(warning.level, String);
   check(warning.description, String);
 
   if( warning.type == "tsunami"){
@@ -95,7 +95,10 @@ function getWarningMessageForFcm(warning){
     },
     "data" : {
       "type": warning.type,
-      "level": warning.level
+      "level": warning.level,
+      "in_effect": warning.in_effect,
+      "issued_at": warning.issued_at,
+      "description": warning.description
     }
   };
 
