@@ -30,7 +30,7 @@ import CyclonePage from './Cyclone.jsx';
 import EarthquakePage from './Earthquake.jsx';
 import HeavyRainPage from './HeavyRain.jsx';
 import AboutSMDPage from './AboutSMD.jsx';
-import SettingPage from './SettingPage.jsx';
+import PreferencesPageContainer from './PreferencesPage.jsx';
 import TopPage from "./TopPage.jsx";
 
 import * as HazardArea from '../api/hazardArea.js';

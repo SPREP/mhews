@@ -59,7 +59,7 @@
         "useGrid": true
       },
       "settings": {
-        "component": "SettingPage",
+        "component": "PreferencesPageContainer",
         "title": "title.settings"
       },
       "earthquakePage" : {

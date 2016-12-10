@@ -5,20 +5,22 @@ import Subheader from 'material-ui/Subheader';
 import Divider from 'material-ui/Divider';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import i18n from 'i18next';
+import { createContainer } from 'meteor/react-meteor-data';
+import {Preferences} from '../api/preferences.js';
 
-class SettingPage extends React.Component {
+const districts = [
+  "upolu-north-northwest",
+  "upolu-east-southwest",
+  "savaii-east-northeast",
+  "savaii-northwest",
+  "savaii-south"
+];
+
+class PreferencesPage extends React.Component {
 
   render(){
-    const districts = [
-      "upolu-north-northwest",
-      "upolu-east-southwest",
-      "savaii-east-northeast",
-      "savaii-northwest",
-      "savaii-south"
-    ];
-
-    const lang = getCurrentLanguage();
-    const district = getCurrentDistrict();
+    const lang = this.props.language;
+    const district = this.props.district;
     console.log("lang = "+lang);
 
     return(
@@ -55,36 +57,46 @@ class SettingPage extends React.Component {
         console.error(error);
       }
       else{
-        if( typeof(Storage) !== 'undefined'){
-          localStorage.setItem("language", lang);
-        }
+        this.savePreferences("language", lang);
       }
-//      this.props.onPageSelection(topPageName);
     })
   }
   changeDistrict(district){
-    if( typeof(Storage) !== 'undefined'){
-      localStorage.setItem("district", district);
+    this.savePreferences("district", district);
+  }
+  savePreferences(key, value){
+    if( !Preferences ){
+      console.error("Preferences local collection is not defined!!");
+      return;
     }
+    Preferences.upsert({key: key}, {key: key, value: value});
   }
 }
 
-function getCurrentDistrict(){
-  if( typeof(Storage) !== 'undefined'){
-    return localStorage.getItem("district");
+
+PreferencesPage.propTypes = {
+  language: React.PropTypes.string,
+  district: React.PropTypes.district
+}
+
+export default PreferencesPageContainer = createContainer(() => {
+  let districtPreference;
+  let languagePreference;
+
+  if( Preferences ){
+    districtPreference = Preferences.findOne({key: "district"});
+    languagePreference = Preferences.findOne({key: "language"});
   }
   else{
-    return "upolu-north-northwest";
+    console.error("Preferences local collection is not defined!!");
+    // TODO show an error message to the user.
   }
-}
+  let district = districtPreference ? districtPreference.value : districts[0];
+  let language = languagePreference ? languagePreference.value : "en";
 
-function getCurrentLanguage(){
-  if( typeof(Storage) !== 'undefined'){
-    return localStorage.getItem("language");
+  return {
+    language,
+    district
   }
-  else{
-    return "en";
-  }
-}
 
-export default SettingPage;
+}, PreferencesPage);
