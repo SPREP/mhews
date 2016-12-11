@@ -28,9 +28,11 @@ class PreferencesPage extends React.Component {
         <Subheader>Language</Subheader>
         <RadioButtonGroup name="language" onChange={(e, v)=>{this.changeLanguage(v)}} defaultSelected={lang}>
           <RadioButton
+            key="en"
             label="English"
             value="en"/>
           <RadioButton
+            key="ws"
             label="Samoan"
             value="ws"/>
         </RadioButtonGroup>
@@ -40,6 +42,7 @@ class PreferencesPage extends React.Component {
           {
             districts.map((district)=>(
               <RadioButton
+                key={district}
                 label={this.props.t("district."+district)}
                 value={district} />
             ))
@@ -52,7 +55,6 @@ class PreferencesPage extends React.Component {
   changeLanguage(lang) {
     const topPageName = Meteor.settings.public.topPage;
     i18n.changeLanguage(lang, (error, t) => {
-      console.log("Callback from i18n.changeLanguage");
       if( error ){
         console.error(error);
       }
@@ -69,30 +71,28 @@ class PreferencesPage extends React.Component {
       console.error("Preferences local collection is not defined!!");
       return;
     }
-    Preferences.upsert({key: key}, {key: key, value: value});
+    Preferences.save(key, value);
   }
 }
 
 
 PreferencesPage.propTypes = {
   language: React.PropTypes.string,
-  district: React.PropTypes.district
+  district: React.PropTypes.string
 }
 
 export default PreferencesPageContainer = createContainer(() => {
-  let districtPreference;
-  let languagePreference;
+  let district;
+  let language;
 
   if( Preferences ){
-    districtPreference = Preferences.findOne({key: "district"});
-    languagePreference = Preferences.findOne({key: "language"});
+    district = Preferences.load("district") || "";
+    language = Preferences.load("language") || "";
   }
   else{
     console.error("Preferences local collection is not defined!!");
     // TODO show an error message to the user.
   }
-  let district = districtPreference ? districtPreference.value : districts[0];
-  let language = languagePreference ? languagePreference.value : "en";
 
   return {
     language,

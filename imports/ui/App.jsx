@@ -30,7 +30,9 @@ import CyclonePage from './Cyclone.jsx';
 import EarthquakePage from './Earthquake.jsx';
 import HeavyRainPage from './HeavyRain.jsx';
 import AboutSMDPage from './AboutSMD.jsx';
+import {Preferences} from '../api/preferences.js';
 import PreferencesPageContainer from './PreferencesPage.jsx';
+import InitPageContainer from './InitPage.jsx';
 import TopPage from "./TopPage.jsx";
 
 import * as HazardArea from '../api/hazardArea.js';
@@ -249,25 +251,41 @@ class App extends React.Component {
       }
     }
 
-    return (
-      <MuiThemeProvider>
-        <div>
-          <AppBar
-            title={t(title)}
-            onLeftIconButtonTouchTap={()=>{this.toggleDrawerOpen()}}
-            iconElementLeft={<IconButton><MenuIcon /></IconButton>}
-            />
-          <DrawerMenu {...this.props}
-            drawerOpen={this.state.drawerOpen}
-            onRequestChange={(open)=>{this.setDrawerOpen(open);}}
-            onPageSelection={(page) => {this.handlePageSelection(page);}}
-            />
+    if( Preferences.load("appInitialized") ){
+      return (
+        <MuiThemeProvider>
+          <div>
+            <AppBar
+              title={t(title)}
+              onLeftIconButtonTouchTap={()=>{this.toggleDrawerOpen()}}
+              iconElementLeft={<IconButton><MenuIcon /></IconButton>}
+              />
+            <DrawerMenu {...this.props}
+              drawerOpen={this.state.drawerOpen}
+              onRequestChange={(open)=>{this.setDrawerOpen(open);}}
+              onPageSelection={(page) => {this.handlePageSelection(page);}}
+              />
 
-          {this.renderContents()}
-        </div>
-      </MuiThemeProvider>
+            {this.renderContents()}
+          </div>
+        </MuiThemeProvider>
 
-    );
+      );
+    }
+    else{
+      const topPage = Meteor.settings.public.topPage;
+
+      return (
+        <MuiThemeProvider>
+          <InitPageContainer {...this.props} onFinished={()=>{
+              console.log("InitPageContainer.onFinished()");
+              Preferences.save("appInitialized", true);
+              this.handlePageSelection(topPage)}
+            }/>
+        </MuiThemeProvider>
+
+      );
+    }
 
   }
 }

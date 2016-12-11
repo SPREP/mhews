@@ -9,6 +9,7 @@ import i18n from 'i18next';
 import { createContainer } from 'meteor/react-meteor-data';
 
 import {WeatherForecasts} from '../api/weather.js';
+import {Preferences} from '../api/preferences.js';
 
 const Months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -38,7 +39,7 @@ export class WeatherPage extends React.Component {
     const situation = forecast.situation;
     const dates = forecast.listForecastDates();
     const displayDate = this.getDisplayDate(dates);
-    const district = this.getDisplayDistrict();
+    const district = this.props.district;
     const districtForecast = forecast.getDistrictForecast(district, displayDate);
     let forecastText;
     if( districtForecast ){
@@ -96,17 +97,6 @@ export class WeatherPage extends React.Component {
     return this.state.displayDate ? this.state.displayDate : dates[0];
   }
 
-  getDisplayDistrict(){
-    let district;
-    if( typeof(Storage) !== 'undefined'){
-      district = localStorage.getItem("district");
-    }
-    if( !district ){
-      district = "upolu-north-northwest";
-    }
-    return district;
-  }
-
   render(){
     const forecast = this.props.forecast;
 
@@ -143,6 +133,7 @@ export class WeatherPage extends React.Component {
 WeatherPage.propTypes = {
   loading: React.PropTypes.bool,
   forecast: React.PropTypes.object,
+  district: React.PropTypes.string,
   t: React.PropTypes.func
 }
 
@@ -153,12 +144,13 @@ export default WeatherPageContainer = createContainer(({t, handles})=>{
     return;
   }
   const loading = !handle.ready();
-  const district = "upolu-north-northwest";
+  const district = Preferences.load("district");
   const language = i18n.language;
 
   return {
     loading,
     t,
+    district,
     forecast: loading? null : WeatherForecasts.getLatestForecast(language),
   }
 }, WeatherPage);
