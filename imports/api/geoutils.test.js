@@ -3,35 +3,35 @@ import * as GeoUtils from './geoutils.js';
 var assert = require('assert');
 describe('GeoUtils', function() {
   describe('#getZoomLevel()', function() {
-    it('should zoom level 3 for 2100km', function() {
-      assert.equal(3, GeoUtils.getZoomLevel(2100));
+    it('should zoom level 6 for 2100km', function() {
+      assert.equal(6, GeoUtils.getZoomLevel(2100));
     });
-    it('should zoom level 3 for 2000km', function() {
-      assert.equal(3, GeoUtils.getZoomLevel(2000));
+    it('should zoom level 6 for 2000km', function() {
+      assert.equal(6, GeoUtils.getZoomLevel(2000));
     });
-    it('should zoom level 3 for 1100km', function() {
-      assert.equal(3, GeoUtils.getZoomLevel(1100));
+    it('should zoom level 6 for 1100km', function() {
+      assert.equal(6, GeoUtils.getZoomLevel(1100));
     });
-    it('should zoom level 4 for 1000km', function() {
-      assert.equal(4, GeoUtils.getZoomLevel(1000));
+    it('should zoom level 7 for 1000km', function() {
+      assert.equal(7, GeoUtils.getZoomLevel(1000));
     });
-    it('should zoom level 5 for 500km', function() {
-      assert.equal(5, GeoUtils.getZoomLevel(500));
+    it('should zoom level 8 for 500km', function() {
+      assert.equal(8, GeoUtils.getZoomLevel(500));
     });
-    it('should zoom level 6 for 200km', function() {
-      assert.equal(6, GeoUtils.getZoomLevel(200));
+    it('should zoom level 9 for 200km', function() {
+      assert.equal(9, GeoUtils.getZoomLevel(200));
     });
-    it('should zoom level 7 for 100km', function() {
-      assert.equal(7, GeoUtils.getZoomLevel(100));
+    it('should zoom level 10 for 100km', function() {
+      assert.equal(10, GeoUtils.getZoomLevel(100));
     });
-    it('should zoom level 8 for 50km', function() {
-      assert.equal(8, GeoUtils.getZoomLevel(50));
+    it('should zoom level 11 for 50km', function() {
+      assert.equal(11, GeoUtils.getZoomLevel(50));
     });
-    it('should zoom level 9 for 20km', function() {
-      assert.equal(9, GeoUtils.getZoomLevel(20));
+    it('should zoom level 12 for 20km', function() {
+      assert.equal(12, GeoUtils.getZoomLevel(20));
     });
-    it('should zoom level 9 for 10km', function() {
-      assert.equal(9, GeoUtils.getZoomLevel(10));
+    it('should zoom level 12 for 10km', function() {
+      assert.equal(12, GeoUtils.getZoomLevel(10));
     });
   });
 });
