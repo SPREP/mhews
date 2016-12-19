@@ -62,7 +62,8 @@ class WarningCollection extends Mongo.Collection {
     check(warning.type, String);
     check(warning.issued_at, Date);
 
-    super.insert(warning);
+    let selector = {type: warning.type, bulletinId: warning.bulletinId, in_effect: true};
+    super.upsert(selector, warning);
   }
 
   getHazardTypes(){

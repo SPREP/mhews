@@ -6,7 +6,7 @@ class BulletinCollection extends Mongo.Collection{
 
   constructor(collectionName, prevBulletinSelectorFunc){
     super(collectionName);
-    this.prevBulletinSelector = prevBulletinSelectorFunc;
+    this.prevBulletinSelectorFunc = prevBulletinSelectorFunc;
   }
   /*
   mhews server receives the published single bulletin document,
@@ -18,13 +18,17 @@ class BulletinCollection extends Mongo.Collection{
   */
   publishBulletin(bulletin){
     check(bulletin, Object);
-    check(bulletin.id, String);
-    check(bulletin.warnings, []);
+    check(bulletin.id, Number);
+    check(bulletin.warnings, [Match.Any]);
+    check(bulletin.tc_info, {name: String});
 
     const bulletinId = bulletin.id;
 
     const previousBulletin = this.findPreviousBulletin(bulletin);
-    let currentWarnings = Warnings.find({"bulletinId": previousBulletin.id, "in_effect": true}).fetch();
+    let currentWarnings = [];
+    if( previousBulletin ){
+      currentWarnings = Warnings.find({"bulletinId": previousBulletin.id, "in_effect": true}).fetch();
+    }
 
     const warnings = this.extractWarnings(bulletin);
     warnings.forEach((warning)=>{
