@@ -2,13 +2,10 @@ import React from 'react';
 import GoogleMap from './GoogleMapJs.jsx';
 import * as GeoUtils from '../api/geoutils.js';
 import * as HazardArea from '../api/hazardArea.js';
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {Card, CardTitle, CardText} from 'material-ui/Card';
 
 /* i18n */
 import { translate } from 'react-i18next';
-
-const HeavyRainAreaNames = ["Samoa", "Upolu Island", "Savaii Island", "Manono Island", "Apolima Island"];
-const HeavyRainDirection = ["North", "East", "South", "West", "Town Area", "Highlands"];
 
 const Samoa = {
   center: {
@@ -79,8 +76,6 @@ class HeavyRainPage extends React.Component {
   drawWarningArea(map){
     const heavyRain = this.heavyRain;
     const hazardAreas = HazardArea.findAreas(heavyRain.area, heavyRain.direction);
-    const title = "HeavyRain "+heavyRain.level+" in effect";
-    const snippet = "Warning for the people in "+heavyRain.area+" "+heavyRain.direction;
 
     hazardAreas.forEach((hazardArea) =>{
       if( hazardArea.shape == HazardArea.Shape.polygon ){
@@ -91,6 +86,10 @@ class HeavyRainPage extends React.Component {
       }
     });
   }
+}
+
+HeavyRainPage.propTypes = {
+  phenomena: React.PropTypes.object
 }
 
 export default translate(['common'])(HeavyRainPage);

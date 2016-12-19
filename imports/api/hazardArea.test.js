@@ -2,7 +2,7 @@ import * as HazardArea from './hazardArea.js';
 
 var assert = require('assert');
 describe('hazardArea', function() {
-  describe('HazardArea.maybeInHazardArea', function() {
+  describe('maybeInHazardArea', function() {
     // Apia is on the Upolu island
     const Apia = {
       lat: -13.815605,
@@ -46,5 +46,23 @@ describe('hazardArea', function() {
     it('should return true when area is not specified', function() {
       assert.equal(true,HazardArea.maybeInHazardArea(Apia, {}));
     });
-  });
+  },
+  describe("getAreaId", function(){
+    it("should work with area and direction specified", function(){
+      assert.equal("samoa_upolu_north", HazardArea.getAreaId("Upolu Island", "North"));
+    });
+    it("should work with only area specified", function(){
+      assert.equal("samoa_savaii", HazardArea.getAreaId("Savaii Island"));
+    });
+    it("should work when Samoa is specified", function(){
+      assert.equal("samoa", HazardArea.getAreaId("Samoa"));
+    });
+    it("should return undefined when nothing is specified", function(){
+      assert.equal(undefined, HazardArea.getAreaId());
+    });
+    it("should return undefined when unknown area is specified", function(){
+      assert.equal(undefined, HazardArea.getAreaId("Tokyo"));
+    });
+  })
+);
 });

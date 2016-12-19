@@ -1,10 +1,10 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random';
 import { createContainer } from 'meteor/react-meteor-data';
-import RefreshIndicator from 'material-ui/RefreshIndicator';
 
-const map_div_id = "map_canvas";
+/* global google */
+/* global GoogleMaps */
 
 function googleLatLng(position){
   return new google.maps.LatLng(position.lat, position.lng);
@@ -125,7 +125,8 @@ class GoogleMap extends React.Component {
       </div>
     );
   }
-};
+}
+
 /*
 GoogleMap.propTypes = {
   loaded: PropTypes.bool.isRequired,
@@ -135,7 +136,16 @@ GoogleMap.propTypes = {
   children: PropTypes.node,
 };
 */
+GoogleMap.propTypes = {
+  loaded: React.PropTypes.bool,
+  name: React.PropTypes.string,
+  mapCenter: React.PropTypes.object,
+  zoom: React.PropTypes.number,
+  onReady: React.PropTypes.func,
+  children: React.PropTypes.node
+}
 
-GoogleMapContainer = createContainer(() => ({loaded: GoogleMaps.loaded(),name: Random.id()}), GoogleMap);
+
+const GoogleMapContainer = createContainer(() => ({loaded: GoogleMaps.loaded(),name: Random.id()}), GoogleMap);
 
 export default GoogleMapContainer;

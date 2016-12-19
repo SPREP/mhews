@@ -1,9 +1,5 @@
-import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import {GridList, GridTile} from 'material-ui/GridList';
-import ListItem from 'material-ui/List/ListItem';
-import Avatar from 'material-ui/Avatar';
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {Card, CardActions, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import i18n from 'i18next';
 import { createContainer } from 'meteor/react-meteor-data';
@@ -33,8 +29,6 @@ export class WeatherPage extends React.Component {
   }
 
   renderForecast(forecast){
-    const t = this.props.t;
-
     const issuedAt = forecast.issued_at;
     const situation = forecast.situation;
     const dates = forecast.listForecastDates();
@@ -49,6 +43,7 @@ export class WeatherPage extends React.Component {
       forecastText = "No forecast is available for district = "+district+" on "+displayDate.toDateString();
     }
     const compact = this.props.compact;
+    const subtitle = district + " - " + "issued at "+this.dateToString(issuedAt);
 
     return (
       <Card>
@@ -59,7 +54,7 @@ export class WeatherPage extends React.Component {
               <img src={surfaceChartUrl} />
             </CardMedia>)
         }
-        <CardTitle title={this.dateToString(displayDate)} subtitle={district} />
+        <CardTitle title={this.dateToString(displayDate)} subtitle={subtitle} />
         <CardText>{forecastText}</CardText>
         <CardActions>
           {
@@ -129,15 +124,15 @@ export class WeatherPage extends React.Component {
 
 }
 
-
 WeatherPage.propTypes = {
   loading: React.PropTypes.bool,
   forecast: React.PropTypes.object,
   district: React.PropTypes.string,
-  t: React.PropTypes.func
+  t: React.PropTypes.func,
+  compact: React.PropTypes.bool
 }
 
-export default WeatherPageContainer = createContainer(({t, handles})=>{
+const WeatherPageContainer = createContainer(({t, handles})=>{
   const handle = handles["weatherForecast"];
   if( !handle ){
     console.error("handle for weatherForecast was not given!");
@@ -155,37 +150,4 @@ export default WeatherPageContainer = createContainer(({t, handles})=>{
   }
 }, WeatherPage);
 
-/**
-* Usage: <WeatherTile onClick={callback} />
-* This GridTile requires two columns to display the latest weather observation.
-*/
-export class WeatherMenuTile extends React.Component {
-  constructor(props){
-    super(props);
-  }
-
-  retrieveWeatherObservation(){
-    // TODO This should be cached to avoid unnecessary server access.
-    return {city: 'Apia', weather: 'Sunny', temperature: 25.3};
-  }
-
-  generateTitle(observation){
-    return observation.city + " " + observation.temperature + "C";
-  }
-
-  getImageName(observation){
-    return "images/weather/Sunny.png";
-  }
-
-  render(){
-    const observation = this.retrieveWeatherObservation();
-
-    return (
-      <ListItem
-        leftAvatar={<Avatar src={this.getImageName(observation)}></Avatar>}
-        primaryText={this.generateTitle(observation)}
-        onTouchTap={() => this.props.onTouchTap()}
-        />
-    )
-  }
-}
+export default WeatherPageContainer;

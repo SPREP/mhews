@@ -1,12 +1,11 @@
 var assert = require('assert');
 import {Warnings} from "./warnings.js";
-import { check } from 'meteor/check'
 
 function getValidWarning(bulletinId){
   return {
     "bulletinId": bulletinId ? bulletinId : 1,
     "type": "tsunami",
-    "issued_at": "2016-12-08 11:55:00",
+    "issued_at": moment("2016-12-08 11:55:00").toDate(),
     "in_effect": true,
     "level": "warning",
     "epicenter": {
@@ -17,7 +16,7 @@ function getValidWarning(bulletinId){
     "depth": 10,
     "description": "Escape immediately!"
   }
-};
+}
 
 describe('Warnings', function() {
   if( Meteor.isServer ){

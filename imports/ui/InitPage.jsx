@@ -51,14 +51,14 @@ class InitPage extends React.Component {
       stepIndex: stepIndex,
       finished: finished,
     });
-  };
+  }
 
   handlePrev(){
     const {stepIndex} = this.state;
     if (stepIndex > 0) {
       this.setState({stepIndex: stepIndex - 1});
     }
-  };
+  }
 
   renderStepActions(step) {
     const {stepIndex} = this.state;
@@ -87,7 +87,7 @@ class InitPage extends React.Component {
   }
 
   render() {
-    const {finished, stepIndex} = this.state;
+    const {_finished, stepIndex} = this.state;
     const props = this.props;
 
     return (
@@ -149,10 +149,11 @@ InitPage.propTypes = {
   language: React.PropTypes.string,
   district: React.PropTypes.string,
   onSelection: React.PropTypes.func,
-  onFinished: React.PropTypes.func
+  onFinished: React.PropTypes.func,
+  t: React.PropTypes.func
 }
 
-export default InitPageContainer = createContainer(({onFinished})=>{
+const InitPageContainer = createContainer(({onFinished})=>{
   const district = Preferences.load("district") || "";
   const language = Preferences.load("language") || "";
 
@@ -175,3 +176,5 @@ export default InitPageContainer = createContainer(({onFinished})=>{
   }
 
 }, InitPage);
+
+export default InitPageContainer;

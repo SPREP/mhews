@@ -1,3 +1,5 @@
+/* global geolib */
+
 const HazardAreaMap = {
   "Samoa": {
   },
@@ -169,6 +171,36 @@ export function maybeInHazardArea(position, data){
   }
   // Either areaList is empty, or position is not in any of the areas.
   return false;
+}
+
+export function getAreaId(area, direction){
+  const areaIdComponents = ["samoa"];
+
+  if( area == "Samoa"){
+    // Nothing to do
+  }
+  else if( area == "Upolu Island" ){
+    areaIdComponents.push("upolu");
+  }
+  else if( area == "Savaii Island" ){
+    areaIdComponents.push("savaii");
+  }
+  else if( area == "Manono Island" ){
+    areaIdComponents.push("manono");
+  }
+  else if( area == "Apolima Island" ){
+    areaIdComponents.push("apolima");
+  }
+  else {
+    console.error("Unknown area "+area+" was given to getAreaId()");
+    return undefined;
+  }
+
+  if( direction ){
+    areaIdComponents.push(direction.toLowerCase());
+  }
+
+  return areaIdComponents.join("_");
 }
 
 export const Shape = {

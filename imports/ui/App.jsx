@@ -1,18 +1,12 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 
 /* Imports from the material-ui */
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
-import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
-import Dialog from 'material-ui/Dialog';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {GridList, GridTile} from 'material-ui/GridList';
-import List from 'material-ui/List/List';
 import Drawer from 'material-ui/Drawer';
 
 /* This plugin captures the tap event in React. */
@@ -22,22 +16,10 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import { translate } from 'react-i18next';
 
 /* Imports the mhews's components */
-//import {WarningList, WarningsMenuTile} from './WarningList.jsx';
-import WarningListContainer from './WarningList.jsx';
-//import {WeatherPage, WeatherMenuTile} from './Weather.jsx';
-import WeatherPageContainer from './Weather.jsx';
-import CyclonePage from './Cyclone.jsx';
-import EarthquakePage from './Earthquake.jsx';
-import HeavyRainPage from './HeavyRain.jsx';
-import AboutSMDPage from './AboutSMD.jsx';
-import {Preferences} from '../api/preferences.js';
-import PreferencesPageContainer from './PreferencesPage.jsx';
+import {getReactComponentByName} from '../api/componentHelper.js';
 import InitPageContainer from './InitPage.jsx';
-import TopPage from "./TopPage.jsx";
-
-import * as HazardArea from '../api/hazardArea.js';
-
-const disasterNotificationTopic = 'disaster';
+import {Preferences} from '../api/preferences.js';
+import { createContainer } from 'meteor/react-meteor-data';
 
 /**
  * This is needed for the material-ui components handle click event.
@@ -45,13 +27,20 @@ const disasterNotificationTopic = 'disaster';
  */
 if( Meteor.isCordova ){
   injectTapEventPlugin({
-    shouldRejectClick: function (lastTouchEventTimestamp, clickEventTimestamp) {
+    shouldRejectClick: function () {
       return true;
     }
   });
 }
 else{
   injectTapEventPlugin();
+}
+
+// Function commonly used by the App and SwitchableContent
+function getPageConfig(page){
+  const config = Meteor.settings.public.pages[page];
+  config.key = page;
+  return config;
 }
 
 class DrawerMenu extends React.Component {
@@ -69,7 +58,7 @@ class DrawerMenu extends React.Component {
         <MenuItem
           key={title}
           onTouchTap={
-            (event, menuItem) => {
+            (event) => {
               event.preventDefault();
               this.props.onRequestChange(false);
               this.props.onPageSelection(pageName);
@@ -93,125 +82,30 @@ class DrawerMenu extends React.Component {
   }
 }
 
-class App extends React.Component {
+DrawerMenu.propTypes = {
+  onRequestChange: React.PropTypes.func,
+  onPageSelection: React.PropTypes.func,
+  drawerOpen: React.PropTypes.bool,
+  t: React.PropTypes.func
+}
 
-  constructor(props){
-    super(props);
-    this.state = {
-      page: Meteor.settings.public.topPage,
-      drawerOpen: false
-    }
-    // Phenomena to be displayed by the Earthquake and HeavyRain page.
-    // The phonomena is set by the FCM or by the user's selection in the WarningList page.
-    this.phenomena = null;
-    this.handles = null;
+// phenomena is provided either by user selection on the warning list page,
+// or by the FCM. In order to keep the React components separated from the FCM,
+// ReactiveVar is used instead of the state in the App.
+export const phenomenaVar = new ReactiveVar(null);
 
-    // Change the back-button behavior
-    document.addEventListener("backbutton", () => { this.onBackKeyDown() });
-  }
-
-  componentDidMount(){
-    if( Meteor.isCordova ){
-      Meteor.defer(()=>{ this.initfcm();});
-    }
-  }
-
-  handlePageSelection(page){
-    this.setState({page: page});
-  }
-  onBackKeyDown(){
-    const topPageName = Meteor.settings.public.topPage;
-
-    if( this.state.page == topPageName){
-      navigator.app.exitApp();
-    }
-    else{
-      this.handlePageSelection(topPageName);
-    }
-  }
-
-  // Initialize the FCM plugin
-  initfcm() {
-
-    FCMPlugin.subscribeToTopic(disasterNotificationTopic);
-
-    FCMPlugin.onNotification(
-      (data) => {
-        this.handleFcmNotification(data);
-      },
-      (msg) => {
-        console.log('onNotification callback successfully registered: ' + msg);
-      },
-      (err) => {
-        console.error('Error registering onNotification callback: ' + err);
-        // TODO Need to handle this error. Try to re-subscribe to the topic until it succeeds?
-      }
-    );
-  }
-
-  setPhenomena(data){
-    this.phenomena = data;
-  }
-
-  handleFcmNotification(fcmData){
-    console.log("FCM data received.");
-
-    const config = Meteor.settings.public.notificationConfig[fcmData.type];
-    if( !config ){
-      console.error("Unknown hazard type "+fcmData.type);
-      return;
-    }
-    const data = convertFcmDataToHazardDataStructure(fcmData);
-
-    this.setPhenomena(data);
-
-    if( config.useLocation ){
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          if( HazardArea.maybeInHazardArea(pos, data)){
-            this.notifyUserAndChangePage(config);
-          }
-        },
-        (error) => {
-          console.error("Failed to obtain the current location.");
-          // Notify the user just in case, as the user may be in the hazard area.
-          this.notifyUserAndChangePage(config);
-        },
-        { maximumAge: 10*60*1000, // Cached position within 10min is accepted.
-          timeout: 30000, // 30 seconds to wait for the positioning.
-          enableHighAccuray: true
-        }
-      );
-    }
-    else{
-      this.notifyUserAndChangePage(config);
-    }
-  }
-
-  notifyUserAndChangePage(config){
-    if( !this.phenomena.wasTapped ){ playSound(config.sound);}
-    this.setState({page: config.page});
-  }
+class SwitchableContent extends React.Component {
 
   /**
   * Handle state change caused by the user choosing a menu.
   */
-  renderContents(){
-    const page = this.state.page;
+  render(){
+    const page = this.props.page;
     const pageConfig = getPageConfig(page);
+    const props = this.props;
+
     if( pageConfig ){
       if( pageConfig.component ){
-        const props = {
-          ...this.props,
-          phenomena: this.phenomena,
-          handles: this.handles,
-          onPageSelection: (page, phenomena) => {
-            if( phenomena ){
-              this.setPhenomena(phenomena);
-            }
-            this.handlePageSelection(page);
-          }
-        };
         return React.createElement(
           getReactComponentByName(pageConfig.component),
           props
@@ -227,6 +121,55 @@ class App extends React.Component {
     return (<div>Choose a content from the top-left menu</div>);
   }
 
+}
+
+SwitchableContent.propTypes = {
+  page: React.PropTypes.string,
+  t: React.PropTypes.func,
+  phenomena: React.PropTypes.object,
+  onPageSelection: React.PropTypes.func
+}
+
+const SwitchableContentContainer = createContainer(({t, page, onPageSelection})=>{
+
+  // phenomena property is used by the Earthquake and HeavyRain pages.
+  // It is transparent to the SwitchableContent.
+  return {
+    page,
+    t,
+    phenomena: phenomenaVar.get(),
+    onPageSelection
+  }
+}, SwitchableContent);
+
+class App extends React.Component {
+
+  constructor(props){
+    super(props);
+    this.state = {
+      page: Meteor.settings.public.topPage,
+      drawerOpen: false
+    }
+
+    // Change the back-button behavior
+    document.addEventListener("backbutton", () => { this.onBackKeyDown() });
+  }
+
+  onBackKeyDown(){
+    const topPageName = Meteor.settings.public.topPage;
+
+    if( this.state.page == topPageName){
+      navigator.app.exitApp();
+    }
+    else{
+      this.handlePageSelection(topPageName);
+    }
+  }
+
+  handlePageSelection(page){
+    this.setState({page: page});
+  }
+
   toggleDrawerOpen(){
     this.setDrawerOpen(!this.state.drawerOpen);
   }
@@ -234,24 +177,14 @@ class App extends React.Component {
   setDrawerOpen(open){
     this.setState({drawerOpen: open});
   }
+
   render(){
     const t = this.props.t;
-    const pageConfig = getPageConfig(this.state.page);
+    const page = this.state.page;
+    const pageConfig = getPageConfig(page);
     const title = pageConfig.title;
 
-    // TODO This code should be moved to a container wrapping the App.
-    if( Meteor.isClient ){
-      if( this.handles == null ){
-        this.handles = {};
-        // To receive the data from the weatherForecast collection
-        this.handles.weatherForecast = Meteor.subscribe('weatherForecast');
-
-        // To receive the data from the warnings collection
-        this.handles.warnings = Meteor.subscribe('warnings');
-      }
-    }
-
-    if( Preferences.load("appInitialized") ){
+    if( this.props.appInitialized ){
       return (
         <MuiThemeProvider>
           <div>
@@ -265,8 +198,15 @@ class App extends React.Component {
               onRequestChange={(open)=>{this.setDrawerOpen(open);}}
               onPageSelection={(page) => {this.handlePageSelection(page);}}
               />
-
-            {this.renderContents()}
+            <SwitchableContentContainer {...this.props}
+              page={page}
+              onPageSelection={(page, phenomena) => {
+                if( phenomena ){
+                  phenomenaVar.set(phenomena);
+                }
+                this.handlePageSelection(page);
+              }}
+              />
           </div>
         </MuiThemeProvider>
 
@@ -290,89 +230,29 @@ class App extends React.Component {
   }
 }
 
-// FCM cannot deliver layered JSON, so epicenter is represented by two attributes.
-// This function put them back into the same data structure as a client publishes to the server.
-function convertFcmDataToHazardDataStructure(data){
-  data.issued_at = moment(data.issued_at).toDate();
-  data.epicenter = {
-    lat: parseFloat(data.epicenter_lat),
-    lng: parseFloat(data.epicenter_lng),
+App.propTypes = {
+  appInitialized: React.PropTypes.bool,
+  handles: React.PropTypes.object,
+  t: React.PropTypes.func
+}
+
+const AppContainer = createContainer(({t})=>{
+
+  const handles = {};
+  // To receive the data from the weatherForecast collection
+  handles.weatherForecast = Meteor.subscribe('weatherForecast');
+
+  // To receive the data from the warnings collection
+  handles.warnings = Meteor.subscribe('warnings');
+
+  // To receive the data from the cycloneBulletin collection
+  handles.cycloneBulletin = Meteor.subscribe('cycloneBulletins');
+
+  return {
+    appInitialized: Preferences.load("appInitialized"),
+    handles,
+    t
   }
-  data.mw = parseFloat(data.mw);
-  data.depth = parseFloat(data.depth);
+}, App);
 
-  return data;
-}
-
-function playSound(file){
-  // TODO It seems the code below does not work well with iOS
-  // http://stackoverflow.com/questions/36291748/play-local-audio-on-cordova-in-meteor-1-3
-
-  const url = document.location.origin+"/"+file;
-  console.log("url = "+url);
-  let media = new Media(url,
-    ()=>{
-      console.log("Media success.");
-      media.release();
-    },
-    (err)=>{
-      console.error("Media error: "+err.message);
-    }
-  );
-
-  if( media ){
-    media.play();
-  }
-  else{
-    console.error("media is not defined or null.");
-  }
-}
-
-const styles = {
-  root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-  },
-  gridList: {
-    width: 300,
-    overflowY: 'auto',
-  },
-};
-
-function getPageConfigsForGrid(){
-  const configs = getPageConfigs();
-  let configsForGrid = [];
-
-  configs.forEach((config)=>{
-    if( config.useGrid ){
-      configsForGrid.push(config);
-    }
-  });
-  return configsForGrid;
-}
-
-function getPageConfig(page){
-  const config = Meteor.settings.public.pages[page];
-  config.key = page;
-  return config;
-}
-
-function getPageConfigs(){
-  const pages = Meteor.settings.public.pages;
-  let configs = [];
-
-  for(let key in pages){
-    let page = pages[key];
-    page.key = key;
-    configs.push(page);
-  }
-
-  return configs;
-}
-
-function getReactComponentByName(componentName){
-  return eval(componentName);
-}
-
-export default translate(['common'])(App);
+export default translate(['common'])(AppContainer);

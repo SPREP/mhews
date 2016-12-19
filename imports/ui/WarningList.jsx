@@ -1,17 +1,16 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import {GridList, GridTile} from 'material-ui/GridList';
 import Avatar from 'material-ui/Avatar';
 import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
-import Divider from 'material-ui/Divider';
-import Subheader from 'material-ui/Subheader';
 import Paper from 'material-ui/Paper';
+import IconButton from 'material-ui/IconButton';
+import HighlightOff from 'material-ui/svg-icons/action/highlight-off';
 
 import { createContainer } from 'meteor/react-meteor-data';
-import i18n from 'i18next';
+//import i18n from 'i18next';
 
-import {Warnings, HazardType} from '../api/warnings.js';
+import {Warnings} from '../api/warnings.js';
 
 export class WarningList extends React.Component {
 
@@ -52,6 +51,7 @@ export class WarningList extends React.Component {
   render(){
     const warnings = this.props.warnings;
     const t = this.props.t;
+    const isAdmin = this.props.isAdmin;
 
     if( this.props.loading ){
       return (<p>{"Loading warning list..."}</p>);
@@ -63,14 +63,20 @@ export class WarningList extends React.Component {
             {
               warnings.map((warning) => {
                 const style = getWarningStyle(warning.level);
+                const cancelButton = (
+                  <IconButton onTouchTap={()=>{this.props.cancelWarning(warning.type, warning.bulletinId)}}>
+                    <HighlightOff />
+                  </IconButton>
+                );
 
                 return (
-                  // FIXME The ListItem needs the key property set.
                   <ListItem
+                    key={warning.bulletinId}
                     leftAvatar={this.renderAvatar(warning)}
                     primaryText={this.getWarningSummary(warning)}
                     secondaryText={this.getWarningDetails(warning)}
                     style={style}
+                    rightIconButton={isAdmin ? cancelButton : undefined}
                     onTouchTap={()=>{this.renderWarningDetailsPage(warning)}}
                     />
                 );
@@ -109,65 +115,41 @@ function getWarningStyle(level){
 WarningList.propTypes = {
   loading: React.PropTypes.bool,
   warnings: React.PropTypes.array,
-  t: React.PropTypes.func
+  t: React.PropTypes.func,
+  isAdmin: React.PropTypes.bool,
+  cancelWarning: React.PropTypes.func,
+  onPageSelection: React.PropTypes.func
 }
 
-export default WarningListContainer = createContainer(({t, handles})=>{
+function cancelWarning(type, bulletinId){
+  Meteor.call("cancelWarning", type, bulletinId, (err, res)=>{
+    if( err ){
+      console.log("cancelWarning remote call failed.");
+      console.log(JSON.stringify(err));
+    }
+    if( res ){
+      console.log(JSON.stringify(res));
+    }
+  });
+}
+
+const WarningListContainer = createContainer(({t, handles})=>{
   const handle = handles["warnings"];
   if( !handle ){
     console.error("handle for warnings was not given!");
     return;
   }
   const loading = !handle.ready();
-  const language = i18n.language;
+  const isAdmin = !Meteor.isCordova; // FIXME This is not at all correct logic (^^;
 
   return {
     loading,
     t,
-    warnings: loading? null : Warnings.findWarningsInEffect()
+    isAdmin,
+    warnings: loading? null : Warnings.findWarningsInEffect(),
+    cancelWarning
   }
 
 }, WarningList);
 
-
-/**
-* Usage: <WarningsGridTile onClick={callback} />
-* This GridTile requires two columns to display the latest warning in effect.
-*/
-export class WarningsMenuTile extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      latestWarning: null
-    };
-  }
-
-  componentDidMount(){
-    const latestWarning = Warnings.findLatestWarningInEffect();
-    this.setState({latestWarning: latestWarning});
-  }
-
-  getWarningMessage(warning){
-    const t = this.props.t;
-
-    if( warning ){
-      return t(warning.type) + " " + t(warning.level) + " " + t("is in effect in") + " " + warning.region;
-    }
-    else{
-      return t("no_warning_in_effect");
-    }
-  }
-
-  render(){
-    const latestWarning = this.state.latestWarning;
-
-    return (
-      <ListItem
-        key={latestWarning._id}
-        leftAvatar={<Avatar src="images/warning.png"></Avatar>}
-        primaryText={this.getWarningMessage(latestWarning)}
-        onTouchTap={(event) => {event.preventDefault(); this.props.onTouchTap()}}
-        />
-    );
-  }
-}
+export default WarningListContainer;

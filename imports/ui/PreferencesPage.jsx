@@ -1,5 +1,4 @@
 import React from 'react';
-import { Meteor } from 'meteor/meteor';
 
 import Subheader from 'material-ui/Subheader';
 import Divider from 'material-ui/Divider';
@@ -53,8 +52,7 @@ class PreferencesPage extends React.Component {
     );
   }
   changeLanguage(lang) {
-    const topPageName = Meteor.settings.public.topPage;
-    i18n.changeLanguage(lang, (error, t) => {
+    i18n.changeLanguage(lang, (error, _t) => {
       if( error ){
         console.error(error);
       }
@@ -78,10 +76,11 @@ class PreferencesPage extends React.Component {
 
 PreferencesPage.propTypes = {
   language: React.PropTypes.string,
-  district: React.PropTypes.string
+  district: React.PropTypes.string,
+  t: React.PropTypes.func
 }
 
-export default PreferencesPageContainer = createContainer(() => {
+const PreferencesPageContainer = createContainer(() => {
   let district;
   let language;
 
@@ -100,3 +99,5 @@ export default PreferencesPageContainer = createContainer(() => {
   }
 
 }, PreferencesPage);
+
+export default PreferencesPageContainer;

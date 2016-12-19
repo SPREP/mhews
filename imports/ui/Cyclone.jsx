@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {Card, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import {Warnings} from '../api/warnings.js';
 
 /* i18n */
@@ -10,6 +10,7 @@ import { translate } from 'react-i18next';
  * The Cyclone forecast product is published to the SMD web site. So this class just displays it.
  * On top, the warning or watch information is displayed.
  */
+
 class CyclonePage extends React.Component {
 
   constructor(props){
@@ -34,7 +35,6 @@ class CyclonePage extends React.Component {
 
   renderCyclone(cyclone){
     const name = cyclone.name;
-    const category = cyclone.category;
     const district = cyclone.district;
     const description = cyclone.description;
     const issuedAt = cyclone.issuedAt;
@@ -77,6 +77,10 @@ class CyclonePage extends React.Component {
       return this.renderNoCyclone();
     }
   }
+}
+
+CyclonePage.propTypes = {
+  phenomena: React.PropTypes.object
 }
 
 export default translate(['common'])(CyclonePage);

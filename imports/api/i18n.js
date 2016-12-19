@@ -5,9 +5,6 @@ const i18nConfig = {
   resources: {
     en: {
       common: {
-        "Warnings": "Warnings",
-        "Warning": "Warning",
-        "Watch": "Watch",
         "Weather": "Weather",
         "Earthquake": "Earthquake",
         "Cyclone": "Cyclone",

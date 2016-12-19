@@ -2,7 +2,8 @@
   "name": "mhews",
   "private": true,
   "scripts": {
-    "start": "meteor run"
+    "start": "meteor run",
+    "lint": "eslint ."
   },
   "dependencies": {
     "babel-code-frame": "^6.16.0",
@@ -20,5 +21,14 @@
     "react-tap-event-plugin": "^2.0.0",
     "request": "^2.79.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "babel-eslint": "^6.1.2",
+    "eslint": "^3.5.0",
+    "eslint-config-airbnb": "^11.1.0",
+    "eslint-import-resolver-meteor": "^0.3.3",
+    "eslint-plugin-import": "^1.15.0",
+    "eslint-plugin-jsx-a11y": "^2.2.2",
+    "eslint-plugin-meteor": "^4.0.0",
+    "eslint-plugin-react": "^6.2.1"
+  }
 }

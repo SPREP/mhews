@@ -1,0 +1,63 @@
+{
+  "plugins": ["meteor", "react", "mocha"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:meteor/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "env": {
+    "meteor": true,
+    "node": true,
+    "browser": true,
+    "mocha": true
+  },
+  "globals": {
+    "moment": true
+  },
+  "settings": {
+    "import/resolver": "meteor",
+    "react": {
+      "createClass": "createClass",
+      "pragma": "React"
+    }
+  },
+  "rules": {
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error",
+    "react/prop-types": "error",
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [
+          ".js",
+          ".jsx"
+        ]
+      }
+    ],
+    "mocha/no-exclusive-tests": "error",
+    "no-underscore-dangle": [
+      "error",
+      {
+        "allow": [
+          "_id"
+        ]
+      }
+    ],
+    "import/no-extraneous-dependencies": 0,
+    "no-console": 0,
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ]
+  }
+}
