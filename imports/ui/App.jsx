@@ -158,7 +158,10 @@ class App extends React.Component {
   onBackKeyDown(){
     const topPageName = Meteor.settings.public.topPage;
 
-    if( this.state.page == topPageName){
+    if( this.state.drawerOpen ){
+      this.toggleDrawerOpen();
+    }
+    else if( this.state.page == topPageName){
       navigator.app.exitApp();
     }
     else{
