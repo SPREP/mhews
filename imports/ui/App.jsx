@@ -8,6 +8,7 @@ import MenuItem from 'material-ui/MenuItem';
 import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Drawer from 'material-ui/Drawer';
+import Snackbar from 'material-ui/Snackbar';
 
 /* This plugin captures the tap event in React. */
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -210,6 +211,12 @@ class App extends React.Component {
                 this.handlePageSelection(page);
               }}
               />
+              <Snackbar
+                open={!this.props.connected}
+                message="Waiting for network"
+                bodyStyle={{"width": "100%"}}
+                style={{"width": "100%"}}
+              />
           </div>
         </MuiThemeProvider>
 
@@ -236,7 +243,8 @@ class App extends React.Component {
 App.propTypes = {
   appInitialized: React.PropTypes.bool,
   handles: React.PropTypes.object,
-  t: React.PropTypes.func
+  t: React.PropTypes.func,
+  connected: React.PropTypes.bool
 }
 
 const AppContainer = createContainer(({t})=>{
@@ -254,7 +262,8 @@ const AppContainer = createContainer(({t})=>{
   return {
     appInitialized: Preferences.load("appInitialized"),
     handles,
-    t
+    t,
+    connected: Meteor.status().connected
   }
 }, App);
 
