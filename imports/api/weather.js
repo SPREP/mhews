@@ -1,6 +1,15 @@
+/* global Ground */
 import { Mongo } from 'meteor/mongo';
 
-export const WeatherForecasts = new Mongo.Collection("weatherForecast");
+const MongoWeatherForecasts = new Mongo.Collection("weatherForecast");
+
+let GroundWeatherForecasts;
+if( Meteor.isClient ){
+  GroundWeatherForecasts = new Ground.Collection("groundWeatherForecast");
+  GroundWeatherForecasts.observeSource(MongoWeatherForecasts.find());
+}
+
+export const WeatherForecasts = Meteor.isClient ? GroundWeatherForecasts : MongoWeatherForecasts;
 
 WeatherForecasts.getLatestForecast = (lng)=>{
   let forecasts = WeatherForecasts.find({lang: lng}, {sort: {'issued_at': -1}}).fetch();

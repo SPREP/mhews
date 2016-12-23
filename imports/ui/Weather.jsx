@@ -138,7 +138,7 @@ const WeatherPageContainer = createContainer(({t, handles})=>{
     console.error("handle for weatherForecast was not given!");
     return;
   }
-  const loading = !handle.ready();
+  const loading = false;
   const district = Preferences.load("district");
   const language = i18n.language;
 

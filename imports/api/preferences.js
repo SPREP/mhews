@@ -1,6 +1,6 @@
 /* global Ground */
 
-export const Preferences = new Ground.Collection(null);
+export const Preferences = new Ground.Collection("preferences");
 
 Preferences.save = (key, value)=>{
   Preferences.upsert({key: key}, {key: key, value: value});
