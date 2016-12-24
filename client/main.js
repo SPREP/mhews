@@ -2,6 +2,8 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { render } from 'react-dom';
 
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
 import AppContainer, {phenomenaVar} from '../imports/ui/App.jsx';
 
 /* i18n */
@@ -40,7 +42,11 @@ Meteor.startup(() => {
 function renderApp(){
 
   render(
-    <I18nextProvider i18n={ i18n }><AppContainer /></I18nextProvider>,
+    <I18nextProvider i18n={ i18n }>
+      <MuiThemeProvider>
+        <AppContainer />
+      </MuiThemeProvider>
+    </I18nextProvider>,
       document.getElementById('render-target')
     );
 }

@@ -2,6 +2,7 @@ import React from 'react';
 
 import Subheader from 'material-ui/Subheader';
 import Divider from 'material-ui/Divider';
+import RaisedButton from 'material-ui/RaisedButton';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import i18n from 'i18next';
 import { createContainer } from 'meteor/react-meteor-data';
@@ -20,7 +21,9 @@ class PreferencesPage extends React.Component {
   render(){
     const lang = this.props.language;
     const district = this.props.district;
-    console.log("lang = "+lang);
+    this.selectedLanguage = lang;
+    this.selectedDistrict = district;
+    console.log("PreferencesPage.render() lang = "+lang);
 
     return(
       <div>
@@ -46,25 +49,43 @@ class PreferencesPage extends React.Component {
                 value={district} />
             ))
           }
-          </RadioButtonGroup>
+        </RadioButtonGroup>
+        <Divider />
+        <RaisedButton
+          label="Save"
+          disableTouchRipple={true}
+          disableFocusRipple={true}
+          primary={true}
+          onTouchTap={()=>{this.savePreferences()}}
+          style={{marginRight: 12}}
+        />
+
       </div>
 
     );
   }
   changeLanguage(lang) {
-    i18n.changeLanguage(lang, (error, _t) => {
+    console.log("changeLanguage = "+lang);
+    this.selectedLanguage = lang;
+  }
+  changeDistrict(district){
+    console.log("changeDistrict = "+district);
+    this.selectedDistrict = district;
+  }
+
+  savePreferences(){
+    this.savePreference("language", this.selectedLanguage);
+    this.savePreference("district", this.selectedDistrict);
+
+    i18n.changeLanguage(this.selectedLanguage, (error, _t) => {
       if( error ){
         console.error(error);
       }
-      else{
-        this.savePreferences("language", lang);
-      }
     })
+
   }
-  changeDistrict(district){
-    this.savePreferences("district", district);
-  }
-  savePreferences(key, value){
+
+  savePreference(key, value){
     if( !Preferences ){
       console.error("Preferences local collection is not defined!!");
       return;

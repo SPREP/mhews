@@ -6,7 +6,6 @@ import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import MenuItem from 'material-ui/MenuItem';
 import MenuIcon from 'material-ui/svg-icons/navigation/menu';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Drawer from 'material-ui/Drawer';
 import Snackbar from 'material-ui/Snackbar';
 
@@ -50,8 +49,11 @@ class DrawerMenu extends React.Component {
   }
 
   render(){
+    console.log("DrawMenu.render()");
+
     const menu = Meteor.settings.public.menu;
     const pages = Meteor.settings.public.pages;
+
     const children = menu.map((pageName) => {
       const page = pages[pageName];
       const title = page.title;
@@ -101,6 +103,8 @@ class SwitchableContent extends React.Component {
   * Handle state change caused by the user choosing a menu.
   */
   render(){
+    console.log("SwitchableContent.render()");
+
     const page = this.props.page;
     const pageConfig = getPageConfig(page);
     const props = this.props;
@@ -182,7 +186,47 @@ class App extends React.Component {
     this.setState({drawerOpen: open});
   }
 
+  renderDrawerMenu(){
+    return (
+      <DrawerMenu {...this.props}
+        drawerOpen={this.state.drawerOpen}
+        onRequestChange={(open)=>{this.setDrawerOpen(open);}}
+        onPageSelection={(page) => {this.handlePageSelection(page);}}
+      />
+    );
+  }
+
+  renderSwitchableContent(page){
+    return (
+      <SwitchableContentContainer {...this.props}
+        page={page}
+        onPageSelection={(page, phenomena) => {
+          if( phenomena ){
+            phenomenaVar.set(phenomena);
+          }
+          this.handlePageSelection(page);
+        }}
+      />
+    );
+
+  }
+
+  renderConnectionIndicator(){
+    const t = this.props.t;
+
+    return (
+      <Snackbar
+        open={!this.props.connected}
+        message={t("waiting-for-network")}
+        bodyStyle={{"width": "100%"}}
+        style={{"width": "100%"}}
+      />
+    );
+  }
+
   render(){
+    console.log("App.render()");
+
     const t = this.props.t;
     const page = this.state.page;
     const pageConfig = getPageConfig(page);
@@ -190,49 +234,27 @@ class App extends React.Component {
 
     if( this.props.appInitialized ){
       return (
-        <MuiThemeProvider>
-          <div>
-            <AppBar
-              title={t(title)}
-              onLeftIconButtonTouchTap={()=>{this.toggleDrawerOpen()}}
-              iconElementLeft={<IconButton><MenuIcon /></IconButton>}
-              />
-            <DrawerMenu {...this.props}
-              drawerOpen={this.state.drawerOpen}
-              onRequestChange={(open)=>{this.setDrawerOpen(open);}}
-              onPageSelection={(page) => {this.handlePageSelection(page);}}
-              />
-            <SwitchableContentContainer {...this.props}
-              page={page}
-              onPageSelection={(page, phenomena) => {
-                if( phenomena ){
-                  phenomenaVar.set(phenomena);
-                }
-                this.handlePageSelection(page);
-              }}
-              />
-              <Snackbar
-                open={!this.props.connected}
-                message={t("waiting-for-network")}
-                bodyStyle={{"width": "100%"}}
-                style={{"width": "100%"}}
-              />
-          </div>
-        </MuiThemeProvider>
-
+        <div>
+          <AppBar
+            title={t(title)}
+            onLeftIconButtonTouchTap={()=>{this.toggleDrawerOpen()}}
+            iconElementLeft={<IconButton><MenuIcon /></IconButton>}
+          />
+          {this.state.drawerOpen ? this.renderDrawerMenu() : ""}
+          {this.state.drawerOpen ? "" : this.renderSwitchableContent(page)}
+          {!this.props.connected ? this.renderConnectionIndicator(): ""}
+        </div>
       );
     }
     else{
       const topPage = Meteor.settings.public.topPage;
 
       return (
-        <MuiThemeProvider>
           <InitPageContainer {...this.props} onFinished={()=>{
               console.log("InitPageContainer.onFinished()");
               Preferences.save("appInitialized", true);
               this.handlePageSelection(topPage)}
             }/>
-        </MuiThemeProvider>
 
       );
     }

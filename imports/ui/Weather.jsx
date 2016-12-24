@@ -48,11 +48,12 @@ export class WeatherPage extends React.Component {
     return (
       <Card>
         {
-            compact ? "" : (<CardMedia
-              overlay={<CardTitle title="Situation" subtitle={situation} />}
-              >
+          compact ? "" : (<CardMedia
+            overlay={<CardTitle title="Situation" subtitle={situation} />}
+            >
               <img src={surfaceChartUrl} />
-            </CardMedia>)
+            </CardMedia>
+          )
         }
         <CardTitle title={this.dateToString(displayDate)} subtitle={subtitle} />
         <CardText>{forecastText}</CardText>
@@ -71,7 +72,9 @@ export class WeatherPage extends React.Component {
   }
 
   changeDisplayDate(date){
-    this.setState({displayDate: date});
+    if( this.state.displayDate != date ){
+      this.setState({displayDate: date});
+    }
   }
 
   getShortDateStr(date){
@@ -93,6 +96,8 @@ export class WeatherPage extends React.Component {
   }
 
   render(){
+    console.log("Weather.render()");
+
     const forecast = this.props.forecast;
 
     if( this.props.loading ){
