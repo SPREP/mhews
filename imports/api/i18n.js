@@ -60,7 +60,8 @@ const i18nConfig = {
           "Sat": "Sat",
           "Sun": "Sun"
         },
-        HeavyRain: "Heavy Rain"
+        HeavyRain: "Heavy Rain",
+        "waiting-for-network": "Waiting for Network"
       }
     },
     ws: {
@@ -121,7 +122,8 @@ const i18nConfig = {
           "Sat": "Aso To'anai",
           "Sun": "Aso Sa"
         },
-        HeavyRain: "Heavy Rain"
+        HeavyRain: "Heavy Rain",
+        "waiting-for-network": "Fa'atali mo le network"
       }
     }
   },

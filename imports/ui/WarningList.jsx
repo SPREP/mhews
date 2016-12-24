@@ -12,6 +12,8 @@ import { createContainer } from 'meteor/react-meteor-data';
 
 import {Warnings} from '../api/warnings.js';
 
+const noWarningKey = "no_warning_in_effect";
+
 export class WarningList extends React.Component {
 
   getWarningSummary(warning){
@@ -29,6 +31,9 @@ export class WarningList extends React.Component {
     if(config){
       return config.icon;
     }
+    else if( type == noWarningKey ){
+      return "images/no_warning.png";
+    }
     else{
       return "images/warning.png";
     }
@@ -39,7 +44,8 @@ export class WarningList extends React.Component {
   }
 
   renderAvatar(warning){
-    const avatarImage = this.getWarningTypeIcon(warning.type);
+    const avatarImage = this.getWarningTypeIcon(warning ? warning.type : noWarningKey );
+
     if( avatarImage ){
       return (<Avatar src={avatarImage}></Avatar>);
     }
@@ -56,39 +62,47 @@ export class WarningList extends React.Component {
     if( this.props.loading ){
       return (<p>{"Loading warning list..."}</p>);
     }
-    else if( warnings && warnings.length > 0 ){
-      return (
-        <Paper zDepth={1}>
-          <List>
-            {
-              warnings.map((warning) => {
-                const style = getWarningStyle(warning.level);
-                const cancelButton = (
-                  <IconButton onTouchTap={()=>{this.props.cancelWarning(warning.type, warning.bulletinId)}}>
-                    <HighlightOff />
-                  </IconButton>
-                );
 
-                return (
-                  <ListItem
-                    key={warning.bulletinId}
-                    leftAvatar={this.renderAvatar(warning)}
-                    primaryText={this.getWarningSummary(warning)}
-                    secondaryText={this.getWarningDetails(warning)}
-                    style={style}
-                    rightIconButton={isAdmin ? cancelButton : undefined}
-                    onTouchTap={()=>{this.renderWarningDetailsPage(warning)}}
-                    />
-                );
-              })
-            }
-          </List>
-      </Paper>
-      );
+    let itemlist = [];
+    if( warnings && warnings.length > 0 ){
+      itemlist =warnings.map((warning) => {
+        const cancelButton = (
+          <IconButton onTouchTap={()=>{this.props.cancelWarning(warning.type, warning.bulletinId)}}>
+            <HighlightOff />
+          </IconButton>
+        );
+
+        return (
+          <ListItem
+            key={warning.bulletinId}
+            leftAvatar={this.renderAvatar(warning)}
+            primaryText={this.getWarningSummary(warning)}
+            secondaryText={this.getWarningDetails(warning)}
+            style={getWarningStyle(warning.level)}
+            rightIconButton={isAdmin ? cancelButton : undefined}
+            onTouchTap={()=>{this.renderWarningDetailsPage(warning)}}
+          />
+        );
+      })
     }
     else{
-      return (<p>{t('no_warning_in_effect')}</p>);
+      itemlist.push(
+        <ListItem
+          key={noWarningKey}
+          leftAvatar={this.renderAvatar()}
+          primaryText={t(noWarningKey)}
+          style={getWarningStyle()}
+        />
+      )
     }
+
+    return (
+      <Paper zDepth={1}>
+        <List>
+          {itemlist}
+        </List>
+      </Paper>
+    );
   }
   renderWarningDetailsPage(warning){
     const config = Meteor.settings.public.notificationConfig;

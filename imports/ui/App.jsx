@@ -213,7 +213,7 @@ class App extends React.Component {
               />
               <Snackbar
                 open={!this.props.connected}
-                message="Waiting for network"
+                message={t("waiting-for-network")}
                 bodyStyle={{"width": "100%"}}
                 style={{"width": "100%"}}
               />
