@@ -1,4 +1,3 @@
-
 const i18nConfig = {
   lng: 'en',
   fallbackLng: 'en',

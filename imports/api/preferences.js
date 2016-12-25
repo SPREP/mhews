@@ -1,12 +1,27 @@
 /* global Ground */
 
-export const Preferences = new Ground.Collection("preferences");
+class PreferencesClass {
 
-Preferences.save = (key, value)=>{
-  Preferences.upsert({key: key}, {key: key, value: value});
-};
+  init(){
+    if( !this.collection ){
+      this.collection = new Ground.Collection("preferences");
+    }
+  }
 
-Preferences.load = (key)=>{
-  const keyValue = Preferences.findOne({key: key});
-  return keyValue ? keyValue.value: undefined;
-};
+  save(key, value){
+    this.collection.upsert({key: key}, {key: key, value: value});
+  }
+
+  load(key){
+    if( !this.collection ) return undefined;
+
+    const keyValue = this.collection.findOne({key: key});
+    return keyValue ? keyValue.value: undefined;
+  }
+
+  isLoaded(){
+    return this.collection ? this.collection.isLoaded : false;
+  }
+}
+
+export const Preferences = new PreferencesClass();

@@ -1,7 +1,12 @@
 import { Meteor } from 'meteor/meteor';
 import {getAreaId} from './hazardArea.js';
 
-var request = require('request');
+//var request = require('request');
+var request;
+
+if( Meteor.isServer ){
+  request = require('request');
+}
 
 /* global FCMPlugin */
 /*

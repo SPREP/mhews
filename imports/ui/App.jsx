@@ -9,32 +9,14 @@ import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import Drawer from 'material-ui/Drawer';
 import Snackbar from 'material-ui/Snackbar';
 
-/* This plugin captures the tap event in React. */
-import injectTapEventPlugin from 'react-tap-event-plugin';
-
 /* i18n */
 import { translate } from 'react-i18next';
 
 /* Imports the mhews's components */
 import {getReactComponentByName} from '../api/componentHelper.js';
-import InitPageContainer from './InitPage.jsx';
-import {Preferences} from '../api/preferences.js';
 import { createContainer } from 'meteor/react-meteor-data';
 
-/**
- * This is needed for the material-ui components handle click event.
- * shouldRejectClick disables the onClick, but this is needed to avoid ghost click.
- */
-if( Meteor.isCordova ){
-  injectTapEventPlugin({
-    shouldRejectClick: function () {
-      return true;
-    }
-  });
-}
-else{
-  injectTapEventPlugin();
-}
+/* global navigator */
 
 // Function commonly used by the App and SwitchableContent
 function getPageConfig(page){
@@ -232,38 +214,22 @@ class App extends React.Component {
     const pageConfig = getPageConfig(page);
     const title = pageConfig.title;
 
-    if( this.props.appInitialized ){
-      return (
-        <div>
-          <AppBar
-            title={t(title)}
-            onLeftIconButtonTouchTap={()=>{this.toggleDrawerOpen()}}
-            iconElementLeft={<IconButton><MenuIcon /></IconButton>}
-          />
-          {this.state.drawerOpen ? this.renderDrawerMenu() : ""}
-          {this.state.drawerOpen ? "" : this.renderSwitchableContent(page)}
-          {!this.props.connected ? this.renderConnectionIndicator(): ""}
-        </div>
-      );
-    }
-    else{
-      const topPage = Meteor.settings.public.topPage;
-
-      return (
-          <InitPageContainer {...this.props} onFinished={()=>{
-              console.log("InitPageContainer.onFinished()");
-              Preferences.save("appInitialized", true);
-              this.handlePageSelection(topPage)}
-            }/>
-
-      );
-    }
-
+    return (
+      <div>
+        <AppBar
+          title={t(title)}
+          onLeftIconButtonTouchTap={()=>{this.toggleDrawerOpen()}}
+          iconElementLeft={<IconButton><MenuIcon /></IconButton>}
+        />
+        {this.state.drawerOpen ? this.renderDrawerMenu() : ""}
+        {this.state.drawerOpen ? "" : this.renderSwitchableContent(page)}
+        {!this.props.connected ? this.renderConnectionIndicator(): ""}
+      </div>
+    );
   }
 }
 
 App.propTypes = {
-  appInitialized: React.PropTypes.bool,
   handles: React.PropTypes.object,
   t: React.PropTypes.func,
   connected: React.PropTypes.bool
@@ -282,7 +248,6 @@ const AppContainer = createContainer(({t})=>{
   handles.cycloneBulletin = Meteor.subscribe('cycloneBulletins');
 
   return {
-    appInitialized: Preferences.load("appInitialized"),
     handles,
     t,
     connected: Meteor.status().connected

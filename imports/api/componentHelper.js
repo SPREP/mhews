@@ -1,4 +1,3 @@
-
 /* The following imports are required by the result of eval function.
    Disable the eslint rule to check unused vars in this file.
 */

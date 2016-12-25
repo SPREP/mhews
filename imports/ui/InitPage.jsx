@@ -36,7 +36,7 @@ class InitPage extends React.Component {
 
     this.state = {
       finished: false,
-      stepIndex: 0,
+      stepIndex: 0
     };
   }
 
@@ -45,7 +45,7 @@ class InitPage extends React.Component {
     stepIndex ++;
     const finished = stepIndex > 2;
     if( finished ){
-      this.props.onFinished();
+      this.props.handleFinished();
     }
     this.setState({
       stepIndex: stepIndex,
@@ -100,7 +100,7 @@ class InitPage extends React.Component {
               <p>
                 Please choose the language in which the application shows the contents.
               </p>
-              <RadioButtonGroup name="language" onChange={(e, v)=>{props.onSelection("language", v)}} defaultSelected={props.language}>
+              <RadioButtonGroup name="language" onChange={(e, v)=>{props.onSelection("language", v)}} defaultSelected={this.props.selectedLanguage}>
                 <RadioButton
                   key="en"
                   label="English"
@@ -117,12 +117,13 @@ class InitPage extends React.Component {
             <StepLabel>Select the district</StepLabel>
             <StepContent>
               <p>Please choose the district where you usually are. The app shows the contents for the selected district.</p>
-              <RadioButtonGroup name="district" onChange={(e, v)=>{props.onSelection("district", v)}} defaultSelected={props.district}>
+              <RadioButtonGroup name="district" onChange={(e, v)=>{props.onSelection("district", v)}} defaultSelected={this.props.selectedDistrict}>
                 {
                   districts.map((district)=>(
                     <RadioButton
                       key={district}
-                      label={this.props.t("district."+district)}
+//                      label={this.props.t("district."+district)}
+                      label={district}
                       value={district} />
                   ))
                 }
@@ -145,34 +146,42 @@ class InitPage extends React.Component {
   }
 }
 
+let selectedLanguage = new ReactiveVar();
+
+let selectedDistrict = new ReactiveVar();
+
 InitPage.propTypes = {
-  language: React.PropTypes.string,
-  district: React.PropTypes.string,
   onSelection: React.PropTypes.func,
-  onFinished: React.PropTypes.func,
+  handleFinished: React.PropTypes.func,
+  selectedLanguage: React.PropTypes.string,
+  selectedDistrict: React.PropTypes.string,
   t: React.PropTypes.func
 }
 
-const InitPageContainer = createContainer(({onFinished})=>{
-  const district = Preferences.load("district") || "";
-  const language = Preferences.load("language") || "";
-
+const InitPageContainer = createContainer(({onFinished, t})=>{
   return {
-    language,
-    district,
     onFinished,
+    selectedLanguage: selectedLanguage.get(),
+    selectedDistrict: selectedDistrict.get(),
     onSelection: (key, value)=>{
       if( key == "language" ){
-        Preferences.save(key, value);
-        i18n.changeLanguage(language);
+        selectedLanguage.set(value);
       }
       else if( key == "district" ){
-        Preferences.save(key, value);
+        selectedDistrict.set(value);
       }
       else{
         console.error("onSelection was called with unknown key "+key+" and value="+value+" pair.");
       }
-    }
+    },
+    handleFinished: ()=>{
+      const language = selectedLanguage.get();
+      Preferences.save("language", language);
+      i18n.changeLanguage(language);
+      Preferences.save("district", selectedDistrict.get());
+      onFinished();
+    },
+    t
   }
 
 }, InitPage);
