@@ -50,14 +50,14 @@ function startPublishingWarnings(){
   Warnings.find({in_effect: true}).observe({
     added: function(warning){
       console.log("Enter observe.added()");
-      sendFcm(warning, changeNeedsAttention(warning));
+      sendFcm(warning, Warnings.changeNeedsAttention(warning));
     },
     changed: function(newWarning, oldWarning){
       console.log("Enter observe.changed()");
       if( Warnings.hasNoSignificantChange(newWarning, oldWarning)){
         return;
       }
-      sendFcm(newWarning, changeNeedsAttention(newWarning, oldWarning));
+      sendFcm(newWarning, Warnings.changeNeedsAttention(newWarning, oldWarning));
     },
     removed: function(warning){
       console.log("Enter observe.removed()");
@@ -77,23 +77,20 @@ function sendFcm(warning, needsAttention){
       warning.area = "Samoa";
     }
     sendFcmNotification(
-      Warnings.toFcmMessage(warning, needsAttention ? "tsunami_warning.wav" : "default"),
+      Warnings.toFcmMessage(warning, soundEffectFile(warning, needsAttention)),
       warning.area,
       warning.direction
     );
   })
 }
 
-// User should be notified by using a strong sound effect if
-// 1) The watch or warning for this area and direction is newly in effect, or
-// 2) The same warning remains in effect but the level has raised.
-// (e.g. Raised from Watch to Warning.)
-function changeNeedsAttention(newWarning, oldWarning){
-  let needsAttention = Warnings.isMoreSignificant(newWarning.level, "advisory");
-  if( oldWarning ){
-    needsAttention = needsAttention && Warnings.isMoreSignificant(newWarning.level, oldWarning.level);
+function soundEffectFile(warning, needsAttention){
+  let soundFile;
+  if( needsAttention ){
+    soundFile = Meteor.settings.public.notificationConfig[warning.type];
   }
-  return needsAttention;
+
+  return soundFile ? soundFile : "default";
 }
 
 function checkWarningType(type){
@@ -144,7 +141,7 @@ function publishWarning(warning){
   check(this.connection, Match.Where(isClientIpAllowed));
   check(warning.bulletinId, Number);
   check(warning.type, Match.Where(checkWarningType));
-  check(warning.level, String);
+  check(warning.level, Match.OneOf(...Warnings.listLevels()));
   check(warning.in_effect, Match.OneOf(true, false));
   check(warning.issued_at, Date);
   check(warning.description, String);
@@ -155,7 +152,14 @@ function publishWarning(warning){
     check(warning.depth, Number);
   }
 
-  return Warnings.insert(warning);
+  if( warning.in_effect ){
+    return Warnings.insert(warning);
+  }
+  else {
+    // FIXME: This cancellation does not work because IBL gives different bulletinNumber
+    // from the warning bulletin to be cancelled.
+    return Warnings.cancelWarning(warning);
+  }
 }
 
 function cancelWarning(type, bulletinId){
@@ -171,7 +175,7 @@ function publishWeatherForecast(forecast){
   console.log("Enter publishWeatherForecast.");
 
   check(this.connection, Match.Where(isClientIpAllowed));
-  check(forecast.bulletinId, Number);
+//  check(forecast.bulletinId, Number);
   check(forecast.issued_at, Date);
   check(forecast.lang, Match.OneOf("en", "ws"));
   check(forecast.situation, String);

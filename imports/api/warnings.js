@@ -1,6 +1,9 @@
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
 
+// Warning levels in the significance order.
+const levels = ["information", "advisory", "watch", "warning"];
+
 class WarningCollection extends Mongo.Collection {
 
   findWarningsInEffect(type, area, direction){
@@ -77,8 +80,11 @@ class WarningCollection extends Mongo.Collection {
     return hazardTypes;
   }
 
+  listLevels(){
+    return levels;
+  }
+
   isMoreSignificant(level1, level2){
-    const levels = ["information", "advisory", "watch", "warning"];
     const l1 = levels.indexOf(level1.toLowerCase());
     const l2 = levels.indexOf(level2.toLowerCase());
     return l1 > l2;
@@ -154,6 +160,18 @@ class WarningCollection extends Mongo.Collection {
     return this.isForSameArea(warning1, warning2) &&
     warning1.level == warning2.level;
   }
+
+  // User should be notified by using a strong sound effect if
+  // 1) The watch or warning for this area and direction is newly in effect, or
+  // 2) The same warning remains in effect but the level has raised.
+  // (e.g. Raised from Watch to Warning.)
+  changeNeedsAttention(newWarning, oldWarning){
+    let needsAttention = this.isMoreSignificant(newWarning.level, "advisory");
+    if( oldWarning ){
+      needsAttention = needsAttention && this.isMoreSignificant(newWarning.level, oldWarning.level);
+    }
+    return needsAttention;
+  }  
 }
 
 export const Warnings = new WarningCollection("warnings");

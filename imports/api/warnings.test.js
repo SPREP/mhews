@@ -112,5 +112,12 @@ describe('Warnings', function() {
         assert.equal(false, Warnings.findOne({type: "tsunami", bulletinId: 100}).in_effect);
       });
     });
+
+    describe("isMoreSignificant()", function() {
+      it("Information is less significant than Advisory", function(){
+        assert.equal(false, Warnings.isMoreSignificant("information", "advisory"));
+        assert.equal(true, Warnings.isMoreSignificant("advisory", "information"));
+      });
+    });
   }
 });

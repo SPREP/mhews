@@ -218,6 +218,8 @@ class App extends React.Component {
       <div>
         <AppBar
           title={t(title)}
+          style={{"backgroundColor": "#F40000"}}
+          titleStyle={{"fontSize": "18px"}}
           onLeftIconButtonTouchTap={()=>{this.toggleDrawerOpen()}}
           iconElementLeft={<IconButton><MenuIcon /></IconButton>}
         />

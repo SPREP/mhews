@@ -8,6 +8,7 @@ import CyclonePage from '../ui/Cyclone.jsx';
 import EarthquakePage from '../ui/Earthquake.jsx';
 import HeavyRainPage from '../ui/HeavyRain.jsx';
 import AboutSMDPage from '../ui/AboutSMD.jsx';
+import AboutAppPage from '../ui/AboutAppPage.jsx';
 import PreferencesPageContainer from '../ui/PreferencesPage.jsx';
 import TopPage from "../ui/TopPage.jsx";
 

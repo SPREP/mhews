@@ -11,7 +11,7 @@ const Months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 
 const WeekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-const surfaceChartUrl = "http://www.samet.gov.ws/images/081216_PM.png";
+const surfaceChartUrl = "http://www.samet.gov.ws/images/surface_chart/latest.png";
 
 /**
 * This page should show the latest weather forecast.
@@ -43,13 +43,13 @@ export class WeatherPage extends React.Component {
       forecastText = "No forecast is available for district = "+district+" on "+displayDate.toDateString();
     }
     const compact = this.props.compact;
-    const subtitle = district + " - " + "issued at "+this.dateToString(issuedAt);
+    const subtitle = this.props.t("district."+district) + " - " + "Issued at "+this.dateToString(issuedAt);
 
     return (
       <Card>
         {
           compact ? "" : (<CardMedia
-            overlay={<CardTitle title="Situation" subtitle={situation} />}
+            overlay={<CardTitle title="" subtitle={"Situation: "+situation} />}
             >
               <img src={surfaceChartUrl} />
             </CardMedia>

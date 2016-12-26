@@ -22,12 +22,22 @@ import {playSound} from '../imports/api/mediautils.js';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
 /* global Reloader */
+/*
+if( Meteor.isDevelopment ){
 
-Reloader.configure({
-  check: 'firstStart', // Only make an additonal check the first time the app ever starts
-  checkTimer: 5000,  // Wait 5 seconds to see if new code is available on first start
-  refresh: 'start' // Only refresh to already downloaded code on a start and not a resume
-});
+  Reloader.configure({
+    check: false,
+    refresh: "instantly"
+  });
+}
+else{
+  Reloader.configure({
+    check: 'firstStart', // Only make an additonal check the first time the app ever starts
+    checkTimer: 5000,  // Wait 5 seconds to see if new code is available on first start
+    refresh: 'start' // Only refresh to already downloaded code on a start and not a resume
+  });
+}
+*/
 
 Meteor.startup(() => {
   console.log("Meteor.startup() -- ");
@@ -36,22 +46,37 @@ Meteor.startup(() => {
   renderApp();
 
   if( Meteor.isCordova ){
-    Meteor.defer(()=>{
+    const fcmInitializer = ()=>{
       initFcmClient((data)=>{
         handleFcmNotification(data)
       });
-    });
+    };
 
-/**
- * This is needed for the material-ui components handle click event.
- * shouldRejectClick disables the onClick, but this is needed to avoid ghost click.
- */
+    Meteor.defer(fcmInitializer);
+
+    // The plugin stops receiving FCM data after the device has been paused and resumed again.
+    // Reinitialize the plugin on the resume event.
+//    document.addEventListener(
+//      "resume",fcmInitializer, false
+//    );
+  }
+
+  /**
+  * This is needed for the material-ui components handle click event.
+  * shouldRejectClick disables the onClick, but this is needed to avoid ghost click.
+  */
+  if( Meteor.isCordova ){
+
     injectTapEventPlugin({
       shouldRejectClick: function () {
         return true;
       }
     });
   }
+  else{
+    injectTapEventPlugin();
+  }
+
 });
 
 function renderApp(){
@@ -117,12 +142,15 @@ AppInitializer.propTypes = {
 const prefLoaded = new ReactiveVar(false);
 
 const AppInitializerContainer = createContainer(()=>{
-  navigator.splashscreen.hide();
+  if( Meteor.isCordova ){
+    navigator.splashscreen.hide();
+  }
   Meteor.defer(()=>{
     Preferences.init();
   });
 
   // FIXME Better way to catch this event??
+  // FIXME Make sure stop this 100ms interval execution after the initializer finished.
   setInterval(()=>{
     prefLoaded.set(Preferences.isLoaded());
   }, 100);
@@ -145,5 +173,10 @@ function handleFcmNotification(fcmData){
   const warning = Warnings.fromFcmMessage(fcmData);
 
   phenomenaVar.set(warning);
-  if( !fcmData.wasTapped ){ playSound(config.sound);}
+  if( !fcmData.wasTapped ){
+    // Need to notify the user of the new bulletin.
+    if(Warnings.changeNeedsAttention(warning)){
+      playSound(config.sound);
+    }
+  }
 }
