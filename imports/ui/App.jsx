@@ -149,6 +149,8 @@ const SwitchableContentContainer = createContainer(({t, page, onPageSelection})=
   }
 }, SwitchableContent);
 
+const topPageName = Meteor.settings.public.topPage;
+
 class App extends React.Component {
 
   constructor(props){
@@ -159,14 +161,11 @@ class App extends React.Component {
       dialogOpen: false
     }
     this.isSoftwareUpdateConfirmed = false;
-
-    // Change the back-button behavior
-    document.addEventListener("backbutton", () => { this.onBackKeyDown() });
+    this.onBackKeyDown = this.onBackKeyDown.bind(this);
   }
 
+  // FIXME What to be done here is to pause the app, not close it.
   onBackKeyDown(){
-    const topPageName = Meteor.settings.public.topPage;
-
     if( this.state.drawerOpen ){
       this.toggleDrawerOpen();
     }
@@ -294,6 +293,14 @@ class App extends React.Component {
     const page = this.state.page;
     const pageConfig = getPageConfig(page);
     const title = pageConfig.title;
+
+    // Change the back-button behavior
+    if( this.state.page != topPageName || this.state.drawerOpen ){
+      document.addEventListener("backbutton", this.onBackKeyDown);
+    }
+    else{
+      document.removeEventListener("backbutton", this.onBackKeyDown);
+    }
 
     return (
       <div>

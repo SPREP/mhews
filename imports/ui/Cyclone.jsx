@@ -36,7 +36,7 @@ class CyclonePage extends React.Component {
   renderCyclone(cyclone){
     const name = cyclone.name;
     const district = cyclone.district;
-    const description = cyclone.description;
+    const description = cyclone.description_en;
     const issuedAt = cyclone.issuedAt;
     const title = "Category " + cyclone.category + " " + cyclone.warningLevel;
 

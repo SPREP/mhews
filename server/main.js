@@ -144,7 +144,8 @@ function publishWarning(warning){
   check(warning.level, Match.OneOf(...Warnings.listLevels()));
   check(warning.in_effect, Match.OneOf(true, false));
   check(warning.issued_at, Date);
-  check(warning.description, String);
+  check(warning.description_en, String);
+  check(warning.description_ws, String);
 
   if( warning.type == "tsunami"){
     check(warning.epicenter, {lat: Number, lng: Number});

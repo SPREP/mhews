@@ -3,6 +3,7 @@ import {Card, CardHeader, CardActions, CardMedia, CardTitle, CardText} from 'mat
 import FlatButton from 'material-ui/FlatButton';
 import i18n from 'i18next';
 import { createContainer } from 'meteor/react-meteor-data';
+import SwipeableViews from 'react-swipeable-views';
 
 import {WeatherForecasts} from '../api/weather.js';
 import {Preferences} from '../api/preferences.js';
@@ -11,7 +12,7 @@ const Months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 
 const WeekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-const surfaceChartUrl = "http://www.samet.gov.ws/images/surface_chart/latest.png";
+const surfaceChartUrl = "http://www.samet.gov.ws/images/surface_chart/latest_compact.png";
 
 /**
 * This page should show the latest weather forecast.
@@ -71,46 +72,58 @@ export class WeatherPage extends React.Component {
     const situation = forecast.situation;
     const dates = forecast.listForecastDates();
     const displayDate = this.getDisplayDate(dates);
+    const displayDateIndex = displayDate ? dates.indexOf(displayDate) : 0;
     const district = this.props.district;
-    const districtForecast = forecast.getDistrictForecast(district, displayDate);
-    let forecastText;
-    if( districtForecast ){
-      forecastText = districtForecast.forecast;
-    }
-    else{
-      forecastText = "No forecast is available for district = "+district+" on "+displayDate.toDateString();
-    }
     const compact = this.props.compact;
     const subtitle = this.props.t("district."+district);
 
     // The Weather card expands/shrinks when the CardText is tapped.
     return (
-      <div>
-        <Card>
-          <CardHeader
-            title="Weather Forecast"
-            showExpandableButton={true}
-            subtitle={"Issued at "+this.dateTimeToString(issuedAt)}
-          />
-          {this.renderSituation(situation)}
-          <CardTitle
-            title={this.dateToString(displayDate)}
-            titleStyle={{"font-size": "14pt"}}
-            subtitle={subtitle}
-          />
-          <CardText>{forecastText}</CardText>
-          <CardActions>
-            {
-              dates.map((date) => (
-                <FlatButton
-                  key={this.getShortDateStr(date)}
-                  label={this.getShortDateStr(date)}
-                  onTouchTap={()=>{this.changeDisplayDate(date)}}/>
-                ))
+      <Card>
+        <CardHeader
+          title="Weather Forecast"
+          showExpandableButton={true}
+          subtitle={"Issued at "+this.dateTimeToString(issuedAt)}
+        />
+        {this.renderSituation(situation)}
+        <SwipeableViews index={displayDateIndex}>
+          {
+            dates.map((date) => {
+              const districtForecast = forecast.getDistrictForecast(district, date);
+              let forecastText;
+              if( districtForecast ){
+                forecastText = districtForecast.forecast;
               }
-            </CardActions>
-          </Card>
-        </div>
+              else{
+                forecastText = "No forecast is available for district = "+district+" on "+date.toDateString();
+              }
+
+              return (<div>
+                <CardTitle
+                  key={this.dateToString(date)}
+                  title={this.dateToString(date)}
+                  titleStyle={{"fontSize": "14pt"}}
+                  subtitle={subtitle}
+                />
+                <CardText>{forecastText}</CardText>
+              </div>)
+            })
+          }
+        </SwipeableViews>
+        <CardActions>
+          {
+            dates.map((date) => (
+              <button
+                key={this.dateToString(date)}
+                style={{"padding": "5px 5px", "border": "none", "background": "none"}}
+                onTouchTap={()=>{this.changeDisplayDate(date)}}
+              >
+                {this.getDayOfDate(date)}
+              </button>
+            ))
+          }
+        </CardActions>
+      </Card>
     );
   }
 
@@ -161,6 +174,11 @@ export class WeatherPage extends React.Component {
 
   dateTimeToString(dateTime){
     return moment(dateTime).format("YYYY-MM-DD hh:mm");
+  }
+
+  getDayOfDate(dateTime){
+    const day = this.props.t("weekdays."+WeekDays[dateTime.getDay()]);
+    return day;
   }
 }
 

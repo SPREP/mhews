@@ -51,7 +51,7 @@ class HeavyRainPage extends React.Component {
               Loading...
             </GoogleMap>
             <CardTitle title={"Heavy Rain"+" "+heavyRain.level} subtitle={heavyRain.issued_at.toDateString()} />
-            <CardText>{heavyRain.description}</CardText>
+            <CardText>{heavyRain.description_en}</CardText>
           </Card>
         );
       }

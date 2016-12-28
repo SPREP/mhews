@@ -23,7 +23,7 @@ export class WarningList extends React.Component {
   }
 
   getWarningDetails(warning){
-    return warning.description;
+    return warning.description_en;
   }
 
   getWarningTypeIcon(type){

@@ -47,8 +47,8 @@ class EarthquakePage extends React.Component {
             <GoogleMap mapCenter={quake.epicenter} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
               Loading...
             </GoogleMap>
-            <CardTitle title={"Earthquake"+" "+quake.level} subtitle={quake.issued_at.toDateString()}/>
-            <CardText>{quake.description}</CardText>
+            <CardTitle title={quake.type+" "+quake.level} subtitle={quake.issued_at.toDateString()}/>
+            <CardText>{quake.description_en}</CardText>
           </Card>
         );
       }
