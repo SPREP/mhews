@@ -6,10 +6,11 @@ import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
 import MenuItem from 'material-ui/MenuItem';
-import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import Drawer from 'material-ui/Drawer';
 import Snackbar from 'material-ui/Snackbar';
 import Dialog from 'material-ui/Dialog';
+import MenuIcon from 'material-ui/svg-icons/navigation/menu';
+import CloseIcon from 'material-ui/svg-icons/navigation/close';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -42,6 +43,7 @@ class DrawerMenu extends React.Component {
     const children = menu.map((pageName) => {
       const page = pages[pageName];
       const title = page.title;
+      const icon = React.createElement(getReactComponentByName(page.icon));
       return (
         <MenuItem
           key={title}
@@ -52,6 +54,7 @@ class DrawerMenu extends React.Component {
               this.props.onPageSelection(pageName);
             }
           }
+          leftIcon={icon}
           primaryText={this.props.t(title)}
           value={pageName}
           />);
@@ -65,6 +68,7 @@ class DrawerMenu extends React.Component {
             quitAppVar.set(true);
           }
         }
+        leftIcon={<CloseIcon />}
         primaryText={this.props.t("title.quit")}
         value={"title.quit"}
       />

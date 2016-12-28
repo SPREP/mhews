@@ -11,6 +11,11 @@ import AboutSMDPage from '../ui/AboutSMD.jsx';
 import AboutAppPage from '../ui/AboutAppPage.jsx';
 import PreferencesPageContainer from '../ui/PreferencesPage.jsx';
 import TopPage from "../ui/TopPage.jsx";
+import HomeIcon from 'material-ui/svg-icons/action/home';
+import SettingsIcon from 'material-ui/svg-icons/action/settings';
+import WarningIcon from 'material-ui/svg-icons/alert/warning';
+import WeatherIcon from 'material-ui/svg-icons/image/wb-sunny';
+import CopyrightIcon from 'material-ui/svg-icons/action/copyright';
 
 export function getReactComponentByName(componentName){
   return eval(componentName);

@@ -86,7 +86,10 @@ export class WeatherPage extends React.Component {
         {
           compact ? "" : this.renderSituation(situation)
         }
-        <CardTitle title={this.dateToString(displayDate)} subtitle={subtitle} />
+        <CardTitle
+           title={this.dateToString(displayDate)}
+           subtitle={subtitle} 
+         />
         <CardText>{forecastText}</CardText>
         <CardActions>
           {
