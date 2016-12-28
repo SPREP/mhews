@@ -21,24 +21,6 @@ import {playSound} from '../imports/api/mediautils.js';
 /* This plugin captures the tap event in React. */
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
-/* global Reloader */
-/*
-if( Meteor.isDevelopment ){
-
-  Reloader.configure({
-    check: false,
-    refresh: "instantly"
-  });
-}
-else{
-  Reloader.configure({
-    check: 'firstStart', // Only make an additonal check the first time the app ever starts
-    checkTimer: 5000,  // Wait 5 seconds to see if new code is available on first start
-    refresh: 'start' // Only refresh to already downloaded code on a start and not a resume
-  });
-}
-*/
-
 Meteor.startup(() => {
   console.log("Meteor.startup() -- ");
 
@@ -150,9 +132,11 @@ const AppInitializerContainer = createContainer(()=>{
   });
 
   // FIXME Better way to catch this event??
-  // FIXME Make sure stop this 100ms interval execution after the initializer finished.
-  setInterval(()=>{
-    prefLoaded.set(Preferences.isLoaded());
+  const intervalId = setInterval(()=>{
+    if( Preferences.isLoaded()){
+      prefLoaded.set(true);
+      clearInterval(intervalId);
+    }
   }, 100);
 
   return {

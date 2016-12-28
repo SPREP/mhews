@@ -23,7 +23,8 @@ const i18nConfig = {
           eqtsunami: "Earthquake And Tsunami",
           cyclone: "Cyclone",
           about: "About SMD",
-          aboutApp: "About this App"
+          aboutApp: "About this App",
+          quit: "Quit"
         },
         district: {
           "upolu-north-northwest": "Upolu North Northwest",
@@ -33,7 +34,7 @@ const i18nConfig = {
           "savaii-south": "Savaii South"
         },
         "is in effect in": "is in effect in",
-        no_warning_in_effect: "Currently no warning is in effect.",
+        no_warning_in_effect: "No warning is in effect.",
         no_weather_forecast_error: "Sorry there is no forecast... Perhaps the app failed to contact the server.",
         situation: "Situation",
         month:{
@@ -60,7 +61,8 @@ const i18nConfig = {
           "Sun": "Sun"
         },
         HeavyRain: "Heavy Rain",
-        "waiting-for-network": "Waiting for Network"
+        "waiting-for-network": "Waiting for Network",
+        "software-update-available": "New software available."
       }
     },
     ws: {
@@ -85,7 +87,8 @@ const i18nConfig = {
           eqtsunami: "Mafui'e ma Sunami",
           cyclone: "Afa",
           about: "Faatautau ia SMD",
-          aboutApp: "Faatautau ia App"
+          aboutApp: "Faatautau ia App",
+          quit: "Quit"
         },
         district: {
           "upolu-north-northwest": "Upolu North Northwest",
@@ -95,7 +98,7 @@ const i18nConfig = {
           "savaii-south": "Savaii South"
         },
         "is in effect in": "i aafiaga i le",
-        no_warning_in_effect: "E leai se lapataiga i aafiaga nei.",
+        no_warning_in_effect: "E leai se lapataiga i aafiaga.",
         no_weather_forecast_error: "Tulou e leai forecast...",
         situation: "Tulaga",
         month: {
@@ -122,7 +125,8 @@ const i18nConfig = {
           "Sun": "Aso Sa"
         },
         HeavyRain: "Heavy Rain",
-        "waiting-for-network": "Fa'atali mo le network"
+        "waiting-for-network": "Fa'atali mo le network",
+        "software-update-available": "New software available."
       }
     }
   },

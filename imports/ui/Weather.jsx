@@ -21,11 +21,47 @@ export class WeatherPage extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = {displayDate: null};
+    this.state = {
+      displayDate: null,
+      displayCardMediaTitle: true
+    };
   }
 
   validatePhenomena(){
     return true;
+  }
+
+  renderSituation(situation){
+    const cardTitle = (<CardTitle title="" subtitle={"Situation: "+situation} />);
+
+    if( this.props.connected ){
+      if( this.state.displayCardMediaTitle ){
+        return (
+          <CardMedia
+            overlay={cardTitle}
+            onTouchTap={()=>{this.toggleDisplayCardMediaTitle()}}>
+            <img src={surfaceChartUrl} />
+          </CardMedia>
+        );
+
+      }
+      else{
+        return (
+          <CardMedia
+            onTouchTap={()=>{this.toggleDisplayCardMediaTitle()}}>
+            <img src={surfaceChartUrl} />
+          </CardMedia>
+        );
+
+      }
+    }
+    else{
+      return cardTitle;
+    }
+  }
+
+  toggleDisplayCardMediaTitle(){
+    this.setState({displayCardMediaTitle: !this.state.displayCardMediaTitle});
   }
 
   renderForecast(forecast){
@@ -43,17 +79,12 @@ export class WeatherPage extends React.Component {
       forecastText = "No forecast is available for district = "+district+" on "+displayDate.toDateString();
     }
     const compact = this.props.compact;
-    const subtitle = this.props.t("district."+district) + " - " + "Issued at "+this.dateToString(issuedAt);
+    const subtitle = this.props.t("district."+district) + " - " + "Issued at "+this.dateTimeToString(issuedAt);
 
     return (
       <Card>
         {
-          compact ? "" : (<CardMedia
-            overlay={<CardTitle title="" subtitle={"Situation: "+situation} />}
-            >
-              <img src={surfaceChartUrl} />
-            </CardMedia>
-          )
+          compact ? "" : this.renderSituation(situation)
         }
         <CardTitle title={this.dateToString(displayDate)} subtitle={subtitle} />
         <CardText>{forecastText}</CardText>
@@ -100,12 +131,7 @@ export class WeatherPage extends React.Component {
 
     const forecast = this.props.forecast;
 
-    if( this.props.loading ){
-      return (
-        <p>{"Loading ..."}</p>
-      )
-    }
-    else if( forecast ){
+    if( forecast ){
       return this.renderForecast(forecast);
     }
     else{
@@ -114,44 +140,41 @@ export class WeatherPage extends React.Component {
   }
   // Convert a date object into string depending on the set language.
   dateToString(date){
-    const lang = i18n.language;
     const t = this.props.t;
 
-    if( lang == "ws"){
-      const day = t("weekdays."+WeekDays[date.getDay()]);
-      const month = t("month."+Months[date.getMonth()]);
-      return day+" "+month+" "+date.getDate()+" "+date.getFullYear();
-    }
-    else{
-      return date.toDateString();
-    }
+    const day = t("weekdays."+WeekDays[date.getDay()]);
+    const month = t("month."+Months[date.getMonth()]);
+    return month+" "+date.getDate()+" ("+day+")";
   }
 
+  dateTimeToString(dateTime){
+    return moment(dateTime).format("YYYY-MM-DD hh:mm:ss");
+  }
 }
 
 WeatherPage.propTypes = {
-  loading: React.PropTypes.bool,
   forecast: React.PropTypes.object,
   district: React.PropTypes.string,
   t: React.PropTypes.func,
-  compact: React.PropTypes.bool
+  compact: React.PropTypes.bool,
+  connected: React.PropTypes.bool
 }
 
-const WeatherPageContainer = createContainer(({t, handles})=>{
+const WeatherPageContainer = createContainer(({t, handles, compact})=>{
   const handle = handles["weatherForecast"];
   if( !handle ){
     console.error("handle for weatherForecast was not given!");
     return;
   }
-  const loading = false;
   const district = Preferences.load("district");
   const language = i18n.language;
 
   return {
-    loading,
     t,
     district,
-    forecast: loading? null : WeatherForecasts.getLatestForecast(language),
+    forecast: WeatherForecasts.getLatestForecast(language),
+    compact,
+    connected: Meteor.status().connected
   }
 }, WeatherPage);
 

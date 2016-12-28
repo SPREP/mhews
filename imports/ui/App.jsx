@@ -4,10 +4,12 @@ import { Meteor } from 'meteor/meteor';
 /* Imports from the material-ui */
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
+import FlatButton from 'material-ui/FlatButton';
 import MenuItem from 'material-ui/MenuItem';
 import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import Drawer from 'material-ui/Drawer';
 import Snackbar from 'material-ui/Snackbar';
+import Dialog from 'material-ui/Dialog';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -17,6 +19,7 @@ import {getReactComponentByName} from '../api/componentHelper.js';
 import { createContainer } from 'meteor/react-meteor-data';
 
 /* global navigator */
+/* global Reload */
 
 // Function commonly used by the App and SwitchableContent
 function getPageConfig(page){
@@ -54,6 +57,19 @@ class DrawerMenu extends React.Component {
           />);
     });
 
+    children.push(
+      <MenuItem
+        key="quit"
+        onTouchTap={
+          () =>{
+            quitAppVar.set(true);
+          }
+        }
+        primaryText={this.props.t("title.quit")}
+        value={"title.quit"}
+      />
+    );
+
     return React.createElement(
       Drawer,
       {
@@ -79,14 +95,14 @@ DrawerMenu.propTypes = {
 // ReactiveVar is used instead of the state in the App.
 export const phenomenaVar = new ReactiveVar(null);
 
+const quitAppVar = new ReactiveVar(false);
+
 class SwitchableContent extends React.Component {
 
   /**
   * Handle state change caused by the user choosing a menu.
   */
   render(){
-    console.log("SwitchableContent.render()");
-
     const page = this.props.page;
     const pageConfig = getPageConfig(page);
     const props = this.props;
@@ -135,8 +151,10 @@ class App extends React.Component {
     super(props);
     this.state = {
       page: Meteor.settings.public.topPage,
-      drawerOpen: false
+      drawerOpen: false,
+      dialogOpen: false
     }
+    this.isSoftwareUpdateConfirmed = false;
 
     // Change the back-button behavior
     document.addEventListener("backbutton", () => { this.onBackKeyDown() });
@@ -193,7 +211,7 @@ class App extends React.Component {
 
   }
 
-  renderConnectionIndicator(){
+  renderConnectionStatus(){
     const t = this.props.t;
 
     return (
@@ -206,9 +224,68 @@ class App extends React.Component {
     );
   }
 
-  render(){
-    console.log("App.render()");
+  renderSoftwareUpdateAvailability(){
+    const t = this.props.t;
 
+    if( !this.props.connected ){
+      return "";
+    }
+    if( this.isSoftwareUpdateConfirmed ){
+      return "";
+    }
+
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary={true}
+        onTouchTap={()=>{this.closeDialog()}}
+      />,
+      <FlatButton
+        label="Quit"
+        primary={true}
+        onTouchTap={()=>{quitAppVar.set(true)}}
+      />,
+    ];
+
+    return (
+      <div>
+        <Snackbar
+          open={this.props.softwareUpdateAvailable}
+          message={t("software-update-available")}
+          bodyStyle={{"width": "100%"}}
+          style={{"width": "100%"}}
+          action="Update"
+          autoHideDuration={5000}
+          onRequestClose={()=>{this.closeSoftwareUpdateSnackbar()}}
+          onActionTouchTap={()=>{this.askUserToRestartApp()}}
+        />
+        <Dialog
+          title="Software update"
+          actions={actions}
+          modal={false}
+          open={this.state.dialogOpen}
+          onRequestClose={()=>{this.closeDialog()}}
+          >
+          For installing the software update, the Application will be quit.
+          Please restart the application.
+          </Dialog>
+        </div>
+    );
+  }
+
+  closeSoftwareUpdateSnackbar(){
+    this.isSoftwareUpdateConfirmed = true;
+  }
+
+  askUserToRestartApp(){
+    this.setState({dialogOpen: true});
+  }
+
+  closeDialog(){
+    this.setState({dialogOpen: false});
+  }
+
+  render(){
     const t = this.props.t;
     const page = this.state.page;
     const pageConfig = getPageConfig(page);
@@ -224,8 +301,9 @@ class App extends React.Component {
           iconElementLeft={<IconButton><MenuIcon /></IconButton>}
         />
         {this.state.drawerOpen ? this.renderDrawerMenu() : ""}
-        {this.state.drawerOpen ? "" : this.renderSwitchableContent(page)}
-        {!this.props.connected ? this.renderConnectionIndicator(): ""}
+        {!this.state.drawerOpen ? this.renderSwitchableContent(page): ""}
+        {!this.props.connected ? this.renderConnectionStatus(): ""}
+        {this.props.softwareUpdateAvailable ? this.renderSoftwareUpdateAvailability(): ""}
       </div>
     );
   }
@@ -234,7 +312,8 @@ class App extends React.Component {
 App.propTypes = {
   handles: React.PropTypes.object,
   t: React.PropTypes.func,
-  connected: React.PropTypes.bool
+  connected: React.PropTypes.bool,
+  softwareUpdateAvailable: React.PropTypes.bool
 }
 
 const AppContainer = createContainer(({t})=>{
@@ -249,10 +328,17 @@ const AppContainer = createContainer(({t})=>{
   // To receive the data from the cycloneBulletin collection
   handles.cycloneBulletin = Meteor.subscribe('cycloneBulletins');
 
+  Tracker.autorun(()=>{
+    if( quitAppVar.get() == true ){
+      navigator.app.exitApp();
+    }
+  })
+
   return {
     handles,
     t,
-    connected: Meteor.status().connected
+    connected: Meteor.status().connected,
+    softwareUpdateAvailable: Reload.isWaitingForResume()
   }
 }, App);
 
