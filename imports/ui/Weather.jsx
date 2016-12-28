@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, CardActions, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {Card, CardHeader, CardActions, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import i18n from 'i18next';
 import { createContainer } from 'meteor/react-meteor-data';
@@ -32,13 +32,14 @@ export class WeatherPage extends React.Component {
   }
 
   renderSituation(situation){
-    const cardTitle = (<CardTitle title="" subtitle={"Situation: "+situation} />);
+    const cardTitle = (<CardTitle title="Situation" subtitle={situation} />);
 
     if( this.props.connected ){
       if( this.state.displayCardMediaTitle ){
         return (
           <CardMedia
             overlay={cardTitle}
+            expandable={true}
             onTouchTap={()=>{this.toggleDisplayCardMediaTitle()}}>
             <img src={surfaceChartUrl} />
           </CardMedia>
@@ -48,6 +49,7 @@ export class WeatherPage extends React.Component {
       else{
         return (
           <CardMedia
+            expandable={true}
             onTouchTap={()=>{this.toggleDisplayCardMediaTitle()}}>
             <img src={surfaceChartUrl} />
           </CardMedia>
@@ -79,29 +81,36 @@ export class WeatherPage extends React.Component {
       forecastText = "No forecast is available for district = "+district+" on "+displayDate.toDateString();
     }
     const compact = this.props.compact;
-    const subtitle = this.props.t("district."+district) + " - " + "Issued at "+this.dateTimeToString(issuedAt);
+    const subtitle = this.props.t("district."+district);
 
+    // The Weather card expands/shrinks when the CardText is tapped.
     return (
-      <Card>
-        {
-          compact ? "" : this.renderSituation(situation)
-        }
-        <CardTitle
-           title={this.dateToString(displayDate)}
-           subtitle={subtitle} 
-         />
-        <CardText>{forecastText}</CardText>
-        <CardActions>
-          {
-            dates.map((date) => (
-              <FlatButton
-                key={this.getShortDateStr(date)}
-                label={this.getShortDateStr(date)}
-                onTouchTap={()=>{this.changeDisplayDate(date)}}/>
-            ))
-          }
-        </CardActions>
-      </Card>
+      <div>
+        <Card>
+          <CardHeader
+            title="Weather Forecast"
+            showExpandableButton={true}
+            subtitle={"Issued at "+this.dateTimeToString(issuedAt)}
+          />
+          {this.renderSituation(situation)}
+          <CardTitle
+            title={this.dateToString(displayDate)}
+            titleStyle={{"font-size": "14pt"}}
+            subtitle={subtitle}
+          />
+          <CardText>{forecastText}</CardText>
+          <CardActions>
+            {
+              dates.map((date) => (
+                <FlatButton
+                  key={this.getShortDateStr(date)}
+                  label={this.getShortDateStr(date)}
+                  onTouchTap={()=>{this.changeDisplayDate(date)}}/>
+                ))
+              }
+            </CardActions>
+          </Card>
+        </div>
     );
   }
 
@@ -151,7 +160,7 @@ export class WeatherPage extends React.Component {
   }
 
   dateTimeToString(dateTime){
-    return moment(dateTime).format("YYYY-MM-DD hh:mm:ss");
+    return moment(dateTime).format("YYYY-MM-DD hh:mm");
   }
 }
 

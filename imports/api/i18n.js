@@ -14,8 +14,8 @@ const i18nConfig = {
         "warning": "warning",
         "heavyRain": "heavyRain",
         title : {
-          index: "Overview",
-          weather: "Weather Forecast",
+          index: "Samoa Weather",
+          weather: "Weather",
           heavyRain: "Heavy Rain",
           warnings: "Effective Warnings",
           language: "Language Setting",
@@ -77,7 +77,7 @@ const i18nConfig = {
         "warning": "warning",
         "heavyRain": "heavyRain",
         title : {
-          index: "Overview",
+          index: "Samoa Weather",
           weather: "Tau",
           heavyRain: "Heavy Rain",
           warnings: "Lapataiga",
