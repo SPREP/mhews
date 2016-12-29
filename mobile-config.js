@@ -20,5 +20,7 @@ App.configurePlugin('cordova-plugin-googlemaps', {
   'API_KEY_FOR_ANDROID': 'AIzaSyAU8GJceF2q71UkbwDkFbl7Hzx9Y6mcFAU'
 });
 
+App.setPreference("SplashMaintainAspectRatio", "true");
+App.setPreference("ShowSplashScreenSpinner", "true");
+
 App.accessRule('<access origin="*" />');
-  

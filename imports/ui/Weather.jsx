@@ -182,6 +182,16 @@ export class WeatherPage extends React.Component {
   }
 }
 
+let surfaceChartHolder;
+
+function preloadSurfaceChart(){
+  surfaceChartHolder = new Image();
+  surfaceChartHolder.onload = ()=>{
+    console.log("Preloaded the surface chart.");
+  };
+  surfaceChartHolder.src = surfaceChartUrl;
+}
+
 WeatherPage.propTypes = {
   forecast: React.PropTypes.object,
   district: React.PropTypes.string,
@@ -198,6 +208,12 @@ const WeatherPageContainer = createContainer(({t, handles, compact})=>{
   }
   const district = Preferences.load("district");
   const language = i18n.language;
+
+  Tracker.autorun(()=>{
+    if( Meteor.status().connected ){
+      preloadSurfaceChart();
+    }
+  });
 
   return {
     t,
