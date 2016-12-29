@@ -21,12 +21,20 @@ import {playSound} from '../imports/api/mediautils.js';
 /* This plugin captures the tap event in React. */
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
+/* global Reloader */
+
 Meteor.startup(() => {
   console.log("Meteor.startup() -- ");
 
   i18n.init(i18nConfig);
   renderApp();
 
+  Reloader.configure({
+    check: false, // Check for new code every time the app starts
+    refresh: 'start', // Refresh to already downloaded code on start (not on resume)
+    idleCutoff: 1000 * 60 * 10  // Wait 10 minutes before treating a resume as a start
+  });
+  
   if( Meteor.isCordova ){
     const fcmInitializer = ()=>{
       initFcmClient((data)=>{

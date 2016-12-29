@@ -110,18 +110,22 @@ export function findAreas(areaName, direction){
     let areas = [];
     if( direction == "North" || direction == "South") {
       ["Upolu Island", "Savaii Island"].forEach((areaName) => {
-        areas.push(findAreas(areaName, direction));
+        areas = areas.concat(findAreas(areaName, direction));
       });
     }
     else if( direction == "East"){
-      areas.push(findAreas("Upolu Island"));
+      areas = areas.concat(findAreas("Upolu Island"));
     }
     else if( direction == "West"){
-      areas.push(findAreas("Savaii Island"));
+      areas = areas.concat(findAreas("Savaii Island"));
+    }
+    else if( direction == "Whole Area"){
+      areas = areas.concat(findAreas("Upolu Island"));
+      areas = areas.concat(findAreas("Savaii Island"));
     }
     // Always include Manono and Apolima just in case.
     ["Manono Island", "Apolima Island"].forEach((areaName) => {
-        areas.push(findAreas(areaName));
+        areas = areas.concat(findAreas(areaName));
     });
 
     return areas;
@@ -132,7 +136,7 @@ export function findAreas(areaName, direction){
   else {
     const area = HazardAreaMap[areaName];
     if( area ){
-      if( direction ){
+      if( direction && direction != "Whole Area"){
         return [area[direction]];
       }
       else{

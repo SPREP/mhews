@@ -152,6 +152,10 @@ function publishWarning(warning){
     check(warning.mw, Number);
     check(warning.depth, Number);
   }
+  else if( warning.type == "heavyRain"){
+    check(warning.area, String);
+    check(warning.direction, String);
+  }
 
   if( warning.in_effect ){
     return Warnings.insert(warning);

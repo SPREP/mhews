@@ -20,7 +20,6 @@ import {getReactComponentByName} from '../api/componentHelper.js';
 import { createContainer } from 'meteor/react-meteor-data';
 
 /* global navigator */
-/* global Reload */
 
 // Function commonly used by the App and SwitchableContent
 function getPageConfig(page){
@@ -169,9 +168,6 @@ class App extends React.Component {
     if( this.state.drawerOpen ){
       this.toggleDrawerOpen();
     }
-    else if( this.state.page == topPageName){
-      navigator.app.exitApp();
-    }
     else{
       this.handlePageSelection(topPageName);
     }
@@ -281,6 +277,7 @@ class App extends React.Component {
   }
 
   askUserToRestartApp(){
+    console.log("askUserToRestartApp()");
     this.setState({dialogOpen: true});
   }
 
@@ -349,7 +346,7 @@ const AppContainer = createContainer(({t})=>{
     handles,
     t,
     connected: Meteor.status().connected,
-    softwareUpdateAvailable: Reload.isWaitingForResume()
+    softwareUpdateAvailable: false
   }
 }, App);
 

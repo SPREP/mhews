@@ -2,8 +2,8 @@
 
 /* Return the appropriate zoom level for the specified area size in km */
 export function getZoomLevel(areaSize){
-  const sizeList = [20, 50, 100, 200, 500, 1000];
-  let level = 12;
+  const sizeList = [100, 200, 500, 1000];
+  let level = 10;
   for(let i= 0; i< sizeList.length; i++){
     if( areaSize <= sizeList[i]){
       return level;

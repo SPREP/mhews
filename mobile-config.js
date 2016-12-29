@@ -1,6 +1,6 @@
 App.info({
   id: 'ws.gov.samet.mhews',
-  version: "0.1.2",
+  version: "0.1.3",
   name: 'mhews',
   description: 'Multi-Hazard Early Warning System mobile app',
   author: 'Samoa Meteorology Division',
@@ -20,7 +20,9 @@ App.configurePlugin('cordova-plugin-googlemaps', {
   'API_KEY_FOR_ANDROID': 'AIzaSyAU8GJceF2q71UkbwDkFbl7Hzx9Y6mcFAU'
 });
 
+App.setPreference("LoadUrlTimeoutValue", 1000000);
 App.setPreference("SplashMaintainAspectRatio", "true");
 App.setPreference("ShowSplashScreenSpinner", "true");
+App.setPreference("WebAppStartupTimeout",1000000);
 
 App.accessRule('<access origin="*" />');

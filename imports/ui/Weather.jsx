@@ -98,15 +98,15 @@ export class WeatherPage extends React.Component {
                 forecastText = "No forecast is available for district = "+district+" on "+date.toDateString();
               }
 
-              return (<div>
-                <CardTitle
-                  key={this.dateToString(date)}
-                  title={this.dateToString(date)}
-                  titleStyle={{"fontSize": "14pt"}}
-                  subtitle={subtitle}
-                />
-                <CardText>{forecastText}</CardText>
-              </div>)
+              return (
+                <div key={this.dateToString(date)}>
+                  <CardTitle                    
+                    title={this.dateToString(date)}
+                    titleStyle={{"fontSize": "14pt"}}
+                    subtitle={subtitle}
+                  />
+                  <CardText>{forecastText}</CardText>
+                </div>)
             })
           }
         </SwipeableViews>
