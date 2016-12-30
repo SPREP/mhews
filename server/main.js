@@ -61,7 +61,7 @@ function startPublishingWarnings(){
     },
     removed: function(warning){
       console.log("Enter observe.removed()");
-      // Here, the warning is the document when it was in the result set (i.e. in_effect = true)
+      // Here, the warning is effective document when it was in the result set (i.e. in_effect = true)
       // Change it to false so that the fcm.js chooses the right cancellation message.
       warning.in_effect = false;
       sendFcm(warning, false);
@@ -71,6 +71,10 @@ function startPublishingWarnings(){
 }
 
 function sendFcm(warning, needsAttention){
+  if( warning.in_effect && warning.is_user_notified ){
+    // FCM message has already been sent for this warning.
+    return;
+  }
   Meteor.defer(function(){
     if( !warning.area ){
       // If a warning was issued without area specified, let's set it to the whole Samoa.
@@ -81,6 +85,8 @@ function sendFcm(warning, needsAttention){
       warning.area,
       warning.direction
     );
+    // This will prevent the server from sending the FCM message twice or more.
+    Warnings.update({_id: warning._id}, {"$set": {is_user_notified: true}});
   })
 }
 
