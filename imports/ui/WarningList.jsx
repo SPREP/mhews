@@ -1,16 +1,18 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import Avatar from 'material-ui/Avatar';
-import List from 'material-ui/List/List';
-import ListItem from 'material-ui/List/ListItem';
 import Paper from 'material-ui/Paper';
 import IconButton from 'material-ui/IconButton';
 import HighlightOff from 'material-ui/svg-icons/action/highlight-off';
+import {Card, CardHeader} from 'material-ui/Card';
 
 import { createContainer } from 'meteor/react-meteor-data';
 //import i18n from 'i18next';
 
 import {Warnings} from '../api/warnings.js';
+import HeavyRainPage from './HeavyRain.jsx';
+import CyclonePage from './Cyclone.jsx';
+import EarthquakePage from './Earthquake.jsx';
 
 const noWarningKey = "no_warning_in_effect";
 
@@ -65,42 +67,44 @@ export class WarningList extends React.Component {
 
     let itemlist = [];
     if( warnings && warnings.length > 0 ){
-      itemlist =warnings.map((warning) => {
+      itemlist = warnings.map((warning) => {
         const cancelButton = (
           <IconButton onTouchTap={()=>{this.props.cancelWarning(warning.type, warning.bulletinId)}}>
             <HighlightOff />
           </IconButton>
         );
 
-        return (
-          <ListItem
-            key={warning.bulletinId}
-            leftAvatar={this.renderAvatar(warning)}
-            primaryText={this.getWarningSummary(warning)}
-            secondaryText={this.getWarningDetails(warning)}
-            style={getWarningStyle(warning.level)}
-            rightIconButton={isAdmin ? cancelButton : undefined}
-            onTouchTap={()=>{this.renderWarningDetailsPage(warning)}}
-          />
-        );
+        if( warning.type == "heavyRain"){
+          return (<HeavyRainPage {...this.props} phenomena={warning} />);
+        }
+        else if( warning.type == "cyclone"){
+          return (<CyclonePage {...this.props} phenomena={warning} />);
+        }
+        else if( warning.type == "earthquake" || warning.type == "tsunami"){
+          return (<EarthquakePage {...this.props} phenomena={warning} />);
+        }
+        else{
+          console.log("Unknown warning type "+warning.type);
+        }
+
       })
     }
     else{
       itemlist.push(
-        <ListItem
-          key={noWarningKey}
-          leftAvatar={this.renderAvatar()}
-          primaryText={t(noWarningKey)}
-          style={getWarningStyle()}
-        />
+        <Card>
+          <CardHeader
+            key={noWarningKey}
+            avatar={this.renderAvatar()}
+            title={t(noWarningKey)}
+            style={getWarningStyle()}
+          />
+        </Card>
       )
     }
 
     return (
       <Paper zDepth={1}>
-        <List>
-          {itemlist}
-        </List>
+        {itemlist}
       </Paper>
     );
   }

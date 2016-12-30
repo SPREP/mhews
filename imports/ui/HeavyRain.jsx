@@ -2,7 +2,8 @@ import React from 'react';
 import GoogleMap from './GoogleMapJs.jsx';
 import * as GeoUtils from '../api/geoutils.js';
 import * as HazardArea from '../api/hazardArea.js';
-import {Card, CardTitle, CardText} from 'material-ui/Card';
+import {Card, CardHeader, CardMedia, CardText, CardActions} from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -45,13 +46,23 @@ class HeavyRainPage extends React.Component {
 
     if( this.heavyRain ){
       if( this.heavyRain.area ){
+        console.log("render heavyRain");
+
         return(
           <Card>
-            <GoogleMap mapCenter={Samoa.center} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
-              Loading...
-            </GoogleMap>
-            <CardTitle title={"Heavy Rain"+" "+heavyRain.level} subtitle={heavyRain.issued_at.toDateString()} />
-            <CardText>{heavyRain.description_en}</CardText>
+            <CardHeader
+              avatar={Meteor.settings.public.notificationConfig.heavyRain.icon}
+              actAsExpander={true}
+              title={"Heavy Rain"+" "+heavyRain.level}
+              subtitle={moment(heavyRain.issued_at).format("YYYY-MM-DD hh:mm")}
+            />
+            <CardMedia expandable={true}>
+              <GoogleMap mapCenter={Samoa.center} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
+                Loading...
+              </GoogleMap>
+            </CardMedia>
+            <CardText expandable={true}>{heavyRain.description_en}</CardText>
+            {this.props.isAdmin ? this.renderCancelButton() : ""}
           </Card>
         );
       }
@@ -63,6 +74,16 @@ class HeavyRainPage extends React.Component {
     return(
       <p>{"No heavyRain warning is in effect."}</p>
     );
+  }
+
+  renderCancelButton(){
+    const warning = this.props.phenomena;
+
+    return (
+      <CardActions expandable={true}>
+        <FlatButton label="Cancel" onTouchTap={()=>{this.props.cancelWarning(warning.type, warning.bulletinId)}}/>
+      </CardActions>
+    )
   }
 
   handleOnReady(map) {
@@ -89,7 +110,9 @@ class HeavyRainPage extends React.Component {
 }
 
 HeavyRainPage.propTypes = {
-  phenomena: React.PropTypes.object
+  phenomena: React.PropTypes.object,
+  isAdmin: React.PropTypes.bool,
+  cancelWarning: React.PropTypes.func
 }
 
 export default translate(['common'])(HeavyRainPage);

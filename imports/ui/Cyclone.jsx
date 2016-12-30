@@ -1,5 +1,6 @@
 import React from 'react';
-import {Card, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {Card, CardHeader, CardMedia, CardTitle, CardText, CardActions} from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
 import {Warnings} from '../api/warnings.js';
 
 /* i18n */
@@ -42,28 +43,21 @@ class CyclonePage extends React.Component {
 
     return(
       <Card>
+        <CardHeader
+          avatar={Meteor.settings.public.notificationConfig.cyclone.icon}
+          actAsExpander={true}
+          title={issuedAt.toDateString()}
+          subtitle={district}
+          expandable={true}
+        />
         <CardMedia
           overlay={<CardTitle title={title} subtitle={name} />}
+          expandable={true}
           >
           <img src="http://www.samet.gov.ws/TCModule/IDV60001.gif?1477450290515" />
         </CardMedia>
-        <CardTitle title={issuedAt.toDateString()} subtitle={district} />
-        <CardText>{description}</CardText>
-      </Card>
-    );
-  }
-
-  renderNoCyclone(){
-
-    const title = "No Cylone Warning in effect";
-    return(
-      <Card>
-        <CardMedia
-          overlay={<CardTitle title={title} subtitle={name} />}
-          >
-          <img src="images/samoa-6792.jpg" />
-        </CardMedia>
-        <CardText>{"Are you prepared for the food and waters?"}</CardText>
+        <CardText expandable={true}>{description}</CardText>
+        {this.props.isAdmin ? this.renderCancelButton() : ""}
       </Card>
     );
   }
@@ -77,10 +71,22 @@ class CyclonePage extends React.Component {
       return this.renderNoCyclone();
     }
   }
+
+  renderCancelButton(){
+    const warning = this.props.phenomena;
+
+    return (
+      <CardActions expandable={true}>
+        <FlatButton label="Cancel" onTouchTap={()=>{this.props.cancelWarning(warning.type, warning.bulletinId)}}/>
+      </CardActions>
+    )
+  }
 }
 
 CyclonePage.propTypes = {
-  phenomena: React.PropTypes.object
+  phenomena: React.PropTypes.object,
+  isAdmin: React.PropTypes.bool,
+  cancelWarning: React.PropTypes.func
 }
 
 export default translate(['common'])(CyclonePage);

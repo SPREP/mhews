@@ -1,7 +1,8 @@
 import React from 'react';
 import GoogleMap from './GoogleMapJs.jsx';
 import * as GeoUtils from '../api/geoutils.js';
-import {Card, CardTitle, CardText} from 'material-ui/Card';
+import {Card, CardHeader, CardMedia, CardText, CardActions} from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -44,11 +45,19 @@ class EarthquakePage extends React.Component {
 
         return(
           <Card>
-            <GoogleMap mapCenter={quake.epicenter} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
-              Loading...
-            </GoogleMap>
-            <CardTitle title={quake.type+" "+quake.level} subtitle={quake.issued_at.toDateString()}/>
-            <CardText>{quake.description_en}</CardText>
+            <CardHeader
+              avatar={Meteor.settings.public.notificationConfig.earthquake.icon}
+              actAsExpander={true}
+              title={quake.type+" "+quake.level+" (Mw "+quake.mw+")"}
+              subtitle={moment(quake.issued_at).format("YYYY-MM-DD hh:mm")}
+            />
+            <CardMedia expandable={true}>
+              <GoogleMap mapCenter={quake.epicenter} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
+                Loading...
+              </GoogleMap>
+            </CardMedia>
+            <CardText expandable={true}>{quake.description_en}</CardText>
+            {this.props.isAdmin ? this.renderCancelButton() : ""}
           </Card>
         );
       }
@@ -59,6 +68,17 @@ class EarthquakePage extends React.Component {
     return(
       <p>No earthquake / Tsunami warning in effect.</p>
     );
+  }
+
+
+  renderCancelButton(){
+    const warning = this.props.phenomena;
+
+    return (
+      <CardActions expandable={true}>
+        <FlatButton label="Cancel" onTouchTap={()=>{this.props.cancelWarning(warning.type, warning.bulletinId)}}/>
+      </CardActions>
+    )
   }
 
   handleOnReady(map) {
@@ -95,7 +115,9 @@ class EarthquakePage extends React.Component {
 }
 
 EarthquakePage.propTypes = {
-  phenomena: React.PropTypes.object
+  phenomena: React.PropTypes.object,
+  isAdmin: React.PropTypes.bool,
+  cancelWarning: React.PropTypes.func
 }
 
 export default translate(['common'])(EarthquakePage);
