@@ -4,6 +4,10 @@ import React from 'react';
 
 export default class AboutAppPage extends React.Component {
 
+  renderIcon(type){
+    return (<img src={Meteor.settings.public.notificationConfig[type].icon} width="32px" height="32px"/>);
+  }
+
   render(){
     return(
       <div>
@@ -16,6 +20,17 @@ Please visit <a href="#" onClick={()=>{cordova.InAppBrowser.open('http://www.sam
 well as our <a href="#" onClick={()=>{cordova.InAppBrowser.open('https://www.facebook.com/SamoaMeteorologicalServices/', '_system')}}>Facebook page</a>,
 where you can find more about the weather, climate, and geophysics in Samoa.
         </p>
+        <h3>Bulletin types and levels</h3>
+Samoa Meteorology Division issues the following hazard warning bulletins:
+<table>
+  <tr><td>{this.renderIcon("heavyRain")}</td><td>Heavy Rain Warning</td></tr>
+  <tr><td>{this.renderIcon("earthquake")}</td><td>Earthquake Information</td></tr>
+  <tr><td>{this.renderIcon("tsunami")}</td><td>Tsunami Advisory, Watch and Warning</td></tr>
+  <tr><td>{this.renderIcon("cyclone")}</td><td>Cyclone Watch and Warning</td></tr>
+</table>
+
+"Warning" is severer than "Watch", and "Watch" is severer than "Advisory".
+
         <h3>Privacy Policy</h3>
         <p>
 This application does not collect any information that can identify the user of the application.

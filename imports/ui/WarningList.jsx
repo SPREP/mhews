@@ -59,7 +59,6 @@ export class WarningList extends React.Component {
   render(){
     const warnings = this.props.warnings;
     const t = this.props.t;
-    const isAdmin = this.props.isAdmin;
 
     if( this.props.loading ){
       return (<p>{"Loading warning list..."}</p>);
@@ -68,12 +67,6 @@ export class WarningList extends React.Component {
     let itemlist = [];
     if( warnings && warnings.length > 0 ){
       itemlist = warnings.map((warning) => {
-        const cancelButton = (
-          <IconButton onTouchTap={()=>{this.props.cancelWarning(warning.type, warning.bulletinId)}}>
-            <HighlightOff />
-          </IconButton>
-        );
-
         if( warning.type == "heavyRain"){
           return (<HeavyRainPage {...this.props} phenomena={warning} />);
         }
