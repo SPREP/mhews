@@ -93,9 +93,11 @@ class WarningCollection extends Mongo.Collection {
   toFcmMessage(warning, soundFile){
     const title = warning.type + " " + warning.level;
     const body = warning.direction ? warning.area + " " + warning.direction : warning.area;
+    const ttl = 10 * 60; // 10min time to live
     // Destination topics are set by the fcm.js. Don't set "to" here.
     const fcmMessage = {
       "priority": "high",
+      "time_to_live": ttl,
       "notification" : {
         "title" : title,
         "body" : body,
@@ -171,7 +173,7 @@ class WarningCollection extends Mongo.Collection {
       needsAttention = needsAttention && this.isMoreSignificant(newWarning.level, oldWarning.level);
     }
     return needsAttention;
-  }  
+  }
 }
 
 export const Warnings = new WarningCollection("warnings");
