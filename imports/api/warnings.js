@@ -21,7 +21,8 @@ class WarningCollection extends Mongo.Collection {
     if(direction){
       selector.direction = direction;
     }
-    return super.find(selector, {sort: [["issued_at", "desc"]]}).fetch();
+    // Return the Cursor instead of the result.
+    return super.find(selector, {sort: [["issued_at", "desc"]]});
   }
 
   findLatestWarningInEffect(type){
@@ -168,6 +169,9 @@ class WarningCollection extends Mongo.Collection {
   // 2) The same warning remains in effect but the level has raised.
   // (e.g. Raised from Watch to Warning.)
   changeNeedsAttention(newWarning, oldWarning){
+    if( !newWarning.in_effect ){
+      return false;
+    }
     let needsAttention = this.isMoreSignificant(newWarning.level, "advisory");
     if( oldWarning ){
       needsAttention = needsAttention && this.isMoreSignificant(newWarning.level, oldWarning.level);

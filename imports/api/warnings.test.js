@@ -71,7 +71,7 @@ describe('Warnings', function() {
         const anotherWarning = getValidWarning(101);
         anotherWarning.in_effect = false;
         Warnings.insert(anotherWarning);
-        const result = Warnings.findWarningsInEffect("tsunami");
+        const result = Warnings.findWarningsInEffect("tsunami").fetch();
         assert.equal(1, result.length);
         result.forEach(function(w){
           assert.equal(true, w.in_effect);
@@ -82,7 +82,7 @@ describe('Warnings', function() {
         Warnings.insert(warning);
         const anotherWarning = getValidWarning(101);
         Warnings.insert(anotherWarning);
-        const result = Warnings.findWarningsInEffect("tsunami");
+        const result = Warnings.findWarningsInEffect("tsunami").fetch();
         assert.equal(2, result.length);
         result.forEach(function(w){
           assert.equal(true, w.in_effect);

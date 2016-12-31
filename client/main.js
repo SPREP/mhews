@@ -34,7 +34,7 @@ Meteor.startup(() => {
     refresh: 'start', // Refresh to already downloaded code on start (not on resume)
     idleCutoff: 1000 * 60 * 10  // Wait 10 minutes before treating a resume as a start
   });
-  
+
   if( Meteor.isCordova ){
     const fcmInitializer = ()=>{
       initFcmClient((data)=>{
@@ -168,7 +168,7 @@ function handleFcmNotification(fcmData){
   if( !fcmData.wasTapped ){
     // Need to notify the user of the new bulletin.
     if(Warnings.changeNeedsAttention(warning)){
-      playSound(config.sound);
+//      playSound(config.sound);
     }
   }
 }

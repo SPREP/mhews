@@ -13,8 +13,29 @@ import {Warnings} from '../api/warnings.js';
 import HeavyRainPage from './HeavyRain.jsx';
 import CyclonePage from './Cyclone.jsx';
 import EarthquakePage from './Earthquake.jsx';
+import {playSound} from '../api/mediautils.js';
 
 const noWarningKey = "no_warning_in_effect";
+
+Meteor.startup(()=>{
+  // Observe the warnings collection and play the sound effect
+  Warnings.findWarningsInEffect().observe({
+    added: (warning)=>{
+      console.log("observe.added");
+      playSoundEffect(warning);
+    },
+    changed: (warning)=>{
+      console.log("observe.changed");
+      playSoundEffect(warning);
+    },
+    removed: (warning)=>{
+      console.log("observe.removed");
+      warning.in_effect = false;
+      playSoundEffect(warning);
+    }
+  });
+
+});
 
 export class WarningList extends React.Component {
 
@@ -144,12 +165,29 @@ function cancelWarning(type, bulletinId){
   });
 }
 
+function playSoundEffect(warning, oldWarning){
+  console.log("WarningList.playSoundEffect()");
+
+  const config = Meteor.settings.public.notificationConfig[warning.type];
+  if( !config ){
+    console.error("Unknown hazard type "+warning.type);
+    return;
+  }
+  if(Warnings.changeNeedsAttention(warning, oldWarning)){
+    playSound(config.sound);
+  }
+  else{
+    playSound("general_warning.mp3");
+  }
+}
+
 const WarningListContainer = createContainer(({t, handles})=>{
   const handle = handles["warnings"];
   if( !handle ){
     console.error("handle for warnings was not given!");
     return;
   }
+
   const loading = !handle.ready();
   const isAdmin = !Meteor.isCordova; // FIXME This is not at all correct logic (^^;
 
@@ -157,7 +195,7 @@ const WarningListContainer = createContainer(({t, handles})=>{
     loading,
     t,
     isAdmin,
-    warnings: loading? null : Warnings.findWarningsInEffect(),
+    warnings: loading? null : Warnings.findWarningsInEffect().fetch(),
     cancelWarning
   }
 
