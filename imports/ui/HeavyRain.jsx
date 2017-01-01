@@ -2,8 +2,7 @@ import React from 'react';
 import GoogleMap from './GoogleMapJs.jsx';
 import * as GeoUtils from '../api/geoutils.js';
 import * as HazardArea from '../api/hazardArea.js';
-import {Card, CardHeader, CardMedia, CardText, CardActions} from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
+import HazardView from './HazardView.jsx';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -48,22 +47,20 @@ class HeavyRainPage extends React.Component {
       if( this.heavyRain.area ){
         console.log("render heavyRain");
 
+        const onCancelCallback = this.props.isAdmin ? ()=>{this.props.cancelWarning(heavyRain.type, heavyRain.bulletinId)} : undefined;
+
         return(
-          <Card>
-            <CardHeader
-              avatar={Meteor.settings.public.notificationConfig.heavyRain.icon}
-              actAsExpander={true}
-              title={"Heavy Rain"+" "+heavyRain.level}
-              subtitle={moment(heavyRain.issued_at).format("YYYY-MM-DD hh:mm")}
-            />
-            <CardMedia expandable={true}>
-              <GoogleMap mapCenter={Samoa.center} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
-                Loading...
-              </GoogleMap>
-            </CardMedia>
-            <CardText expandable={true}>{heavyRain.description_en}</CardText>
-            {this.props.isAdmin ? this.renderCancelButton() : ""}
-          </Card>
+          <HazardView
+            avatar={Meteor.settings.public.notificationConfig.heavyRain.icon}
+            headerTitle={"Heavy Rain"+" "+heavyRain.level}
+            headerSubTitle={moment(heavyRain.issued_at).format("YYYY-MM-DD hh:mm")}
+            description={heavyRain.description_en}
+            onCancel={onCancelCallback}
+            >
+            <GoogleMap mapCenter={Samoa.center} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
+              Loading...
+            </GoogleMap>
+          </HazardView>
         );
       }
       else{
@@ -74,16 +71,6 @@ class HeavyRainPage extends React.Component {
     return(
       <p>{"No heavyRain warning is in effect."}</p>
     );
-  }
-
-  renderCancelButton(){
-    const warning = this.props.phenomena;
-
-    return (
-      <CardActions expandable={true}>
-        <FlatButton label="Cancel" onTouchTap={()=>{this.props.cancelWarning(warning.type, warning.bulletinId)}}/>
-      </CardActions>
-    )
   }
 
   handleOnReady(map) {

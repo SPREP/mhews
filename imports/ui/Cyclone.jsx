@@ -1,7 +1,6 @@
 import React from 'react';
-import {Card, CardHeader, CardMedia, CardTitle, CardText, CardActions} from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
 import {Warnings} from '../api/warnings.js';
+import HazardView from './HazardView.jsx';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -41,24 +40,19 @@ class CyclonePage extends React.Component {
     const issuedAt = cyclone.issuedAt;
     const title = "Category " + cyclone.category + " " + cyclone.warningLevel;
 
+    const onCancelCallback = this.props.isAdmin ? ()=>{this.props.cancelWarning(cyclone.type, cyclone.bulletinId)} : undefined;
+
     return(
-      <Card>
-        <CardHeader
-          avatar={Meteor.settings.public.notificationConfig.cyclone.icon}
-          actAsExpander={true}
-          title={issuedAt.toDateString()}
-          subtitle={district}
-          expandable={true}
-        />
-        <CardMedia
-          overlay={<CardTitle title={title} subtitle={name} />}
-          expandable={true}
-          >
-          <img src="http://www.samet.gov.ws/TCModule/IDV60001.gif?1477450290515" />
-        </CardMedia>
-        <CardText expandable={true}>{description}</CardText>
-        {this.props.isAdmin ? this.renderCancelButton() : ""}
-      </Card>
+      <HazardView
+        avatar={Meteor.settings.public.notificationConfig.cyclone.icon}
+        headerTitle={issuedAt.toDateString()}
+        headerSubTitle={district}
+        overlayTitle={title}
+        overlaySubTitle={name}
+        description={description}
+        onCancel={onCancelCallback}>
+        <img src="http://www.samet.gov.ws/TCModule/IDV60001.gif?1477450290515" />
+      </HazardView>
     );
   }
 
@@ -70,16 +64,6 @@ class CyclonePage extends React.Component {
     else{
       return this.renderNoCyclone();
     }
-  }
-
-  renderCancelButton(){
-    const warning = this.props.phenomena;
-
-    return (
-      <CardActions expandable={true}>
-        <FlatButton label="Cancel" onTouchTap={()=>{this.props.cancelWarning(warning.type, warning.bulletinId)}}/>
-      </CardActions>
-    )
   }
 }
 

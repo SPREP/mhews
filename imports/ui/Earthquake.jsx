@@ -1,8 +1,7 @@
 import React from 'react';
 import GoogleMap from './GoogleMapJs.jsx';
 import * as GeoUtils from '../api/geoutils.js';
-import {Card, CardHeader, CardMedia, CardText, CardActions} from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
+import HazardView from './HazardView.jsx';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -43,22 +42,20 @@ class EarthquakePage extends React.Component {
         const diameterKm = radiusKm * 2;
         this.zoom = GeoUtils.getZoomLevel(diameterKm * 1.5) - 2; // -2 is an ugly hack to adjust the zoom leve.
 
+        const onCancelCallback = this.props.isAdmin ? ()=>{this.props.cancelWarning(quake.type, quake.bulletinId)} : undefined;
+
         return(
-          <Card>
-            <CardHeader
-              avatar={Meteor.settings.public.notificationConfig.earthquake.icon}
-              actAsExpander={true}
-              title={quake.type+" "+quake.level+" (Mw "+quake.mw+")"}
-              subtitle={moment(quake.issued_at).format("YYYY-MM-DD hh:mm")}
-            />
-            <CardMedia expandable={true}>
-              <GoogleMap mapCenter={quake.epicenter} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
-                Loading...
-              </GoogleMap>
-            </CardMedia>
-            <CardText expandable={true}>{quake.description_en}</CardText>
-            {this.props.isAdmin ? this.renderCancelButton() : ""}
-          </Card>
+          <HazardView
+            avatar={Meteor.settings.public.notificationConfig.earthquake.icon}
+            headerTitle={quake.type+" "+quake.level+" (Mw "+quake.mw+")"}
+            headerSubTitle={moment(quake.issued_at).format("YYYY-MM-DD hh:mm")}
+            description={quake.description_en}
+            onCancel={onCancelCallback}>
+            <GoogleMap mapCenter={quake.epicenter} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
+              Loading...
+            </GoogleMap>
+          </HazardView>
+
         );
       }
       else{
@@ -68,17 +65,6 @@ class EarthquakePage extends React.Component {
     return(
       <p>No earthquake / Tsunami warning in effect.</p>
     );
-  }
-
-
-  renderCancelButton(){
-    const warning = this.props.phenomena;
-
-    return (
-      <CardActions expandable={true}>
-        <FlatButton label="Cancel" onTouchTap={()=>{this.props.cancelWarning(warning.type, warning.bulletinId)}}/>
-      </CardActions>
-    )
   }
 
   handleOnReady(map) {
