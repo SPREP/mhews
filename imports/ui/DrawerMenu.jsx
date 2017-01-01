@@ -52,15 +52,13 @@ class DrawerMenu extends React.Component {
       );
     }
 
-    return React.createElement(
-      Drawer,
-      {
-        docked: false,
-        open: this.props.drawerOpen,
-        onRequestChange: this.props.onRequestChange
-      },
-      children
-    );
+    return (
+      <Drawer
+        docked={false}
+        open={this.props.drawerOpen}
+        onRequestChange={this.props.onRequestChange}>
+        {children}
+      </Drawer>)
 
   }
 }
