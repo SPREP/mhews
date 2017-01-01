@@ -318,21 +318,12 @@ class App extends React.Component {
 }
 
 App.propTypes = {
-  handles: React.PropTypes.object,
   t: React.PropTypes.func,
   connected: React.PropTypes.bool,
   softwareUpdateAvailable: React.PropTypes.bool
 }
 
 const AppContainer = createContainer(({t})=>{
-
-  const handles = {};
-
-  // To receive the data from the warnings collection
-  handles.warnings = Meteor.subscribe('warnings');
-
-  // To receive the data from the cycloneBulletin collection
-  handles.cycloneBulletin = Meteor.subscribe('cycloneBulletins');
 
   Tracker.autorun(()=>{
     if( quitAppVar.get() == true ){
@@ -341,7 +332,6 @@ const AppContainer = createContainer(({t})=>{
   })
 
   return {
-    handles,
     t,
     connected: Meteor.status().connected,
     softwareUpdateAvailable: false

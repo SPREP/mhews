@@ -1,7 +1,5 @@
 import React from 'react';
 import {Card, CardHeader, CardActions, CardMedia, CardTitle, CardText} from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
-import i18n from 'i18next';
 import { createContainer } from 'meteor/react-meteor-data';
 import SwipeableViews from 'react-swipeable-views';
 
@@ -66,32 +64,27 @@ export class WeatherPage extends React.Component {
   renderSituation(situation){
     const cardTitle = (<CardTitle title="Situation" subtitle={situation} />);
 
-//    if( this.props.connected ){
-      if( this.state.displayCardMediaTitle ){
-        return (
-          <CardMedia
-            overlay={cardTitle}
-            expandable={true}
-            onTouchTap={()=>{this.toggleDisplayCardMediaTitle()}}>
-            <img src={surfaceChartUrl} />
-          </CardMedia>
-        );
+    if( this.state.displayCardMediaTitle ){
+      return (
+        <CardMedia
+          overlay={cardTitle}
+          expandable={true}
+          onTouchTap={()=>{this.toggleDisplayCardMediaTitle()}}>
+          <img src={surfaceChartUrl} />
+        </CardMedia>
+      );
 
-      }
-      else{
-        return (
-          <CardMedia
-            expandable={true}
-            onTouchTap={()=>{this.toggleDisplayCardMediaTitle()}}>
-            <img src={surfaceChartHandler.getSource()} />
-          </CardMedia>
-        );
+    }
+    else{
+      return (
+        <CardMedia
+          expandable={true}
+          onTouchTap={()=>{this.toggleDisplayCardMediaTitle()}}>
+          <img src={surfaceChartHandler.getSource()} />
+        </CardMedia>
+      );
 
-      }
-//    }
-//    else{
-//      return cardTitle;
-//    }
+    }
   }
 
   toggleDisplayCardMediaTitle(){
@@ -105,7 +98,6 @@ export class WeatherPage extends React.Component {
     const displayDate = this.getDisplayDate(dates);
     const displayDateIndex = displayDate ? dates.indexOf(displayDate) : 0;
     const district = this.props.district;
-    const compact = this.props.compact;
     const subtitle = this.props.t("district."+district);
 
     // The Weather card expands/shrinks when the CardText is tapped.
@@ -217,25 +209,16 @@ WeatherPage.propTypes = {
   forecast: React.PropTypes.object,
   district: React.PropTypes.string,
   t: React.PropTypes.func,
-  compact: React.PropTypes.bool,
   connected: React.PropTypes.bool
 }
 
-const WeatherPageContainer = createContainer(({t, compact})=>{
-  const district = Preferences.load("district");
-  const language = i18n.language;
-
-//  Tracker.autorun(()=>{
-//    if( Meteor.status().connected ){
-//      preloadSurfaceChart();
-//    }
-//  });
+const WeatherPageContainer = createContainer(({t})=>{
+  const language = Preferences.load("language");
 
   return {
     t,
-    district,
+    district: Preferences.load("district"),
     forecast: WeatherForecasts.getLatestForecast(language),
-    compact,
     connected: Meteor.status().connected
   }
 }, WeatherPage);

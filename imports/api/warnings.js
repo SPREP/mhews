@@ -53,12 +53,26 @@ class WarningCollection extends Mongo.Collection {
     return super.findOne(selector);
   }
 
-  cancelWarning(warning){
-    check(warning, Object);
-    check(warning.bulletinId, Number);
-
-    let selector = {type: warning.type, bulletinId: warning.bulletinId, in_effect: true};
-    super.update(selector, {"$set": {in_effect: false}});
+  cancelWarning(type, bulletinId){
+    check(type, String);
+    check(bulletinId, String);
+    
+    if( Meteor.isServer ){
+      let selector = {type: type, bulletinId: bulletinId, in_effect: true};
+      super.update(selector, {"$set": {in_effect: false}});
+    }
+    else{
+      // Remote call from a client
+      Meteor.call("cancelWarning", type, bulletinId, (err, res)=>{
+        if( err ){
+          console.log("cancelWarning remote call failed.");
+          console.log(JSON.stringify(err));
+        }
+        if( res ){
+          console.log(JSON.stringify(res));
+        }
+      });
+    }
   }
 
   insert(warning){

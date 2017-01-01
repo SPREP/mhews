@@ -10,7 +10,7 @@ Meteor.startup(() => {
   Meteor.methods({
     publishWeatherForecast: publishWeatherForecast,
     publishWarning: publishWarning,
-    cancelWarning: cancelWarning
+    cancelWarning: Warnings.cancelWarning
   });
 
   startPublishingWarnings();
@@ -171,15 +171,6 @@ function publishWarning(warning){
     // from the warning bulletin to be cancelled.
     return Warnings.cancelWarning(warning);
   }
-}
-
-function cancelWarning(type, bulletinId){
-  const warning = Warnings.findOne({type: type, bulletinId: bulletinId, in_effect: true});
-  if( warning ){
-    Warnings.cancelWarning(warning);
-    return true;
-  }
-  return false;
 }
 
 function publishWeatherForecast(forecast){

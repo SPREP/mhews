@@ -9,24 +9,23 @@ import {Preferences} from '../imports/api/preferences.js';
 import AppContainer, {phenomenaVar} from '../imports/ui/App.jsx';
 import { createContainer } from 'meteor/react-meteor-data';
 
-/* i18n */
-import { I18nextProvider } from 'react-i18next';
-import i18nConfig from '../imports/api/i18n.js';
-import i18n from 'i18next';
-
 import {initFcmClient} from '../imports/api/fcm.js';
 import {Warnings} from '../imports/api/warnings.js';
-import {playSound} from '../imports/api/mediautils.js';
 
 /* This plugin captures the tap event in React. */
 import injectTapEventPlugin from 'react-tap-event-plugin';
+
+import i18n from 'i18next';
+import { I18nextProvider } from 'react-i18next';
+
+// startup code of the client
+import '../imports/startup/client/init.js';
 
 /* global Reloader */
 
 Meteor.startup(() => {
   console.log("Meteor.startup() -- ");
 
-  i18n.init(i18nConfig);
   renderApp();
 
   Reloader.configure({
@@ -79,19 +78,15 @@ function renderApp(){
 
 class AppInitializer extends React.Component {
 
-  constructor(props){
-    super(props);
-    this.state = {appInitialized: props.appInitialized};
-  }
-
   render(){
-    console.log("AppInitializer.render() - loaded = "+this.props.loaded + ", appInitialized = "+this.state.appInitialized);
+    console.log("AppInitializer.render() - loaded = "+this.props.loaded+" appInitialized = "+this.props.appInitialized);
 
     if( !this.props.loaded ){
-      return (<p>Loading preferences...</p>);
+      return (<p>Loading data...</p>);
     }
     else {
-      const appInitialized = Preferences.load("appInitialized") || this.state.appInitialized;
+      // If this.props.loaded is true, appInitialized should've been able to load.
+      const appInitialized = this.props.appInitialized;
 
       return (
         <I18nextProvider i18n={ i18n }>
@@ -108,7 +103,6 @@ class AppInitializer extends React.Component {
       <InitPageContainer {...this.props} onFinished={()=>{
         console.log("InitPageContainer.onFinished()");
         Preferences.save("appInitialized", true);
-        this.appInitialized();
       }}
     />);
   }
@@ -118,10 +112,6 @@ class AppInitializer extends React.Component {
       <AppContainer {...this.props} />
     );
   }
-
-  appInitialized(){
-    this.setState({appInitialized: true});
-  }
 }
 
 AppInitializer.propTypes = {
@@ -129,26 +119,13 @@ AppInitializer.propTypes = {
   appInitialized: React.PropTypes.bool
 }
 
-const prefLoaded = new ReactiveVar(false);
-
 const AppInitializerContainer = createContainer(()=>{
   if( Meteor.isCordova ){
     navigator.splashscreen.hide();
   }
-  Meteor.defer(()=>{
-    Preferences.init();
-  });
-
-  // FIXME Better way to catch this event??
-  const intervalId = setInterval(()=>{
-    if( Preferences.isLoaded()){
-      prefLoaded.set(true);
-      clearInterval(intervalId);
-    }
-  }, 100);
 
   return {
-    loaded: prefLoaded.get(),
+    loaded: Preferences.isLoaded(),
     appInitialized: Preferences.load("appInitialized")
   }
 

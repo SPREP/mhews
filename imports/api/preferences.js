@@ -1,26 +1,44 @@
 /* global Ground */
 
+const keys = ["language", "district", "appInitialized"];
+
 class PreferencesClass {
 
-  init(){
-    if( !this.collection ){
-      this.collection = new Ground.Collection("preferences");
-    }
+  constructor(){
+    this.cache = {};
+    keys.forEach((key)=>{
+      this.cache[key] = new ReactiveVar(undefined);
+    });
+    this.collection = new Ground.Collection("preferences");
+    this.collection.find({}).observe({
+      added: ({key, value})=>{this.cache[key].set(value)},
+      changed: ({key, value})=>{this.cache[key].set(value)},
+      removed: ({key})=>{this.cache[key].set(undefined)}
+    });
+    this.loaded = new ReactiveVar(false);
+
+    // FIXME Better way to catch this event??
+    const intervalId = setInterval(()=>{
+      if(this.collection.isLoaded){
+        this.loaded.set(true);
+        clearInterval(intervalId);
+      }
+    }, 100);
   }
 
   save(key, value){
+    check(key, Match.OneOf(...keys));
     this.collection.upsert({key: key}, {key: key, value: value});
   }
 
+  // Reactive function to return the latest value for the key
+  // TODO Rename this to "get"
   load(key){
-    if( !this.collection ) return undefined;
-
-    const keyValue = this.collection.findOne({key: key});
-    return keyValue ? keyValue.value: undefined;
+    return this.cache[key].get();
   }
 
   isLoaded(){
-    return this.collection ? this.collection.isLoaded : false;
+    return this.loaded.get();
   }
 }
 

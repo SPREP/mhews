@@ -2,8 +2,6 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import Avatar from 'material-ui/Avatar';
 import Paper from 'material-ui/Paper';
-import IconButton from 'material-ui/IconButton';
-import HighlightOff from 'material-ui/svg-icons/action/highlight-off';
 import {Card, CardHeader} from 'material-ui/Card';
 
 import { createContainer } from 'meteor/react-meteor-data';
@@ -13,29 +11,8 @@ import {Warnings} from '../api/warnings.js';
 import HeavyRainPage from './HeavyRain.jsx';
 import CyclonePage from './Cyclone.jsx';
 import EarthquakePage from './Earthquake.jsx';
-import {playSound} from '../api/mediautils.js';
 
 const noWarningKey = "no_warning_in_effect";
-
-Meteor.startup(()=>{
-  // Observe the warnings collection and play the sound effect
-  Warnings.findWarningsInEffect().observe({
-    added: (warning)=>{
-      console.log("observe.added");
-      playSoundEffect(warning);
-    },
-    changed: (warning)=>{
-      console.log("observe.changed");
-      playSoundEffect(warning);
-    },
-    removed: (warning)=>{
-      console.log("observe.removed");
-      warning.in_effect = false;
-      playSoundEffect(warning);
-    }
-  });
-
-});
 
 export class WarningList extends React.Component {
 
@@ -80,10 +57,6 @@ export class WarningList extends React.Component {
   render(){
     const warnings = this.props.warnings;
     const t = this.props.t;
-
-    if( this.props.loading ){
-      return (<p>{"Loading warning list..."}</p>);
-    }
 
     let itemlist = [];
     if( warnings && warnings.length > 0 ){
@@ -144,7 +117,6 @@ function getWarningStyle(level){
 }
 
 WarningList.propTypes = {
-  loading: React.PropTypes.bool,
   warnings: React.PropTypes.array,
   t: React.PropTypes.func,
   isAdmin: React.PropTypes.bool,
@@ -152,50 +124,14 @@ WarningList.propTypes = {
   onPageSelection: React.PropTypes.func
 }
 
-function cancelWarning(type, bulletinId){
-  Meteor.call("cancelWarning", type, bulletinId, (err, res)=>{
-    if( err ){
-      console.log("cancelWarning remote call failed.");
-      console.log(JSON.stringify(err));
-    }
-    if( res ){
-      console.log(JSON.stringify(res));
-    }
-  });
-}
-
-function playSoundEffect(warning, oldWarning){
-  console.log("WarningList.playSoundEffect()");
-
-  const config = Meteor.settings.public.notificationConfig[warning.type];
-  if( !config ){
-    console.error("Unknown hazard type "+warning.type);
-    return;
-  }
-  if(Warnings.changeNeedsAttention(warning, oldWarning)){
-    playSound(config.sound);
-  }
-  else{
-    playSound("general_warning.mp3");
-  }
-}
-
-const WarningListContainer = createContainer(({t, handles})=>{
-  const handle = handles["warnings"];
-  if( !handle ){
-    console.error("handle for warnings was not given!");
-    return;
-  }
-
-  const loading = !handle.ready();
+const WarningListContainer = createContainer(({t})=>{
   const isAdmin = !Meteor.isCordova; // FIXME This is not at all correct logic (^^;
 
   return {
-    loading,
     t,
     isAdmin,
-    warnings: loading? null : Warnings.findWarningsInEffect().fetch(),
-    cancelWarning
+    warnings: Warnings.findWarningsInEffect().fetch(),
+    cancelWarning: Warnings.cancelWarning
   }
 
 }, WarningList);

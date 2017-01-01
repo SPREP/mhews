@@ -67,7 +67,7 @@ class BulletinCollection extends Mongo.Collection{
       return;
     }
     Warnings.find({in_effect: true, bulletinId: bulletinId}).forEach((warning)=>{
-      Warnings.cancelWarning(warning);
+      Warnings.cancelWarning(warning.type, bulletinId);
     })
     this.update({id: bulletinId}, {"$set": {in_effect: false}});
   }

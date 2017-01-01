@@ -4,7 +4,6 @@ import Subheader from 'material-ui/Subheader';
 import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
-import i18n from 'i18next';
 import { createContainer } from 'meteor/react-meteor-data';
 import {Preferences} from '../api/preferences.js';
 
@@ -15,6 +14,8 @@ const districts = [
   "savaii-northwest",
   "savaii-south"
 ];
+
+const topPageName = Meteor.settings.public.topPage;
 
 class PreferencesPage extends React.Component {
 
@@ -76,13 +77,7 @@ class PreferencesPage extends React.Component {
   savePreferences(){
     this.savePreference("language", this.selectedLanguage);
     this.savePreference("district", this.selectedDistrict);
-
-    i18n.changeLanguage(this.selectedLanguage, (error, _t) => {
-      if( error ){
-        console.error(error);
-      }
-    })
-
+    this.props.onPageSelection(topPageName);
   }
 
   savePreference(key, value){
@@ -98,25 +93,16 @@ class PreferencesPage extends React.Component {
 PreferencesPage.propTypes = {
   language: React.PropTypes.string,
   district: React.PropTypes.string,
-  t: React.PropTypes.func
+  t: React.PropTypes.func,
+  onPageSelection: React.PropTypes.func
 }
 
-const PreferencesPageContainer = createContainer(() => {
-  let district;
-  let language;
-
-  if( Preferences ){
-    district = Preferences.load("district") || "";
-    language = Preferences.load("language") || "";
-  }
-  else{
-    console.error("Preferences local collection is not defined!!");
-    // TODO show an error message to the user.
-  }
-
+const PreferencesPageContainer = createContainer(({t, onPageSelection}) => {
   return {
-    language,
-    district
+    language: Preferences.load("language"),
+    district: Preferences.load("district"),
+    t,
+    onPageSelection
   }
 
 }, PreferencesPage);

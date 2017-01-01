@@ -177,7 +177,6 @@ const InitPageContainer = createContainer(({onFinished, t})=>{
     handleFinished: ()=>{
       const language = selectedLanguage.get();
       Preferences.save("language", language);
-      i18n.changeLanguage(language);
       Preferences.save("district", selectedDistrict.get());
       onFinished();
     },
