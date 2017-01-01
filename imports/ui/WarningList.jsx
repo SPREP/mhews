@@ -89,13 +89,13 @@ export class WarningList extends React.Component {
     if( warnings && warnings.length > 0 ){
       itemlist = warnings.map((warning) => {
         if( warning.type == "heavyRain"){
-          return (<HeavyRainPage {...this.props} phenomena={warning} />);
+          return (<HeavyRainPage {...this.props} key={warning._id} phenomena={warning} />);
         }
         else if( warning.type == "cyclone"){
-          return (<CyclonePage {...this.props} phenomena={warning} />);
+          return (<CyclonePage {...this.props} key={warning._id} phenomena={warning} />);
         }
         else if( warning.type == "earthquake" || warning.type == "tsunami"){
-          return (<EarthquakePage {...this.props} phenomena={warning} />);
+          return (<EarthquakePage {...this.props} key={warning._id} phenomena={warning} />);
         }
         else{
           console.log("Unknown warning type "+warning.type);
@@ -105,9 +105,8 @@ export class WarningList extends React.Component {
     }
     else{
       itemlist.push(
-        <Card>
+        <Card key={noWarningKey}>
           <CardHeader
-            key={noWarningKey}
             avatar={this.renderAvatar()}
             title={t(noWarningKey)}
             style={getWarningStyle()}

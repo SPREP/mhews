@@ -1,12 +1,26 @@
 /* global Ground */
 import { Mongo } from 'meteor/mongo';
 
-const MongoWeatherForecasts = new Mongo.Collection("weatherForecast");
+const collectionName = "weatherForecast";
+
+const MongoWeatherForecasts = new Mongo.Collection(collectionName);
 
 let GroundWeatherForecasts;
+
 if( Meteor.isClient ){
   GroundWeatherForecasts = new Ground.Collection("groundWeatherForecast");
-  GroundWeatherForecasts.observeSource(MongoWeatherForecasts.find());
+  const mongoCursor = MongoWeatherForecasts.find();
+  GroundWeatherForecasts.observeSource(mongoCursor);
+
+  Meteor.startup(()=>{
+
+    // To receive the data from the weatherForecast collection
+    Meteor.subscribe(collectionName, ()=>{
+      // Remove all documents not in current subscription
+      console.log("Calling ground.keep()");
+      GroundWeatherForecasts.keep(mongoCursor);
+    });
+  });
 }
 
 export const WeatherForecasts = Meteor.isClient ? GroundWeatherForecasts : MongoWeatherForecasts;

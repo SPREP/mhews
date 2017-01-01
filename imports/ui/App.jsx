@@ -327,8 +327,6 @@ App.propTypes = {
 const AppContainer = createContainer(({t})=>{
 
   const handles = {};
-  // To receive the data from the weatherForecast collection
-  handles.weatherForecast = Meteor.subscribe('weatherForecast');
 
   // To receive the data from the warnings collection
   handles.warnings = Meteor.subscribe('warnings');

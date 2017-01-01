@@ -8,11 +8,42 @@ import SwipeableViews from 'react-swipeable-views';
 import {WeatherForecasts} from '../api/weather.js';
 import {Preferences} from '../api/preferences.js';
 
+import FileCache from '../api/client/filecache.js';
+
 const Months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 const WeekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const surfaceChartUrl = "http://www.samet.gov.ws/images/surface_chart/latest_compact.png";
+
+let surfaceChartHandler;
+
+let forecastCursor;
+
+Meteor.startup(()=>{
+  surfaceChartHandler = FileCache.add(surfaceChartUrl);
+  startObservingWeatherForecast();
+});
+
+// Trigger downloading the surface chart when the weather forecast is updated.
+// This assumes that the surface chart is updated before the forecast is published.
+// (Assumption on the SMD's workflow)
+function refreshSurfaceChart(forecast){
+  console.log("refreshSurfaceChart() for "+forecast._id);
+  if( surfaceChartHandler ){
+    surfaceChartHandler.refresh();
+  }
+}
+
+function startObservingWeatherForecast(){
+  console.log("startObservingWeatherForecast()");
+//  const lng = Preferences.load("language");
+
+  forecastCursor = WeatherForecasts.find({lang: "en", in_effect: true});
+  forecastCursor.observe({
+    added: (forecast)=>{refreshSurfaceChart(forecast)}
+  });
+}
 
 /**
 * This page should show the latest weather forecast.
@@ -35,7 +66,7 @@ export class WeatherPage extends React.Component {
   renderSituation(situation){
     const cardTitle = (<CardTitle title="Situation" subtitle={situation} />);
 
-    if( this.props.connected ){
+//    if( this.props.connected ){
       if( this.state.displayCardMediaTitle ){
         return (
           <CardMedia
@@ -52,15 +83,15 @@ export class WeatherPage extends React.Component {
           <CardMedia
             expandable={true}
             onTouchTap={()=>{this.toggleDisplayCardMediaTitle()}}>
-            <img src={surfaceChartUrl} />
+            <img src={surfaceChartHandler.getSource()} />
           </CardMedia>
         );
 
       }
-    }
-    else{
-      return cardTitle;
-    }
+//    }
+//    else{
+//      return cardTitle;
+//    }
   }
 
   toggleDisplayCardMediaTitle(){
@@ -100,7 +131,7 @@ export class WeatherPage extends React.Component {
 
               return (
                 <div key={this.dateToString(date)}>
-                  <CardTitle                    
+                  <CardTitle
                     title={this.dateToString(date)}
                     titleStyle={{"fontSize": "14pt"}}
                     subtitle={subtitle}
@@ -182,16 +213,6 @@ export class WeatherPage extends React.Component {
   }
 }
 
-let surfaceChartHolder;
-
-function preloadSurfaceChart(){
-  surfaceChartHolder = new Image();
-  surfaceChartHolder.onload = ()=>{
-    console.log("Preloaded the surface chart.");
-  };
-  surfaceChartHolder.src = surfaceChartUrl;
-}
-
 WeatherPage.propTypes = {
   forecast: React.PropTypes.object,
   district: React.PropTypes.string,
@@ -200,20 +221,15 @@ WeatherPage.propTypes = {
   connected: React.PropTypes.bool
 }
 
-const WeatherPageContainer = createContainer(({t, handles, compact})=>{
-  const handle = handles["weatherForecast"];
-  if( !handle ){
-    console.error("handle for weatherForecast was not given!");
-    return;
-  }
+const WeatherPageContainer = createContainer(({t, compact})=>{
   const district = Preferences.load("district");
   const language = i18n.language;
 
-  Tracker.autorun(()=>{
-    if( Meteor.status().connected ){
-      preloadSurfaceChart();
-    }
-  });
+//  Tracker.autorun(()=>{
+//    if( Meteor.status().connected ){
+//      preloadSurfaceChart();
+//    }
+//  });
 
   return {
     t,
