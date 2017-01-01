@@ -3,6 +3,7 @@ import md5 from "blueimp-md5";
 /* global Ground */
 /* global LocalFileSystem */
 /* global FileTransfer */
+/* global WebAppLocalServer */
 
 // Cache specified files for the offline use
 class FileCacheClass {
@@ -79,7 +80,7 @@ class FileCacheHandle {
         path,
         (entry)=>{
           console.log("Downloaded: "+this.url+" to "+entry.toURL());
-          this.source.set(path);
+          this.source.set(WebAppLocalServer.localFileSystemUrl(path));
           FileCache.onDownload(this.url, path);
           this.downloading = false;
         },
