@@ -4,7 +4,7 @@ import { createContainer } from 'meteor/react-meteor-data';
 import SwipeableViews from 'react-swipeable-views';
 
 import {WeatherForecasts} from '../api/weather.js';
-import {Preferences} from '../api/preferences.js';
+import {Preferences} from '../api/client/preferences.js';
 
 import FileCache from '../api/client/filecache.js';
 

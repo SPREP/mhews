@@ -9,9 +9,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 
-import i18n from 'i18next';
 import { createContainer } from 'meteor/react-meteor-data';
-import {Preferences} from '../api/preferences.js';
+import {Preferences} from '../api/client/preferences.js';
 
 const districts = [
   "upolu-north-northwest",

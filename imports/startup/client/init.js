@@ -1,6 +1,6 @@
 import {Warnings} from '../../api/warnings.js';
-import {Preferences} from '../../api/preferences.js';
-import {playSound} from '../../api/mediautils.js';
+import {Preferences} from '../../api/client/preferences.js';
+import {playSound} from '../../api/client/mediautils.js';
 import {WeatherForecasts} from '../../api/weather.js';
 
 /* i18n */

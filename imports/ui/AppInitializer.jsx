@@ -2,7 +2,7 @@ import React from 'react';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import InitPageContainer from './InitPage.jsx';
-import {Preferences} from '../api/preferences.js';
+import {Preferences} from '../api/client/preferences.js';
 
 import AppContainer from './App.jsx';
 import { createContainer } from 'meteor/react-meteor-data';

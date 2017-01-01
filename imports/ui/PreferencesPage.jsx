@@ -5,7 +5,7 @@ import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import { createContainer } from 'meteor/react-meteor-data';
-import {Preferences} from '../api/preferences.js';
+import {Preferences} from '../api/client/preferences.js';
 
 const districts = [
   "upolu-north-northwest",

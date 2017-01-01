@@ -5,148 +5,25 @@ import { Meteor } from 'meteor/meteor';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
-import MenuItem from 'material-ui/MenuItem';
-import Drawer from 'material-ui/Drawer';
 import Snackbar from 'material-ui/Snackbar';
 import Dialog from 'material-ui/Dialog';
 import MenuIcon from 'material-ui/svg-icons/navigation/menu';
-import CloseIcon from 'material-ui/svg-icons/navigation/close';
 
 /* i18n */
 import { translate } from 'react-i18next';
 
 /* Imports the mhews's components */
-import {getReactComponentByName} from '../api/componentHelper.js';
 import { createContainer } from 'meteor/react-meteor-data';
+import SwitchableContentContainer from './SwitchableContent.jsx';
+import DrawerMenu from './DrawerMenu.jsx';
+import {quitApp} from '../api/client/appcontrol.js';
 
 /* global navigator */
-
-// Function commonly used by the App and SwitchableContent
-function getPageConfig(page){
-  const config = Meteor.settings.public.pages[page];
-  config.key = page;
-  return config;
-}
-
-class DrawerMenu extends React.Component {
-  constructor(props){
-    super(props);
-  }
-
-  render(){
-    console.log("DrawMenu.render()");
-
-    const menu = Meteor.settings.public.menu;
-    const pages = Meteor.settings.public.pages;
-
-    const children = menu.map((pageName) => {
-      const page = pages[pageName];
-      const title = page.title;
-      const icon = React.createElement(getReactComponentByName(page.icon));
-      return (
-        <MenuItem
-          key={title}
-          onTouchTap={
-            (event) => {
-              event.preventDefault();
-              this.props.onRequestChange(false);
-              this.props.onPageSelection(pageName);
-            }
-          }
-          leftIcon={icon}
-          primaryText={this.props.t(title)}
-          value={pageName}
-          />);
-    });
-
-    children.push(
-      <MenuItem
-        key="quit"
-        onTouchTap={
-          () =>{
-            quitAppVar.set(true);
-          }
-        }
-        leftIcon={<CloseIcon />}
-        primaryText={this.props.t("title.quit")}
-        value={"title.quit"}
-      />
-    );
-
-    return React.createElement(
-      Drawer,
-      {
-        docked: false,
-        open: this.props.drawerOpen,
-        onRequestChange: this.props.onRequestChange
-      },
-      children
-    );
-
-  }
-}
-
-DrawerMenu.propTypes = {
-  onRequestChange: React.PropTypes.func,
-  onPageSelection: React.PropTypes.func,
-  drawerOpen: React.PropTypes.bool,
-  t: React.PropTypes.func
-}
 
 // phenomena is provided either by user selection on the warning list page,
 // or by the FCM. In order to keep the React components separated from the FCM,
 // ReactiveVar is used instead of the state in the App.
 export const phenomenaVar = new ReactiveVar(null);
-
-const quitAppVar = new ReactiveVar(false);
-
-class SwitchableContent extends React.Component {
-
-  /**
-  * Handle state change caused by the user choosing a menu.
-  */
-  render(){
-    const page = this.props.page;
-    const pageConfig = getPageConfig(page);
-    const props = this.props;
-
-    if( pageConfig ){
-      if( pageConfig.component ){
-        return React.createElement(
-          getReactComponentByName(pageConfig.component),
-          props
-        );
-      }
-      else{
-        console.error("Config for page " + page +" does not contain component property. Check your settings.json.");
-      }
-    }
-    else{
-      console.error("Unknown page state:" + this.state.page);
-    }
-    return (<div>Choose a content from the top-left menu</div>);
-  }
-
-}
-
-SwitchableContent.propTypes = {
-  page: React.PropTypes.string,
-  t: React.PropTypes.func,
-  phenomena: React.PropTypes.object,
-  onPageSelection: React.PropTypes.func
-}
-
-const SwitchableContentContainer = createContainer(({t, page, onPageSelection})=>{
-
-  // phenomena property is used by the Earthquake and HeavyRain pages.
-  // It is transparent to the SwitchableContent.
-  return {
-    page,
-    t,
-    phenomena: phenomenaVar.get(),
-    onPageSelection
-  }
-}, SwitchableContent);
 
 const topPageName = Meteor.settings.public.topPage;
 
@@ -189,6 +66,7 @@ class App extends React.Component {
     return (
       <DrawerMenu {...this.props}
         drawerOpen={this.state.drawerOpen}
+        onQuit={quitApp}
         onRequestChange={(open)=>{this.setDrawerOpen(open);}}
         onPageSelection={(page) => {this.handlePageSelection(page);}}
       />
@@ -198,6 +76,7 @@ class App extends React.Component {
   renderSwitchableContent(page){
     return (
       <SwitchableContentContainer {...this.props}
+        phenomenaVar={phenomenaVar}
         page={page}
         onPageSelection={(page, phenomena) => {
           if( phenomena ){
@@ -242,7 +121,7 @@ class App extends React.Component {
       <FlatButton
         label="Quit"
         primary={true}
-        onTouchTap={()=>{quitAppVar.set(true)}}
+        onTouchTap={quitApp}
       />,
     ];
 
@@ -288,7 +167,7 @@ class App extends React.Component {
   render(){
     const t = this.props.t;
     const page = this.state.page;
-    const pageConfig = getPageConfig(page);
+    const pageConfig = Meteor.settings.public.pages[page];
     const title = pageConfig.title;
 
     // Change the back-button behavior
@@ -324,12 +203,6 @@ App.propTypes = {
 }
 
 const AppContainer = createContainer(({t})=>{
-
-  Tracker.autorun(()=>{
-    if( quitAppVar.get() == true ){
-      navigator.app.exitApp();
-    }
-  })
 
   return {
     t,
