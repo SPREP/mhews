@@ -7,23 +7,24 @@ const MongoWeatherForecasts = new Mongo.Collection(collectionName);
 
 let GroundWeatherForecasts;
 
+let mongoCursor;
+
 if( Meteor.isClient ){
   GroundWeatherForecasts = new Ground.Collection("groundWeatherForecast");
-  const mongoCursor = MongoWeatherForecasts.find();
+  mongoCursor = MongoWeatherForecasts.find();
   GroundWeatherForecasts.observeSource(mongoCursor);
-
-  Meteor.startup(()=>{
-
-    // To receive the data from the weatherForecast collection
-    Meteor.subscribe(collectionName, ()=>{
-      // Remove all documents not in current subscription
-      console.log("Calling ground.keep()");
-      GroundWeatherForecasts.keep(mongoCursor);
-    });
-  });
 }
 
 export const WeatherForecasts = Meteor.isClient ? GroundWeatherForecasts : MongoWeatherForecasts;
+
+WeatherForecasts.init = ()=>{
+  // To receive the data from the weatherForecast collection
+  Meteor.subscribe(collectionName, ()=>{
+    // Remove all documents not in current subscription
+    console.log("Calling ground.keep()");
+    GroundWeatherForecasts.keep(mongoCursor);
+  });
+}
 
 WeatherForecasts.getLatestForecast = (lng)=>{
   let forecasts = WeatherForecasts.find({lang: lng}, {sort: {'issued_at': -1}}).fetch();
