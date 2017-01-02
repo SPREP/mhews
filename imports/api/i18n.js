@@ -34,7 +34,7 @@ const i18nConfig = {
           "savaii-south": "Savaii South"
         },
         "is in effect in": "is in effect in",
-        no_warning_in_effect: "No warning is in effect.",
+        no_warning_in_effect: "No warning is in effect and no severe quake information.",
         no_weather_forecast_error: "Sorry there is no forecast... Perhaps the app failed to contact the server.",
         situation: "Situation",
         month:{
@@ -98,7 +98,7 @@ const i18nConfig = {
           "savaii-south": "Savaii South"
         },
         "is in effect in": "i aafiaga i le",
-        no_warning_in_effect: "E leai se lapataiga i aafiaga.",
+        no_warning_in_effect: "No warning is in effect and no severe quake information.",
         no_weather_forecast_error: "Tulou e leai forecast...",
         situation: "Tulaga",
         month: {
