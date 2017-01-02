@@ -36,7 +36,6 @@ class SwitchableContent extends React.Component {
 SwitchableContent.propTypes = {
   page: React.PropTypes.string,
   t: React.PropTypes.func,
-  phenomena: React.PropTypes.object,
   onPageSelection: React.PropTypes.func
 }
 
@@ -46,14 +45,11 @@ function getPageConfig(page){
   return config;
 }
 
-const SwitchableContentContainer = createContainer(({t, page, onPageSelection, phenomenaVar})=>{
+const SwitchableContentContainer = createContainer(({t, page, onPageSelection})=>{
 
-  // phenomena property is used by the Earthquake and HeavyRain pages.
-  // It is transparent to the SwitchableContent.
   return {
     page,
     t,
-    phenomena: phenomenaVar.get(),
     onPageSelection
   }
 }, SwitchableContent);

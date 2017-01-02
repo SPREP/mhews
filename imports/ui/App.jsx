@@ -20,11 +20,6 @@ import {quitApp} from '../api/client/appcontrol.js';
 
 /* global navigator */
 
-// phenomena is provided either by user selection on the warning list page,
-// or by the FCM. In order to keep the React components separated from the FCM,
-// ReactiveVar is used instead of the state in the App.
-export const phenomenaVar = new ReactiveVar(null);
-
 const topPageName = Meteor.settings.public.topPage;
 
 class App extends React.Component {
@@ -76,12 +71,8 @@ class App extends React.Component {
   renderSwitchableContent(page){
     return (
       <SwitchableContentContainer {...this.props}
-        phenomenaVar={phenomenaVar}
         page={page}
-        onPageSelection={(page, phenomena) => {
-          if( phenomena ){
-            phenomenaVar.set(phenomena);
-          }
+        onPageSelection={(page) => {
           this.handlePageSelection(page);
         }}
       />

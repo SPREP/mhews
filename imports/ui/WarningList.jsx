@@ -94,16 +94,6 @@ export class WarningList extends React.Component {
       </Paper>
     );
   }
-  renderWarningDetailsPage(warning){
-    const config = Meteor.settings.public.notificationConfig;
-    for(let hazardType in config){
-      if( warning.type == hazardType ){
-        this.props.onPageSelection(config[hazardType].page, warning);
-        return;
-      }
-    }
-    console.error("Unknown hazard type "+warning.type);
-  }
 }
 
 function getWarningStyle(level){
@@ -120,8 +110,7 @@ WarningList.propTypes = {
   warnings: React.PropTypes.array,
   t: React.PropTypes.func,
   isAdmin: React.PropTypes.bool,
-  cancelWarning: React.PropTypes.func,
-  onPageSelection: React.PropTypes.func
+  cancelWarning: React.PropTypes.func
 }
 
 const WarningListContainer = createContainer(({t})=>{

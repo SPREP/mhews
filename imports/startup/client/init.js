@@ -6,7 +6,6 @@ import {WeatherForecasts} from '../../api/weather.js';
 /* i18n */
 import i18nConfig from '../../api/i18n.js';
 import i18n from 'i18next';
-import {phenomenaVar} from '../../ui/App.jsx';
 
 import {initFcmClient} from '../../api/fcm.js';
 
@@ -126,21 +125,10 @@ function playSoundEffect(warning, oldWarning){
   }
 }
 
+// Unfortunately the FCM is unreliable.
+// Don't rely on the FCM but observe the Meteor collection to notify the user of a new warning.
+// So this function doesn't do anything.
 function handleFcmNotification(fcmData){
-  console.log("FCM data received.");
+  console.log("FCM data received."+JSON.stringify(fcmData));
 
-  const config = Meteor.settings.public.notificationConfig[fcmData.type];
-  if( !config ){
-    console.error("Unknown hazard type "+fcmData.type);
-    return;
-  }
-  const warning = Warnings.fromFcmMessage(fcmData);
-
-  phenomenaVar.set(warning);
-  if( !fcmData.wasTapped ){
-    // Need to notify the user of the new bulletin.
-    if(Warnings.changeNeedsAttention(warning)){
-//      playSound(config.sound);
-    }
-  }
 }
