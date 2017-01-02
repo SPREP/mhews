@@ -8,6 +8,8 @@ import { translate } from 'react-i18next';
 class HazardView extends React.Component {
 
   render(){
+    const titleColor = getTitleColor(this.props.level);
+
     return(
       <Card>
         <CardHeader
@@ -15,6 +17,7 @@ class HazardView extends React.Component {
           actAsExpander={true}
           title={this.props.headerTitle}
           subtitle={this.props.headerSubTitle}
+          titleColor={titleColor}
         />
         <CardMedia expandable={true}>
           {this.props.children}
@@ -34,13 +37,26 @@ class HazardView extends React.Component {
   }
 }
 
+function getTitleColor(level){
+  console.log("level = "+level);
+  switch(level){
+    case "warning":
+    return "#ff0000";
+    case "watch":
+    return "#ffff00";
+    default:
+    return "#000000";
+  }
+}
+
 HazardView.propTypes = {
   avatar: React.PropTypes.string,
   headerTitle: React.PropTypes.string,
   headerSubTitle: React.PropTypes.string,
   description: React.PropTypes.string,
   onCancel: React.PropTypes.func,
-  children: React.PropTypes.element.isRequired
+  children: React.PropTypes.element.isRequired,
+  level: React.PropTypes.string
 }
 
 export default translate(['common'])(HazardView);

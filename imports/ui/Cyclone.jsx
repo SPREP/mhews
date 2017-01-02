@@ -50,7 +50,8 @@ class CyclonePage extends React.Component {
         overlayTitle={title}
         overlaySubTitle={name}
         description={description}
-        onCancel={onCancelCallback}>
+        onCancel={onCancelCallback}
+        level={cyclone.level}>
         <img src="http://www.samet.gov.ws/TCModule/IDV60001.gif?1477450290515" />
       </HazardView>
     );

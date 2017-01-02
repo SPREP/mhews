@@ -56,6 +56,7 @@ class HeavyRainPage extends React.Component {
             headerSubTitle={moment(heavyRain.issued_at).format("YYYY-MM-DD hh:mm")}
             description={heavyRain.description_en}
             onCancel={onCancelCallback}
+            level={heavyRain.level}
             >
             <GoogleMap mapCenter={Samoa.center} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
               Loading...

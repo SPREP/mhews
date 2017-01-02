@@ -50,7 +50,8 @@ class EarthquakePage extends React.Component {
             headerTitle={quake.type+" "+quake.level+" (Mw "+quake.mw+")"}
             headerSubTitle={moment(quake.issued_at).format("YYYY-MM-DD hh:mm")}
             description={quake.description_en}
-            onCancel={onCancelCallback}>
+            onCancel={onCancelCallback}
+            level={quake.level}>
             <GoogleMap mapCenter={quake.epicenter} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
               Loading...
             </GoogleMap>
