@@ -6,6 +6,11 @@ const levels = ["information", "advisory", "watch", "warning"];
 
 class WarningCollection extends Mongo.Collection {
 
+  constructor(...args){
+    super(...args);
+    this.cancelWarning = this.cancelWarning.bind(this);
+  }
+
   findWarningsInEffect(type, area, direction){
     check(type, Match.Maybe(String));
     check(area, Match.Maybe(String));
@@ -55,8 +60,8 @@ class WarningCollection extends Mongo.Collection {
 
   cancelWarning(type, bulletinId){
     check(type, String);
-    check(bulletinId, String);
-    
+    check(bulletinId, Number);
+
     if( Meteor.isServer ){
       let selector = {type: type, bulletinId: bulletinId, in_effect: true};
       super.update(selector, {"$set": {in_effect: false}});
