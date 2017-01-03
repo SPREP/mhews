@@ -14,12 +14,17 @@ const WeekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const surfaceChartUrl = "http://www.samet.gov.ws/images/surface_chart/latest_compact.png";
 
+const satelliteImageUrl = "http://www.samet.gov.ws/satellite/satellite_image_compact.png";
+
 let surfaceChartHandler;
+
+let satelliteImageHandler;
 
 let forecastCursor;
 
 Meteor.startup(()=>{
   surfaceChartHandler = FileCache.add(surfaceChartUrl);
+  satelliteImageHandler = FileCache.add(satelliteImageUrl);
   startObservingWeatherForecast();
 });
 
@@ -64,27 +69,21 @@ export class WeatherPage extends React.Component {
   renderSituation(situation){
     const cardTitle = (<CardTitle title="Situation" subtitle={situation} />);
 
-    if( this.state.displayCardMediaTitle ){
-      return (
-        <CardMedia
-          overlay={cardTitle}
-          expandable={true}
-          onTouchTap={()=>{this.toggleDisplayCardMediaTitle()}}>
-          <img src={surfaceChartUrl} />
-        </CardMedia>
-      );
-
-    }
-    else{
-      return (
-        <CardMedia
-          expandable={true}
-          onTouchTap={()=>{this.toggleDisplayCardMediaTitle()}}>
-          <img src={surfaceChartHandler.getSource()} />
-        </CardMedia>
-      );
-
-    }
+    return (
+      <SwipeableViews expandable={true}>
+        {
+          [surfaceChartHandler, satelliteImageHandler].map((imageHandler)=>{
+            return (
+              <CardMedia
+                overlay={this.state.displayCardMediaTitle ? cardTitle : undefined}
+                expandable={true}
+                onTouchTap={()=>{this.toggleDisplayCardMediaTitle()}}>
+                <img src={imageHandler.getSource()} />
+              </CardMedia>)
+            })
+        }
+      </SwipeableViews>
+    );
   }
 
   toggleDisplayCardMediaTitle(){
