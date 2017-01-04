@@ -17,6 +17,7 @@ export const playSound = (file) => {
   );
 
   if( media ){
+    media.setVolume(1.0);
     media.play();
   }
   else{
