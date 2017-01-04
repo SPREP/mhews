@@ -16,6 +16,12 @@ const noWarningKey = "no_warning_in_effect";
 
 export class WarningList extends React.Component {
 
+  constructor(props){
+    super(props);
+    this.onExpandChange = this.onExpandChange.bind(this);
+    this.state = {expandedWarningId : null};
+  }
+
   getWarningSummary(warning){
     const t = this.props.t;
 
@@ -62,13 +68,31 @@ export class WarningList extends React.Component {
     if( warnings && warnings.length > 0 ){
       itemlist = warnings.map((warning) => {
         if( warning.type == "heavyRain"){
-          return (<HeavyRainPage {...this.props} key={warning._id} phenomena={warning} />);
+          return (
+            <HeavyRainPage {...this.props}
+              key={warning._id}
+              phenomena={warning}
+              onExpandChange={(state)=>{this.onExpandChange(state, warning._id)}}
+              expanded={this.getExpanded(warning._id)}
+            />);
         }
         else if( warning.type == "cyclone"){
-          return (<CyclonePage {...this.props} key={warning._id} phenomena={warning} />);
+          return (
+            <CyclonePage {...this.props}
+              key={warning._id}
+              phenomena={warning}
+              onExpandChange={(state)=>{this.onExpandChange(state, warning._id)}}
+              expanded={this.getExpanded(warning._id)}
+            />);
         }
         else if( warning.type == "earthquake" || warning.type == "tsunami"){
-          return (<EarthquakePage {...this.props} key={warning._id} phenomena={warning} />);
+          return (
+            <EarthquakePage {...this.props}
+              key={warning._id}
+              phenomena={warning}
+              onExpandChange={(state)=>{this.onExpandChange(state, warning._id)}}
+              expanded={this.getExpanded(warning._id)}
+            />);
         }
         else{
           console.log("Unknown warning type "+warning.type);
@@ -93,6 +117,21 @@ export class WarningList extends React.Component {
         {itemlist}
       </Paper>
     );
+  }
+
+  onExpandChange(newExpandState, warningId){
+    if( newExpandState == true ){
+      this.setState({expandedWarningId: warningId});
+    }
+    else if( newExpandState == false ){
+      if( this.state.expandedWarningId == warningId ){
+        this.setState({expandedWarningId: null});
+      }
+    }
+  }
+
+  getExpanded(warningId){
+    return this.state.expandedWarningId == warningId;
   }
 }
 

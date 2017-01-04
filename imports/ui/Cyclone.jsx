@@ -51,7 +51,10 @@ class CyclonePage extends React.Component {
         overlaySubTitle={name}
         description={description}
         onCancel={onCancelCallback}
+        onExpandChange={this.props.onExpandChange}
+        expanded={this.props.expanded}
         level={cyclone.level}>
+
         <img src="http://www.samet.gov.ws/TCModule/IDV60001.gif?1477450290515" />
       </HazardView>
     );
@@ -71,7 +74,9 @@ class CyclonePage extends React.Component {
 CyclonePage.propTypes = {
   phenomena: React.PropTypes.object,
   isAdmin: React.PropTypes.bool,
-  cancelWarning: React.PropTypes.func
+  cancelWarning: React.PropTypes.func,
+  onExpandChange: React.PropTypes.func,
+  expanded: React.PropTypes.bool
 }
 
 export default translate(['common'])(CyclonePage);

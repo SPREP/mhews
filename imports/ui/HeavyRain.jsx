@@ -57,6 +57,8 @@ class HeavyRainPage extends React.Component {
             description={heavyRain.description_en}
             onCancel={onCancelCallback}
             level={heavyRain.level}
+            onExpandChange={this.props.onExpandChange}
+            expanded={this.props.expanded}
             >
             <GoogleMap mapCenter={Samoa.center} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
               Loading...
@@ -84,7 +86,7 @@ class HeavyRainPage extends React.Component {
 
   drawWarningArea(map){
     const heavyRain = this.heavyRain;
-    const hazardAreas = HazardArea.findAreas(heavyRain.area, heavyRain.direction);
+    const hazardAreas = HazardArea.simplifyAreas(HazardArea.findAreas(heavyRain.area, heavyRain.direction));
 
     hazardAreas.forEach((hazardArea) =>{
       if( hazardArea.shape == HazardArea.Shape.polygon ){
@@ -100,7 +102,10 @@ class HeavyRainPage extends React.Component {
 HeavyRainPage.propTypes = {
   phenomena: React.PropTypes.object,
   isAdmin: React.PropTypes.bool,
-  cancelWarning: React.PropTypes.func
+  cancelWarning: React.PropTypes.func,
+  onExpandChange: React.PropTypes.func,
+  expanded: React.PropTypes.bool
+
 }
 
 export default translate(['common'])(HeavyRainPage);

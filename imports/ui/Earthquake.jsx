@@ -51,6 +51,8 @@ class EarthquakePage extends React.Component {
             headerSubTitle={moment(quake.issued_at).format("YYYY-MM-DD hh:mm")}
             description={quake.description_en}
             onCancel={onCancelCallback}
+            onExpandChange={this.props.onExpandChange}
+            expanded={this.props.expanded}
             level={quake.level}>
             <GoogleMap mapCenter={quake.epicenter} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
               Loading...
@@ -104,7 +106,10 @@ class EarthquakePage extends React.Component {
 EarthquakePage.propTypes = {
   phenomena: React.PropTypes.object,
   isAdmin: React.PropTypes.bool,
-  cancelWarning: React.PropTypes.func
+  cancelWarning: React.PropTypes.func,
+  onExpandChange: React.PropTypes.func,
+  expanded: React.PropTypes.bool
+
 }
 
 export default translate(['common'])(EarthquakePage);

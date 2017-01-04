@@ -11,7 +11,10 @@ class HazardView extends React.Component {
     const titleColor = getTitleColor(this.props.level);
 
     return(
-      <Card>
+      <Card
+        onExpandChange={this.props.onExpandChange}
+        expanded={this.props.expanded}
+        >
         <CardHeader
           avatar={this.props.avatar}
           actAsExpander={true}
@@ -56,7 +59,9 @@ HazardView.propTypes = {
   description: React.PropTypes.string,
   onCancel: React.PropTypes.func,
   children: React.PropTypes.element.isRequired,
-  level: React.PropTypes.string
+  level: React.PropTypes.string,
+  onExpandChange: React.PropTypes.func,
+  expanded: React.PropTypes.bool
 }
 
 export default translate(['common'])(HazardView);
