@@ -24,7 +24,8 @@ const i18nConfig = {
           cyclone: "Cyclone",
           about: "About SMD",
           aboutApp: "About this App",
-          quit: "Quit"
+          quit: "Quit",
+          usage: "Usage"
         },
         district: {
           "upolu-north-northwest": "Upolu North Northwest",
@@ -88,7 +89,8 @@ const i18nConfig = {
           cyclone: "Afa",
           about: "Faatautau ia SMD",
           aboutApp: "Faatautau ia App",
-          quit: "Quit"
+          quit: "Quit",
+          usage: "Usage"          
         },
         district: {
           "upolu-north-northwest": "Upolu North Northwest",
