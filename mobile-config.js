@@ -1,7 +1,7 @@
 App.info({
   id: 'ws.gov.samet.mhews',
   version: "0.1.4",
-  name: 'mhews',
+  name: 'Samoa weather',
   description: 'Multi-Hazard Early Warning System mobile app',
   author: 'Samoa Meteorology Division',
   website: 'http://www.samet.gov.ws'
