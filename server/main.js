@@ -93,7 +93,7 @@ function sendFcm(warning, needsAttention){
 function soundEffectFile(warning, needsAttention){
   let soundFile;
   if( needsAttention ){
-    soundFile = Meteor.settings.public.notificationConfig[warning.type];
+    soundFile = Meteor.settings.public.notificationConfig[warning.type].sound;
   }
 
   return soundFile ? soundFile : "default";
