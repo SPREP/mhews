@@ -4,7 +4,7 @@ import { autoPlay } from 'react-swipeable-views-utils';
 import RaisedButton from 'material-ui/RaisedButton';
 import {Card, CardMedia, CardActions, CardText} from 'material-ui/Card';
 
-import {playSound} from '../api/client/mediautils.js';
+import {playSoundNoDelay} from '../api/client/mediautils.js';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -19,7 +19,7 @@ const topPageName = Meteor.settings.public.topPage;
 const pages = [
   {
     image: "toppage.jpg",
-    text: "The app shows the weather forecast and alert list. If there's no alert in effect, a smily icon is displayed."
+    text: "The app shows the weather forecast and alert list. If there's no alert in effect, a smile icon is displayed."
   },
   {
     image: "weather_details.jpg",
@@ -101,7 +101,7 @@ class UsagePage extends React.Component {
             })
           }
           <Card>
-            <CardText>{"Please start using the app!"}</CardText>
+            <CardText>{"Now you're ready to use this app!"}</CardText>
             <CardActions>
               <RaisedButton
                 label={'Finish'}
@@ -128,7 +128,7 @@ class UsagePage extends React.Component {
     }
     if( pages[index].sound && Meteor.isCordova ){
       Meteor.defer(()=>{
-        playSound(pages[index].sound);
+        playSoundNoDelay(pages[index].sound);
       })
     }
   }

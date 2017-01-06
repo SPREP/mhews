@@ -1,6 +1,24 @@
 /* global Media */
 
-export const playSound = (file) => {
+let soundEffectQueue = [];
+let timer = null;
+
+export function playSound(soundFile){
+  soundEffectQueue.push(soundFile);
+  let selectedSound = null;
+  if( timer == null ){
+    timer = window.setTimeout(()=>{
+      soundEffectQueue.forEach((sound)=>{
+        selectedSound = selectedSound == null ? sound : selectMoreSignificant(selectedSound, sound);
+      });
+      soundEffectQueue = [];
+      timer = null;
+      playSoundNoDelay(selectedSound);
+    }, 1000);
+  }
+}
+
+export function playSoundNoDelay(file){
   // TODO It seems the code below does not work well with iOS
   // http://stackoverflow.com/questions/36291748/play-local-audio-on-cordova-in-meteor-1-3
 
@@ -22,5 +40,15 @@ export const playSound = (file) => {
   }
   else{
     console.error("media is not defined or null.");
+  }
+}
+
+// TODO: To be generalized by using a property indicating the significance.
+function selectMoreSignificant(sound1, sound2){
+  if( sound1 == "tsunami_warning.wav"){
+    return sound1;
+  }
+  else{
+    return sound2;
   }
 }

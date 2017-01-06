@@ -109,6 +109,8 @@ function starti18nTracker(){
 
 }
 
+// Enqueue the sound effect to avoid multiple sound files are played
+// at the same time, especially when the app starts up.
 function playSoundEffect(warning, oldWarning){
   console.log("WarningList.playSoundEffect()");
 
