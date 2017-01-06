@@ -86,7 +86,8 @@ class HeavyRainPage extends React.Component {
 
   drawWarningArea(map){
     const heavyRain = this.heavyRain;
-    const hazardAreas = HazardArea.simplifyAreas(HazardArea.findAreas(heavyRain.area, heavyRain.direction));
+//    const hazardAreas = HazardArea.simplifyAreas(HazardArea.findAreas(heavyRain.area, heavyRain.direction));
+    const hazardAreas = HazardArea.findAreas(heavyRain.area, heavyRain.direction);
 
     hazardAreas.forEach((hazardArea) =>{
       if( hazardArea.shape == HazardArea.Shape.polygon ){

@@ -1,9 +1,29 @@
+var ClipperLib = require("clipper-lib");
+
 /* global geolib */
 
 const HazardAreaMap = {
   "Samoa": {
   },
   "Upolu Island": {
+    "Whole Area": {
+      shape: "polygon",
+      vertices: [
+        {lng:-172.0788574,lat:-13.844747},
+        {lng:-172.0788574,lat:-13.9007428},
+        {lng:-172.0225525,lat:-13.9314014},
+        {lng:-171.9415283,lat:-14.0126937},
+        {lng:-171.8577576,lat:-14.0113613},
+        {lng:-171.7616272,lat:-14.0566595},
+        {lng:-171.6174316,lat:-14.0566595},
+        {lng:-171.4265442,lat:-14.0659845},
+        {lng:-171.3977051,lat:-14.0007015},
+        {lng:-171.5419006,lat:-13.8834122},
+        {lng:-171.8385315,lat:-13.7754002},
+        {lng:-172.0239258,lat:-13.8007408},
+        {lng:-172.0788574,lat:-13.844747}
+      ]
+    },
     "North":{
       shape: "polygon",
       vertices: [
@@ -49,6 +69,22 @@ const HazardAreaMap = {
 //    "Highlands": {},
   },
   "Savaii Island": {
+    "Whole Area":{
+      "shape": "polygon",
+      vertices: [
+        {lng:-172.817688,lat:-13.4710995},
+        {lng:-172.817688,lat:-13.5231786},
+        {lng:-172.5498962,lat:-13.8100762},
+        {lng:-172.3027039,lat:-13.7914051},
+        {lng:-172.2148132,lat:-13.8114098},
+        {lng:-172.1598816,lat:-13.6846849},
+        {lng:-172.1749878,lat:-13.5952694},
+        {lng:-172.331543,lat:-13.419009},
+        {lng:-172.6954651,lat:-13.4991435},
+        {lng:-172.7449036,lat:-13.472435},
+        {lng:-172.817688,lat:-13.4710995}
+      ]
+    },
     "North": {
       shape: "polygon",
       vertices:[
@@ -101,6 +137,32 @@ const HazardAreaMap = {
   },
 }
 
+export function simplifyAreas(areas){
+  const scaleFactor = 100;
+  const path = [];
+  const simplifiedAreas = [];
+  areas.forEach((area)=>{
+    if( area.shape == "polygon"){
+      area.vertices.forEach((vertex)=>{
+        path.push(new ClipperLib.IntPoint(vertex.lat * scaleFactor, vertex.lng * scaleFactor));
+      });
+    }
+    else{
+      simplifiedAreas.push(area);
+    }
+  });
+  const simplifiedPaths = ClipperLib.Clipper.SimplifyPolygon(path, ClipperLib.PolyFillType.pftPositive);
+  simplifiedPaths.forEach((path)=>{
+    const simplifiedVertices = [];
+    path.forEach((intPoint)=>{
+      simplifiedVertices.push({lat: intPoint.X / scaleFactor, lng: intPoint.Y / scaleFactor});
+    });
+    simplifiedAreas.push({shape: "polygon", vertices: simplifiedVertices});
+  })
+
+  return simplifiedAreas;
+}
+
 export function findAreas(areaName, direction){
   if( !areaName ){
     console.error("areaName must be specified.");
@@ -120,8 +182,8 @@ export function findAreas(areaName, direction){
       areas = areas.concat(findAreas("Savaii Island"));
     }
     else if( direction == "Whole Area"){
-      areas = areas.concat(findAreas("Upolu Island"));
-      areas = areas.concat(findAreas("Savaii Island"));
+      areas = areas.concat(findAreas("Upolu Island", "Whole Area"));
+      areas = areas.concat(findAreas("Savaii Island", "Whole Area"));
     }
     // Always include Manono and Apolima just in case.
     ["Manono Island", "Apolima Island"].forEach((areaName) => {
@@ -136,7 +198,7 @@ export function findAreas(areaName, direction){
   else {
     const area = HazardAreaMap[areaName];
     if( area ){
-      if( direction && direction != "Whole Area"){
+      if( direction ){
         return [area[direction]];
       }
       else{
