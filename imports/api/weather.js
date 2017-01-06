@@ -1,5 +1,7 @@
 /* global Ground */
 import { Mongo } from 'meteor/mongo';
+import { check } from 'meteor/check';
+import {isClientIpAllowed} from './serverutils.js';
 
 const collectionName = "weatherForecast";
 
@@ -72,4 +74,23 @@ function addUtilityMethods(forecast){
   }
 
   return forecast;
+}
+
+export function publishWeatherForecast(forecast){
+  console.log("Enter publishWeatherForecast.");
+
+  check(this.connection, Match.Where(isClientIpAllowed));
+//  check(forecast.bulletinId, Number);
+  check(forecast.issued_at, Date);
+  check(forecast.lang, Match.OneOf("en", "ws"));
+  check(forecast.situation, String);
+  check(forecast.forecasts, [{
+    district: String,
+    date: Date,
+    forecast: String
+  }]);
+
+  forecast.in_effect = true;
+
+  return WeatherForecasts.insert(forecast);
 }

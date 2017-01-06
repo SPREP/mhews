@@ -61,6 +61,7 @@ class BulletinCollection extends Mongo.Collection{
     return Warnings.findOne(this.prevBulletinSelectorFunc(bulletin));
   }
 
+  // Server side only
   cancelBulletin(bulletinId){
     const bulletin = this.findOne({id: bulletinId, in_effect: true});
     if( !bulletin ){
