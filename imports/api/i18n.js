@@ -6,12 +6,15 @@ const i18nConfig = {
       common: {
         "Weather": "Weather",
         "Earthquake": "Earthquake",
+        "earthquake": "earthquake",
         "Cyclone": "Cyclone",
         "AboutSMD": "About SMD",
         "Warnings": "Warnings",
         "Warning": "Warning",
         "Watch": "Watch",
         "warning": "warning",
+        "Information": "Information",
+        "information": "information",
         "heavyRain": "heavyRain",
         title : {
           index: "Samoa Weather",
@@ -70,12 +73,15 @@ const i18nConfig = {
       common: {
         "Weather": "Tau",
         "Earthquake": "Mafui'e",
+        "earthquake": "mafui'e",
         "Cyclone": "Afa",
         "AboutSMD": "Faatatau ia SMD",
         "Warnings": "Lapataiga",
         "Warning": "Lapataiga",
         "Watch": "Tausi",
         "warning": "warning",
+        "Information": "Faaaliga",
+        "information": "faaaliga",
         "heavyRain": "heavyRain",
         title : {
           index: "Samoa Weather",
@@ -90,7 +96,7 @@ const i18nConfig = {
           about: "Faatautau ia SMD",
           aboutApp: "Faatautau ia App",
           quit: "Quit",
-          usage: "Usage"          
+          usage: "Usage"
         },
         district: {
           "upolu-north-northwest": "Upolu North Northwest",

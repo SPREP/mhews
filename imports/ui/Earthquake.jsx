@@ -2,6 +2,7 @@ import React from 'react';
 import GoogleMap from './GoogleMapJs.jsx';
 import * as GeoUtils from '../api/geoutils.js';
 import HazardView from './HazardView.jsx';
+import {Preferences} from '../api/client/preferences.js';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -28,6 +29,12 @@ class EarthquakePage extends React.Component {
     return true;
   }
 
+  formatHeaderTitle(quake){
+    const t = this.props.t;
+
+    return t(quake.type)+" "+t(quake.level)+" (Magnitude "+quake.mw+","+quake.region+") ";
+  }
+
   render(){
     let quake = this.props.phenomena;
     this.quake = quake;
@@ -43,13 +50,15 @@ class EarthquakePage extends React.Component {
         this.zoom = GeoUtils.getZoomLevel(diameterKm * 1.5) - 2; // -2 is an ugly hack to adjust the zoom leve.
 
         const onCancelCallback = this.props.isAdmin ? ()=>{this.props.cancelWarning(quake.type, quake.bulletinId)} : undefined;
+        const headerTitle = this.formatHeaderTitle(quake);
+        const description = formatQuakeInformation(quake);
 
         return(
           <HazardView
             avatar={Meteor.settings.public.notificationConfig.earthquake.icon}
-            headerTitle={quake.type+" "+quake.level+" (Mw "+quake.mw+")"}
+            headerTitle={headerTitle}
             headerSubTitle={moment(quake.issued_at).format("YYYY-MM-DD hh:mm")}
-            description={quake.description_en}
+            description={description}
             onCancel={onCancelCallback}
             onExpandChange={this.props.onExpandChange}
             expanded={this.props.expanded}
@@ -103,7 +112,32 @@ class EarthquakePage extends React.Component {
   }
 }
 
+function formatQuakeInformation(quake){
+  if( Preferences.load("language") == "en"){
+    let description = "An earthquake with magnitude "+quake.mw+" occurred in the "+quake.region;
+    description += ", at the depth "+quake.depth+" km";
+    description += ", approximately "+quake.distance_km+" km ("+quake.distance_miles+" miles) ";
+    description += quake.direction_en+ " of Apia. ";
+
+    description += quake.description_en;
+
+    return description;
+  }
+  else{
+    let description = "O le mafuie e tusa lona malosi ma le "+quake.mw+" ile fua mafuie sa afua mai ile motu o "+quake.region;
+    description += ", ile loloto e "+quake.depth+" kilomita";
+    description += ", ile mamao e "+quake.distance_km+" kilomita ("+quake.distance_miles+" maila tautai) ";
+    description += quake.direction_ws+ " o Apia. ";
+
+    description += quake.description_ws;
+
+    return description;
+
+  }
+}
+
 EarthquakePage.propTypes = {
+  t: React.PropTypes.func,
   phenomena: React.PropTypes.object,
   isAdmin: React.PropTypes.bool,
   cancelWarning: React.PropTypes.func,

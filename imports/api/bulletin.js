@@ -7,6 +7,7 @@ class BulletinCollection extends Mongo.Collection{
   constructor(collectionName, prevBulletinSelectorFunc){
     super(collectionName);
     this.prevBulletinSelectorFunc = prevBulletinSelectorFunc;
+    this.publishBulletin = this.publishBulletin.bind(this);
   }
   /*
   mhews server receives the published single bulletin document,
@@ -20,7 +21,8 @@ class BulletinCollection extends Mongo.Collection{
     check(bulletin, Object);
     check(bulletin.id, Number);
     check(bulletin.warnings, [Match.Any]);
-    check(bulletin.tc_info, {name: String});
+    check(bulletin.tc_info, Match.ObjectIncluding({name: String}));
+    check(bulletin.in_effect, Boolean);
 
     const bulletinId = bulletin.id;
 
@@ -32,14 +34,18 @@ class BulletinCollection extends Mongo.Collection{
 
     const warnings = this.extractWarnings(bulletin);
     warnings.forEach((warning)=>{
+      console.log("warning = "+JSON.stringify(warning));
       warning.bulletinId = bulletinId;
       const currentWarning = removeOneIf(currentWarnings, (w)=>{
         return Warnings.isForSameArea(w, warning);
       });
       if( currentWarning ){
+        console.log("Updating warning = "+JSON.stringify(warning));
         Warnings.update({_id: currentWarning._id}, warning);
       }
       else{
+        warning.issued_at = bulletin.issued_at;
+        console.log("Inserting warning = "+JSON.stringify(warning));
         Warnings.insert(warning);
       }
     });

@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 import {Warnings} from '../../api/warnings.js';
+import {CycloneBulletins} from '../../api/bulletin.js';
 import {WeatherForecasts, publishWeatherForecast} from '../../api/weather.js';
 import {sendFcmNotification} from '../../api/fcm.js';
 
@@ -9,12 +10,26 @@ Meteor.startup(() => {
   Meteor.methods({
     publishWeatherForecast: publishWeatherForecast,
     publishWarning: Warnings.publishWarning,
-    cancelWarning: Warnings.cancelWarning
+    cancelWarning: Warnings.cancelWarning,
+    publishBulletin: CycloneBulletins.publishBulletin,
+    cancelBulletin: CycloneBulletins.cancelBulletin
   });
 
+  startPublishingCycloneBulletins();
   startPublishingWarnings();
   startPublishingWeather();
 });
+
+function startPublishingCycloneBulletins(){
+
+  // The 2nd argument must use "function", not the arrow notations.
+  // See this guide https://guide.meteor.com/data-loading.html
+  Meteor.publish('cycloneBulletins', function() {
+    // Only publish the forecasts which is in effect.
+    // Returns the Cursor, not each document.
+    return CycloneBulletins.find({'in_effect': true});
+  });
+}
 
 function startPublishingWeather(){
 
@@ -72,6 +87,10 @@ function startPublishingWarnings(){
 function sendFcm(warning, needsAttention){
   if( warning.in_effect && warning.is_user_notified ){
     // FCM message has already been sent for this warning.
+    return;
+  }
+  if( !warning.in_effect && warning.level == "information"){
+    // Don't send notification for expiry of Information.
     return;
   }
   Meteor.defer(function(){

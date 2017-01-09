@@ -113,6 +113,10 @@ function starti18nTracker(){
 // at the same time, especially when the app starts up.
 function playSoundEffect(warning, oldWarning){
   console.log("WarningList.playSoundEffect()");
+  if( !warning.in_effect && warning.type == "information"){
+    // Don't play sound for the cancellation of information.
+    return;
+  }
 
   const config = Meteor.settings.public.notificationConfig[warning.type];
   if( !config ){

@@ -47,6 +47,21 @@ describe('CycloneBulletins', function() {
       assert.equal(3, array.length);
       assert.equal(false, array.includes("c"));
     });
+    it("should not remove a warning if the area is same but the direction is different.", function(){
+      const area1 = {
+        area: "Samoa",
+        direction: "North"
+      };
+
+      const array = [
+        {
+          area: "Samoa",
+          direction: "South"
+        }
+      ];
+      assert.equal(null, removeOneIf(array, (e)=>{ return Warnings.isForSameArea(e, area1)}));
+      assert.equal(1, array.length);
+    });
   });
 
   if( Meteor.isServer ){
