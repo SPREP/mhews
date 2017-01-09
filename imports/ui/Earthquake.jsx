@@ -57,7 +57,7 @@ class EarthquakePage extends React.Component {
           <HazardView
             avatar={Meteor.settings.public.notificationConfig.earthquake.icon}
             headerTitle={headerTitle}
-            headerSubTitle={moment(quake.issued_at).format("YYYY-MM-DD hh:mm")}
+            headerSubTitle={moment(quake.date_time).format("YYYY-MM-DD hh:mm")}
             description={description}
             onCancel={onCancelCallback}
             onExpandChange={this.props.onExpandChange}
