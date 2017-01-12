@@ -7,6 +7,7 @@ import {WeatherForecasts} from '../api/weather.js';
 import {Preferences} from '../api/client/preferences.js';
 
 import FileCache from '../api/client/filecache.js';
+import {weatherIcons} from '../api/weatherIcons.js';
 
 const Months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -46,6 +47,53 @@ function startObservingWeatherForecast(){
   forecastCursor.observe({
     added: (forecast)=>{refreshSurfaceChart(forecast)}
   });
+}
+
+class WeatherButton extends React.Component {
+
+  render(){
+    return (
+      <div style={{padding: "16px", display: "inline-block"}}>
+        <div>
+          <img
+            src={this.props.icon}
+            style={{width: "32px", height: "32px"}}
+            onTouchTap={this.props.onTouchTap}
+          />
+        </div>
+        <div style={{"font-size": "10pt"}}>
+          {this.props.children}
+        </div>
+      </div>
+    )
+  }
+}
+
+WeatherButton.propTypes = {
+  icon: React.PropTypes.string,
+  children: React.PropTypes.node,
+  onTouchTap: React.PropTypes.func
+}
+
+class WeatherCardHeader extends React.Component {
+
+  render(){
+    return (
+      <div style={{"padding": "16px"}}>
+        <img src={this.props.icon} style={{width: "48px", height: "48px", "display": "inline-block"}}/>
+        <div style={{"padding-left": "16px", display: "inline-block", "vertical-align": "top"}}>
+          <div style={{"font-size": "14pt"}}>{this.props.title}</div>
+          <div style={{"font-size": "10pt"}}>{this.props.subtitle}</div>
+        </div>
+      </div>
+    )
+  }
+}
+
+WeatherCardHeader.propTypes = {
+  icon: React.PropTypes.string,
+  title: React.PropTypes.string,
+  subtitle: React.PropTypes.string
 }
 
 /**
@@ -90,14 +138,36 @@ export class WeatherPage extends React.Component {
     this.setState({displayCardMediaTitle: !this.state.displayCardMediaTitle});
   }
 
-  renderForecast(forecast){
-    const issuedAt = forecast.issued_at;
-    const situation = forecast.situation;
-    const dates = forecast.listForecastDates();
+  getForecastsForDisplay(dates, bulletin, district){
+    return dates.map((date) =>{
+      const districtForecast = bulletin.getDistrictForecast(district, date);
+      let forecastText;
+      if( districtForecast ){
+        forecastText = districtForecast.forecast;
+      }
+      else{
+        forecastText = "No forecast is available for district = "+district+" on "+date.toDateString();
+      }
+      const weatherIcon = getWeatherIcon(districtForecast.weatherSymbol);
+
+      return {
+        date: date,
+        text: forecastText,
+        icon: weatherIcon,
+      }
+
+    });
+  }
+
+  renderForecast(bulletin){
+    const issuedAt = bulletin.issued_at;
+    const situation = bulletin.situation;
+    const dates = bulletin.listForecastDates();
     const displayDate = this.getDisplayDate(dates);
     const displayDateIndex = displayDate ? dates.indexOf(displayDate) : 0;
     const district = this.props.district;
     const subtitle = this.props.t("district."+district);
+    const forecasts = this.getForecastsForDisplay(dates, bulletin, district);
 
     // The Weather card expands/shrinks when the CardText is tapped.
     return (
@@ -110,38 +180,31 @@ export class WeatherPage extends React.Component {
         {this.renderSituation(situation)}
         <SwipeableViews index={displayDateIndex}>
           {
-            dates.map((date) => {
-              const districtForecast = forecast.getDistrictForecast(district, date);
-              let forecastText;
-              if( districtForecast ){
-                forecastText = districtForecast.forecast;
-              }
-              else{
-                forecastText = "No forecast is available for district = "+district+" on "+date.toDateString();
-              }
-
+            forecasts.map((forecast) => {
               return (
-                <div key={this.dateToString(date)}>
-                  <CardTitle
-                    title={this.dateToString(date)}
+                <div key={this.dateToString(forecast.date)}>
+                  <WeatherCardHeader
+                    icon={forecast.icon}
+                    title={this.dateToString(forecast.date)}
                     titleStyle={{"fontSize": "14pt"}}
                     subtitle={subtitle}
                   />
-                  <CardText>{forecastText}</CardText>
+                  <CardText>{forecast.text}</CardText>
                 </div>)
             })
           }
         </SwipeableViews>
         <CardActions>
           {
-            dates.map((date) => (
-              <button
-                key={this.dateToString(date)}
+            forecasts.map((forecast) => (
+              <WeatherButton
+                key={this.dateToString(forecast.date)}
                 style={{"padding": "5px 5px", "border": "none", "background": "none"}}
-                onTouchTap={()=>{this.changeDisplayDate(date)}}
+                icon={forecast.icon}
+                onTouchTap={()=>{this.changeDisplayDate(forecast.date)}}
               >
-                {this.getDayOfDate(date)}
-              </button>
+                {this.getDayOfDate(forecast.date)}
+              </WeatherButton>
             ))
           }
         </CardActions>
@@ -202,6 +265,10 @@ export class WeatherPage extends React.Component {
     const day = this.props.t("weekdays."+WeekDays[dateTime.getDay()]);
     return day;
   }
+}
+
+function getWeatherIcon(weatherSymbol){
+  return "images/weather/"+weatherIcons.dayTime[weatherSymbol];
 }
 
 WeatherPage.propTypes = {
