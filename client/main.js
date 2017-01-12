@@ -10,7 +10,7 @@ import '../imports/startup/client/init.js';
 Meteor.startup(() => {
   console.log("Meteor.startup() -- ");
 
-  renderApp();
+//  renderApp();
 });
 
 function renderApp(){

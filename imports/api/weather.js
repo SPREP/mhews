@@ -5,7 +5,7 @@ import {isClientIpAllowed} from './serverutils.js';
 
 const collectionName = "weatherForecast";
 
-const MongoWeatherForecasts = new Mongo.Collection(collectionName);
+export const MongoWeatherForecasts = new Mongo.Collection(collectionName);
 
 let GroundWeatherForecasts;
 
@@ -18,6 +18,15 @@ if( Meteor.isClient ){
 }
 
 export const WeatherForecasts = Meteor.isClient ? GroundWeatherForecasts : MongoWeatherForecasts;
+
+if( Meteor.isServer ){
+  // Allow this temporarily, so that AdminDashboard can update the weather symbol.
+  MongoWeatherForecasts.allow({
+    update: (_userId, _doc)=>{
+      return true;
+    }
+  })
+}
 
 WeatherForecasts.init = ()=>{
   // To receive the data from the weatherForecast collection
