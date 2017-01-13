@@ -237,21 +237,66 @@ class AdminDashboard extends React.Component {
       forecast.weatherSymbol = this.weatherSymbols[forecastText];
     });
 
-    console.log("updateForecasts() "+JSON.stringify(bulletin.forecasts));
-
-    // FIXME: Update the Samoan forecast as well.
-    return MongoWeatherForecasts.update(
-      {_id: bulletin._id},
-      {"$set": {forecasts: bulletin.forecasts}}
-    );
+    updateForecast(bulletin);
+    const bulletinSamoan = findBulletinSamoan(bulletin);
+    if( bulletinSamoan ){
+      copyWeatherSymbols(bulletin, bulletinSamoan);
+      updateForecast(bulletinSamoan);
+    }
+    else{
+      console.warn("There is no Samoan bulletin for "+bulletin.issued_at+" "+bulletin.name);
+    }
   }
+}
 
+function updateForecast(bulletin){
+  MongoWeatherForecasts.update(
+    {_id: bulletin._id},
+    {"$set": {forecasts: bulletin.forecasts}}
+  );
 }
 
 AdminDashboard.propTypes = {
   effectiveDates: React.PropTypes.array,
   getForecast: React.PropTypes.func
 };
+
+function findBulletinSamoan(bulletin){
+
+  return MongoWeatherForecasts.findOne(
+    {
+      name: bulletin.name,
+      issued_at: bulletin.issued_at,
+      lang: "ws"
+    }
+  );
+}
+
+function copyWeatherSymbols(bulletin, bulletinSamoan){
+  const forecastsSamoan = bulletinSamoan.forecasts;
+  bulletin.forecasts.forEach((forecast)=>{
+    const forecastSamoan = findInArray(forecastsSamoan, (element)=>{
+      return (element.district == forecast.district) &&
+      (moment(element.date).isSame(forecast.date));
+    });
+    if( forecastSamoan ){
+      forecastSamoan.weatherSymbol = forecast.weatherSymbol;
+    }
+    else{
+      console.warn("There is no forecast for "+forecast.district+" "+forecast.date);
+    }
+  });
+
+}
+
+function findInArray(array, condition){
+  for(let i= 0; i< array.length; i++){
+    const element = array[i];
+    if( condition(element) ) return element;
+  }
+
+  return null;
+}
 
 function listEffectiveDates(){
   return MongoWeatherForecasts.find(
