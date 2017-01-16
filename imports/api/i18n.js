@@ -38,7 +38,7 @@ const i18nConfig = {
           "savaii-south": "Savaii South"
         },
         "is in effect in": "is in effect in",
-        no_warning_in_effect: "No warning is in effect and no severe quake information.",
+        no_warning_in_effect: "No warnings in effect. No severe quakes in 24h.",
         no_weather_forecast_error: "Sorry there is no forecast... Perhaps the app failed to contact the server.",
         situation: "Situation",
         month:{

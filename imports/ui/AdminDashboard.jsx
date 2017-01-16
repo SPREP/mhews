@@ -1,6 +1,5 @@
 import React from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import RaisedButton from 'material-ui/RaisedButton';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
@@ -15,14 +14,17 @@ const style = {
 };
 
 const iconInactiveStyle = {
-  width: "32pt",
-  height: "32pt",
-  filter: "opacity(20%)"
+  padding: "8px",
+  width: "32px",
+  height: "32px",
+//  filter: "opacity(20%)"
+  opacity: 0.2,
 }
 
 const iconActiveStyle = {
-  width: "32pt",
-  height: "32pt"
+  padding: "8px",
+  width: "32px",
+  height: "32px"
 }
 
 // FIXME Word-wrapping does not work as expected ...
@@ -82,6 +84,18 @@ class WeatherSymbolTable extends React.Component {
     this.state = {onClickCount: 0};
   }
 
+  renderIconHeaders(){
+    const icons = weatherIcons.dayTime;
+
+    return Object.keys(icons).map((iconSymbol)=>{
+      return (
+        <th style={{width: "64px", "font-size": "10pt", "color": "StaleGrey", "font-weight": "normal"}}>
+          {getHeaderText(iconSymbol)}
+        </th>
+      )
+    });
+  }
+
   renderIcons(forecastText, selectedSymbol){
     const icons = weatherIcons.dayTime;
 
@@ -89,22 +103,22 @@ class WeatherSymbolTable extends React.Component {
       const iconImage = "images/weather/"+icons[iconSymbol];
       if( iconSymbol == selectedSymbol ){
         return (
-          <TableRowColumn>
+          <td>
             <img src={iconImage}
               title={iconSymbol}
               style={iconActiveStyle}/>
-          </TableRowColumn>
+          </td>
         )
       }
       else{
         return (
-          <TableRowColumn>
+          <td>
             <img src={iconImage}
               title={iconSymbol}
               style={iconInactiveStyle}
               onClick={()=>{this.props.onClickWeatherSymbol(forecastText, iconSymbol)}}
             />
-          </TableRowColumn>
+          </td>
         )
       }
     })
@@ -112,27 +126,21 @@ class WeatherSymbolTable extends React.Component {
 
   render(){
     return (
-      <Table selectable={false} style={tableStyle}>
-        <TableHeader displaySelectAll={false}>
-          <TableRow>
-            <TableHeaderColumn style={forecastTextStyle}>Forecast text</TableHeaderColumn>
-            <TableHeaderColumn>Forecast icons</TableHeaderColumn>
-          </TableRow>
-        </TableHeader>
-        <TableBody displayRowCheckbox={false}>
-          {Object.keys(this.props.weatherSymbols).map((forecastText)=>{
-            const selectedSymbol = this.props.weatherSymbols[forecastText];
-            return (
-              <TableRow>
-                <TableRowColumn style={forecastTextStyle}>{forecastText}</TableRowColumn>
-                {this.renderIcons(forecastText, selectedSymbol)}
-              </TableRow>
-            );
+      <table style={{"font-family": "Roboto, San-serif", "font-size": "12pt"}}>
+        <th style={{"font-size": "10pt", "color": "StaleGrey", "font-weight": "normal"}}>{"Forecast text"}</th>
+        {this.renderIconHeaders()}
+        {Object.keys(this.props.weatherSymbols).map((forecastText)=>{
+          const selectedSymbol = this.props.weatherSymbols[forecastText];
+          return (
+            <tr>
+              <td style={forecastTextStyle}>{forecastText}</td>
+              {this.renderIcons(forecastText, selectedSymbol)}
+            </tr>
+          );
 
-          })}
-        </TableBody>
-      </Table>
+        })}
 
+      </table>
     );
   }
 }
@@ -247,6 +255,16 @@ class AdminDashboard extends React.Component {
       console.warn("There is no Samoan bulletin for "+bulletin.issued_at+" "+bulletin.name);
     }
   }
+}
+
+function getHeaderText(weatherSymbol){
+  if( weatherSymbol == "heavyRain"){
+    return "heavy rain";
+  }
+  if( weatherSymbol == "partlyCloudy"){
+    return "partly cloudy";
+  }
+  return weatherSymbol;
 }
 
 function updateForecast(bulletin){

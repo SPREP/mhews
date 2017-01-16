@@ -54,7 +54,7 @@ class WeatherButton extends React.Component {
 
   render(){
     return (
-      <div style={{padding: "16px", display: "inline-block"}}>
+      <div style={{padding: "8px", display: "inline-block"}}>
         <div>
           <img
             src={this.props.icon}
@@ -62,7 +62,7 @@ class WeatherButton extends React.Component {
             onTouchTap={this.props.onTouchTap}
           />
         </div>
-        <div style={{"font-size": "10pt"}}>
+        <div style={{"font-size": "10pt", "text-align": "center"}}>
           {this.props.children}
         </div>
       </div>
@@ -96,19 +96,21 @@ class WeatherCardHeader extends React.Component {
 
   render(){
     return (
-      <div style={{"padding": "16px"}}>
-        <img src={this.props.icon} style={{width: "48px", height: "48px", "display": "inline-block"}}/>
-        <div style={{"padding-left": "16px", display: "inline-block", "vertical-align": "top"}}>
-          <div style={{"font-size": "14pt"}}>{this.props.title}</div>
-          <div style={{"font-size": "10pt"}}>{this.props.subtitle}</div>
+      <div style={{"padding": "16px", "padding-bottom": "0px"}}>
+        <div style={{display: "inline-block"}}>
+          <div style={{"padding-bottom": "8px", display: "inline-block", "vertical-align": "top"}}>
+            <div style={{"font-size": "14pt"}}>{this.props.title}</div>
+            <div style={{"font-size": "10pt"}}>{this.props.subtitle}</div>
+          </div>
+          <div>
+            <SmallCard icon="images/weather/dawn.png" text={this.props.sunrise} />
+            <SmallCard icon="images/weather/sunset.png" text={this.props.sunset} />
+            <SmallCard icon={getMoonIcon(this.props.moonphase)}
+              text={getMoonPhaseName(this.props.moonphase)}
+            />
+          </div>
         </div>
-        <div>
-          <SmallCard icon="images/weather/dawn.png" text={this.props.sunrise} />
-          <SmallCard icon="images/weather/sunset.png" text={this.props.sunset} />
-          <SmallCard icon={getMoonIcon(this.props.moonphase)}
-            text={getMoonPhaseName(this.props.moonphase)}
-          />
-        </div>
+        <img src={this.props.icon} style={{width: "96px", height: "96px", "display": "inline-block"}}/>
       </div>
     )
   }
@@ -120,7 +122,8 @@ WeatherCardHeader.propTypes = {
   subtitle: React.PropTypes.string,
   sunrise: React.PropTypes.string,
   sunset: React.PropTypes.string,
-  moonphase: React.PropTypes.number
+  moonphase: React.PropTypes.number,
+  weatherSymbol: React.PropTypes.string
 }
 
 /**
@@ -186,6 +189,7 @@ export class WeatherPage extends React.Component {
         sunrise: sunlightTimes.sunrise,
         sunset: sunlightTimes.sunset,
         moonphase: moonIllumination.phase,
+        weatherSymbol: districtForecast.weatherSymbol,
         icon: weatherIcon,
       }
 
@@ -224,6 +228,7 @@ export class WeatherPage extends React.Component {
                     sunrise={moment(forecast.sunrise).format("HH:mm")}
                     sunset={moment(forecast.sunset).format("HH:mm")}
                     moonphase={forecast.moonphase}
+                    weatherSymbol={forecast.weatherSymbol}
                   />
                   <CardText>{forecast.text}</CardText>
                 </div>)
