@@ -8,6 +8,7 @@ import {Preferences} from '../api/client/preferences.js';
 
 import FileCache from '../api/client/filecache.js';
 import {weatherIcons} from '../api/weatherIcons.js';
+import SunCalc from 'suncalc';
 
 const Months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -75,6 +76,22 @@ WeatherButton.propTypes = {
   onTouchTap: React.PropTypes.func
 }
 
+class SmallCard extends React.Component {
+  render(){
+    return(
+      <div style={{"padding-right": "16px", display: "inline-block"}}>
+        <img src={this.props.icon} style={{width: "32px", height: "32px"}}/>
+        <div style={{"font-size": "10pt"}}>{this.props.text}</div>
+      </div>
+    );
+  }
+}
+
+SmallCard.propTypes = {
+  icon: React.PropTypes.string,
+  text: React.PropTypes.string
+}
+
 class WeatherCardHeader extends React.Component {
 
   render(){
@@ -85,6 +102,13 @@ class WeatherCardHeader extends React.Component {
           <div style={{"font-size": "14pt"}}>{this.props.title}</div>
           <div style={{"font-size": "10pt"}}>{this.props.subtitle}</div>
         </div>
+        <div>
+          <SmallCard icon="images/weather/dawn.png" text={this.props.sunrise} />
+          <SmallCard icon="images/weather/sunset.png" text={this.props.sunset} />
+          <SmallCard icon={getMoonIcon(this.props.moonphase)}
+            text={getMoonPhaseName(this.props.moonphase)}
+          />
+        </div>
       </div>
     )
   }
@@ -93,7 +117,10 @@ class WeatherCardHeader extends React.Component {
 WeatherCardHeader.propTypes = {
   icon: React.PropTypes.string,
   title: React.PropTypes.string,
-  subtitle: React.PropTypes.string
+  subtitle: React.PropTypes.string,
+  sunrise: React.PropTypes.string,
+  sunset: React.PropTypes.string,
+  moonphase: React.PropTypes.number
 }
 
 /**
@@ -149,10 +176,16 @@ export class WeatherPage extends React.Component {
         forecastText = "No forecast is available for district = "+district+" on "+date.toDateString();
       }
       const weatherIcon = getWeatherIcon(districtForecast.weatherSymbol);
+      const location = getLocationForDistrict(district);
+      const sunlightTimes = SunCalc.getTimes(date, location.lat, location.lng);
+      const moonIllumination = SunCalc.getMoonIllumination(date);
 
       return {
         date: date,
         text: forecastText,
+        sunrise: sunlightTimes.sunrise,
+        sunset: sunlightTimes.sunset,
+        moonphase: moonIllumination.phase,
         icon: weatherIcon,
       }
 
@@ -188,6 +221,9 @@ export class WeatherPage extends React.Component {
                     title={this.dateToString(forecast.date)}
                     titleStyle={{"fontSize": "14pt"}}
                     subtitle={subtitle}
+                    sunrise={moment(forecast.sunrise).format("HH:mm")}
+                    sunset={moment(forecast.sunset).format("HH:mm")}
+                    moonphase={forecast.moonphase}
                   />
                   <CardText>{forecast.text}</CardText>
                 </div>)
@@ -267,8 +303,43 @@ export class WeatherPage extends React.Component {
   }
 }
 
+const Apia = {
+  lat: -13.815605,
+  lng: -171.780512
+};
+
+function getLocationForDistrict(_district){
+  // Just return Apia for now.
+  // TODO Set a representing location of each district, and return the location.
+  return Apia;
+}
+
 function getWeatherIcon(weatherSymbol){
   return "images/weather/"+weatherIcons.dayTime[weatherSymbol];
+}
+
+function getMoonIcon(moonPhase){
+  // moonPhase is a value between 0.0 and 1.0
+  // Map the moonPhase to one of 8 files
+  console.log("moonPhase = "+moonPhase);
+  const fileIndex = Math.round(moonPhase * 8) % 8;
+  return "images/moon/moon-phase-"+fileIndex+".svg";
+}
+
+const moonPhaseNames = [
+  "New Moon",
+  "Waxing Crescent",
+  "First Quarter",
+  "Waxing Gibbous",
+  "Full Moon",
+  "Waning Gibbous",
+  "Last Quarter",
+  "Waning Crescent"
+];
+
+function getMoonPhaseName(moonPhase){
+  const index = Math.round(moonPhase * 8) % 8;
+  return moonPhaseNames[index];
 }
 
 WeatherPage.propTypes = {

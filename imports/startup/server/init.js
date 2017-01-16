@@ -52,6 +52,15 @@ function startPublishingWeather(){
 }
 
 function startPublishingWarnings(){
+  // Start the timer which invalidates old information every 10min.
+  setInterval(Meteor.bindEnvironment(function(){
+    const before24hours = moment().subtract(24, 'hours').toDate();
+    Warnings.update(
+      {"type": "information", "in_effect": true, "issued_at": {"$lt": before24hours}},
+      {"$set": {"in_effect": false}},
+      {multi: true});
+  }), 600 * 1000);
+
   // The 2nd argument must use "function", not the arrow notations.
   // See this guide https://guide.meteor.com/data-loading.html
   Meteor.publish('warnings', function(){
