@@ -79,9 +79,9 @@ WeatherButton.propTypes = {
 class SmallCard extends React.Component {
   render(){
     return(
-      <div style={{"padding-right": "16px", display: "inline-block"}}>
+      <div style={{"padding-right": "16px", display: "inline-block", "vertical-align": "top"}}>
         <img src={this.props.icon} style={{width: "32px", height: "32px"}}/>
-        <div style={{"font-size": "10pt"}}>{this.props.text}</div>
+        <div style={{"font-size": "10pt", width: "34px"}}>{this.props.text}</div>
       </div>
     );
   }
@@ -97,7 +97,7 @@ class WeatherCardHeader extends React.Component {
   render(){
     return (
       <div style={{"padding": "16px", "padding-bottom": "0px"}}>
-        <div style={{display: "inline-block"}}>
+        <div style={{display: "inline-block", "vertical-align": "top"}}>
           <div style={{"padding-bottom": "8px", display: "inline-block", "vertical-align": "top"}}>
             <div style={{"font-size": "14pt"}}>{this.props.title}</div>
             <div style={{"font-size": "10pt"}}>{this.props.subtitle}</div>
@@ -110,7 +110,8 @@ class WeatherCardHeader extends React.Component {
             />
           </div>
         </div>
-        <img src={this.props.icon} style={{width: "96px", height: "96px", "display": "inline-block"}}/>
+        <img src={this.props.icon}
+          style={{width: "96px", height: "96px", "display": "inline-block", "vertical-align": "top"}}/>
       </div>
     )
   }
