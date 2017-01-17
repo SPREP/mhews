@@ -116,7 +116,7 @@ function formatQuakeInformation(quake){
   if( Preferences.load("language") == "en"){
     let description = "An earthquake with magnitude "+quake.mw+" occurred in the "+quake.region;
     description += ", at the depth "+quake.depth+" km";
-    description += ", approximately "+quake.distance_km+" km ("+quake.distance_miles+" miles) ";
+    description += ", approximately "+Math.round(quake.distance_km)+" km ("+Math.round(quake.distance_miles)+" miles) ";
     description += quake.direction_en+ " of Apia. ";
 
     description += quake.description_en;
