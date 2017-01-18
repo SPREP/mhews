@@ -25,4 +25,6 @@ App.setPreference("SplashMaintainAspectRatio", "true");
 App.setPreference("ShowSplashScreenSpinner", "true");
 App.setPreference("WebAppStartupTimeout",1000000);
 
-App.accessRule('<access origin="*" />');
+//App.accessRule('<access origin="*" />');
+App.accessRule('*');
+
