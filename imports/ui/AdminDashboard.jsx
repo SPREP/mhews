@@ -2,6 +2,7 @@ import React from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import DropDownMenu from 'material-ui/DropDownMenu';
+import Snackbar from 'material-ui/Snackbar';
 import MenuItem from 'material-ui/MenuItem';
 
 import { createContainer } from 'meteor/react-meteor-data';
@@ -163,15 +164,17 @@ class AdminDashboard extends React.Component {
     this.weatherSymbols = {};
     this.state = {
       selectedDate: null,
-      onClickCount: 0
+      onClickCount: 0,
+      updateSaved: false
     }
+    this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
   }
 
   changeIcon(forecastText, symbol){
     console.log("symbol "+symbol+" was clicked.");
     this.weatherSymbols[forecastText] = symbol;
     // Count up just to trigger re-rendering
-    this.setState({onClickCount: this.state.onClickCount + 1});
+    this.setState({onClickCount: this.state.onClickCount + 1, updateSaved: false});
   }
 
   fillInWeatherSymbols(){
@@ -233,9 +236,21 @@ class AdminDashboard extends React.Component {
           {
             selectedDate ? this.renderTableAndButton(selectedDate) : ""
           }
+          <Snackbar
+            open={this.state.updateSaved}
+            message="Updated the weather icons"
+            autoHideDuration={4000}
+            onRequestClose={this.handleSnackbarClose}
+          />
         </div>
       </MuiThemeProvider>
     )
+  }
+
+  handleSnackbarClose(){
+    this.setState({
+      updateSaved: false
+    })
   }
 
   // Update the weather forecasts with the selected weather symbols.
@@ -255,6 +270,7 @@ class AdminDashboard extends React.Component {
     else{
       console.warn("There is no Samoan bulletin for "+bulletin.issued_at+" "+bulletin.name);
     }
+    this.setState({updateSaved: true});
   }
 }
 
