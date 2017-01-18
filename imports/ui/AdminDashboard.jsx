@@ -16,15 +16,16 @@ const style = {
 const iconInactiveStyle = {
   padding: "8px",
   width: "32px",
-  height: "32px",
+  height: "32px"
 //  filter: "opacity(20%)"
-  opacity: 0.2,
+//  opacity: 0.2,
 }
 
 const iconActiveStyle = {
   padding: "8px",
   width: "32px",
-  height: "32px"
+  height: "32px",
+  border: "2px solid blue"
 }
 
 // FIXME Word-wrapping does not work as expected ...
