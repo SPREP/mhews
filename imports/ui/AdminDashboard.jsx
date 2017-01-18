@@ -287,7 +287,7 @@ function getHeaderText(weatherSymbol){
 function updateForecast(bulletin){
   MongoWeatherForecasts.update(
     {_id: bulletin._id},
-    {"$set": {forecasts: bulletin.forecasts}}
+    {"$set": {forecasts: bulletin.forecasts, in_effect: true}}
   );
 }
 
@@ -333,16 +333,15 @@ function findInArray(array, condition){
   return null;
 }
 
-function listEffectiveDates(){
+function listLatestForecastDates(){
   return MongoWeatherForecasts.find(
     {
-      in_effect: true,
       lang: "en"
     },
     {
-      sort: {'issued_at': -1},
-      fields: {issued_at: 1, name: 1}
+      fields: {issued_at: 1, name: 1},
     }
+
   ).fetch();
 }
 
@@ -357,7 +356,7 @@ function getForecast(date){
 }
 
 const AdminDashboardContainer = createContainer(()=>{
-  const effectiveDates = listEffectiveDates();
+  const effectiveDates = listLatestForecastDates();
   console.log("effectiveDates = "+JSON.stringify(effectiveDates));
 
   return {

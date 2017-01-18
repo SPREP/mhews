@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 
 import {Warnings} from '../../api/warnings.js';
 import {CycloneBulletins} from '../../api/bulletin.js';
-import {WeatherForecasts, publishWeatherForecast} from '../../api/weather.js';
+import {WeatherForecasts, AdminWeatherForecasts, publishWeatherForecast} from '../../api/weather.js';
 import {sendFcmNotification} from '../../api/fcm.js';
 
 Meteor.startup(() => {
@@ -33,22 +33,18 @@ function startPublishingCycloneBulletins(){
 
 function startPublishingWeather(){
 
-  // Start the timer which invalidates old forecasts every 10min.
-  setInterval(Meteor.bindEnvironment(function(){
-    const before24hours = moment().subtract(24, 'hours').toDate();
-    WeatherForecasts.update(
-      {"in_effect": true, "issued_at": {"$lt": before24hours}},
-      {"$set": {"in_effect": false}},
-      {multi: true});
-  }), 600 * 1000);
-
   // The 2nd argument must use "function", not the arrow notations.
   // See this guide https://guide.meteor.com/data-loading.html
   Meteor.publish('weatherForecast', function() {
-    // Only publish the forecasts which is in effect.
+    // Publish the recent 3 forecasts regardless if it is in effect,
+    // so that the admin dashboard can receive the forecasts that hasn't been in effect yet.
     // Returns the Cursor, not each document.
-    return WeatherForecasts.find({'in_effect': true});
+    return WeatherForecasts.find({}, {
+      sort: {issued_at: -1},
+      limit: 3
+    });
   });
+
 }
 
 function startPublishingWarnings(){

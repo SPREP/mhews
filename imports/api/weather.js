@@ -38,7 +38,7 @@ WeatherForecasts.init = ()=>{
 }
 
 WeatherForecasts.getLatestForecast = (lng)=>{
-  let forecasts = WeatherForecasts.find({lang: lng}, {sort: {'issued_at': -1}}).fetch();
+  let forecasts = WeatherForecasts.find({lang: lng, in_effect: true}, {sort: {'issued_at': -1}}).fetch();
   let data = null;
   if( !forecasts ){
     console.error("No matching data.");
@@ -99,7 +99,8 @@ export function publishWeatherForecast(forecast){
     forecast: String
   }]);
 
-  forecast.in_effect = true;
+  // Don't set in_effect to true here. It is set true after the weather icons have been specified.
+  forecast.in_effect = false;
 
   return WeatherForecasts.insert(forecast);
 }
