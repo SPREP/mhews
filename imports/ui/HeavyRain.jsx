@@ -61,7 +61,7 @@ class HeavyRainPage extends React.Component {
             expanded={this.props.expanded}
             >
             <GoogleMap mapCenter={Samoa.center} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
-              Loading...
+              {this.props.t("loading_map")}
             </GoogleMap>
           </HazardView>
         );
@@ -101,6 +101,7 @@ class HeavyRainPage extends React.Component {
 }
 
 HeavyRainPage.propTypes = {
+  t: React.PropTypes.func,
   phenomena: React.PropTypes.object,
   isAdmin: React.PropTypes.bool,
   cancelWarning: React.PropTypes.func,

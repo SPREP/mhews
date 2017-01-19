@@ -41,6 +41,7 @@ const i18nConfig = {
         no_warning_in_effect: "No warnings in effect. No severe quakes within the last 24h.",
         no_weather_forecast_error: "Sorry there is no forecast... Perhaps the app failed to contact the server.",
         situation: "Situation",
+        loading_map: "Loading Google map...",
         month:{
           "Jan": "Jan",
           "Feb": "Feb",
@@ -109,6 +110,7 @@ const i18nConfig = {
         no_warning_in_effect: "No warning is in effect and no severe quake information.",
         no_weather_forecast_error: "Tulou e leai forecast...",
         situation: "Tulaga",
+        loading_map: "Loading Google map...",
         month: {
           "Jan": "Ian",
           "Feb": "Fep",

@@ -133,8 +133,9 @@ SmallCard.propTypes = {
 }
 
 class WeatherCardHeader extends React.Component {
-
   render(){
+    const adjustedMoonPhase = adjustMoonPhase(this.props.moonphase, this.props.date);
+
     return (
       <div style={{"padding": "16px", "padding-top": "0px", "padding-bottom": "0px"}}>
         <div style={{display: "inline-block", "vertical-align": "top"}}>
@@ -150,8 +151,8 @@ class WeatherCardHeader extends React.Component {
           <div>
             <SmallCard icon="images/weather/dawn.png" text={this.props.sunrise} />
             <SmallCard icon="images/weather/sunset.png" text={this.props.sunset} />
-            <SmallCard icon={getMoonIcon(this.props.moonphase)}
-              text={getMoonPhaseName(this.props.moonphase)}
+            <SmallCard icon={getMoonIcon(adjustedMoonPhase)}
+              text={getMoonName(adjustedMoonPhase)}
             />
             <TideTableViewContainer date={this.props.date}/>
           </div>
@@ -385,15 +386,13 @@ function getWeatherIcon(weatherSymbol){
   return "images/weather/"+weatherIcons.dayTime[weatherSymbol];
 }
 
-function getMoonIcon(moonPhase){
-  // moonPhase is a value between 0.0 and 1.0
-  // Map the moonPhase to one of 8 files
-  console.log("moonPhase = "+moonPhase);
-  const fileIndex = Math.round(moonPhase * 8) % 8;
+function getMoonIcon(adjustedMoonPhase){
+
+  const fileIndex = adjustedMoonPhase;
   return "images/moon/moon-phase-"+fileIndex+".svg";
 }
 
-const moonPhaseNames = [
+const moonNames = [
   "New Moon",
   "Waxing Crescent",
   "First Quarter",
@@ -404,9 +403,52 @@ const moonPhaseNames = [
   "Waning Crescent"
 ];
 
-function getMoonPhaseName(moonPhase){
-  const index = Math.round(moonPhase * 8) % 8;
-  return moonPhaseNames[index];
+function adjustMoonPhase(moonPhase, date){
+    if( isClosest(moonPhase, 0.0, date)){
+    return 0;
+  }
+  else if( isClosest(moonPhase, 0.25, date)){
+    return 2;
+  }
+  else if( isClosest(moonPhase, 0.5, date)){
+    return 4;
+  }
+  else if( isClosest(moonPhase, 0.75, date)){
+    return 6;
+  }
+  else if( moonPhase > 0.0 && moonPhase < 0.25 ){
+    return 1;
+  }
+  else if( moonPhase > 0.25 && moonPhase < 0.5 ){
+    return 3;
+  }
+  else if( moonPhase > 0.5 && moonPhase < 0.75 ){
+    return 5;
+  }
+  else{
+    return 7;
+  }
+}
+
+function getMoonName(adjustedMoonPhase){
+
+  return moonNames[adjustedMoonPhase];
+}
+
+// Check if moonPhase of the given date is closest to the targetPhase,
+// compared to the previous and next day of the given day.
+function isClosest(moonPhase, targetPhase, date){
+  const phasePrevDay = SunCalc.getMoonIllumination(moment(date).subtract(1, 'days')).phase;
+  const phaseNextDay = SunCalc.getMoonIllumination(moment(date).add(1, 'days')).phase;
+
+  return phaseDelta(moonPhase, targetPhase) < phaseDelta(phasePrevDay, targetPhase) &&
+         phaseDelta(moonPhase, targetPhase) < phaseDelta(phaseNextDay, targetPhase);
+}
+
+// This function adjust the modulous
+function phaseDelta(phase1, phase2){
+  const delta = Math.abs(phase1 - phase2);
+  return Math.min(delta, Math.abs(delta - 1.0));
 }
 
 WeatherPage.propTypes = {

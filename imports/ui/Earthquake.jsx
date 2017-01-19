@@ -64,7 +64,7 @@ class EarthquakePage extends React.Component {
             expanded={this.props.expanded}
             level={quake.level}>
             <GoogleMap mapCenter={quake.epicenter} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
-              Loading...
+              {this.props.t("loading_map")}
             </GoogleMap>
           </HazardView>
 
