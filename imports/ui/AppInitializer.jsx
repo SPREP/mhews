@@ -59,7 +59,7 @@ function hideSplashScreen(){
 
 AppInitializer.propTypes = {
   loaded: React.PropTypes.bool,
-  appInitialized: React.PropTypes.bool
+  appInitialized: React.PropTypes.string
 }
 
 const AppInitializerContainer = createContainer(()=>{
