@@ -2,10 +2,10 @@ import SunCalc from 'suncalc';
 
 export class Moon {
   constructor(date){
-    this.date = date;
-    const moonIllumination = SunCalc.getMoonIllumination(date);
+    this.date = adjustDate(date);
+    const moonIllumination = SunCalc.getMoonIllumination(this.date);
     this.moonPhase = moonIllumination.phase;
-    this.adjustedMoonPhase = adjustMoonPhase(this.moonPhase, date);
+    this.adjustedMoonPhase = adjustMoonPhase(this.moonPhase, this.date);
   }
 
   getIcon(){
@@ -15,6 +15,11 @@ export class Moon {
   getName(){
     return getMoonName(this.adjustedMoonPhase);
   }
+}
+
+function adjustDate(date){
+  const dateStr = moment(date).format("YYYY-MM-DD");
+  return moment(dateStr+" 12:00 +1500", "YYYY-MM-DD HH:mm Z").toDate();
 }
 
 function getMoonIcon(adjustedMoonPhase){
