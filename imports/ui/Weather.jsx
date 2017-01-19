@@ -5,6 +5,7 @@ import SwipeableViews from 'react-swipeable-views';
 
 import {WeatherForecasts} from '../api/weather.js';
 import {Preferences} from '../api/client/preferences.js';
+import {TideTableCollection} from '../api/tidetable.js';
 
 import FileCache from '../api/client/filecache.js';
 import {weatherIcons} from '../api/weatherIcons.js';
@@ -49,6 +50,45 @@ function startObservingWeatherForecast(){
     added: (forecast)=>{refreshSurfaceChart(forecast)}
   });
 }
+
+class TideTableView extends React.Component {
+
+  render(){
+    return (
+      <table style={{"padding-left": "8px", "font-size": "10pt", display: "inline-block", "vertical-align": "top"}}>
+        <th>Tide</th>
+        <th>Time</th>
+        <th>Height</th>
+        {
+          this.props.tideTable.map((tide)=>{
+            return (
+              <tr>
+                <td>{tide.tide}</td>
+                <td>{tide.time}</td>
+                <td>{tide.height+"m"}</td>
+              </tr>
+            )
+          })
+        }
+      </table>
+    )
+  }
+}
+
+TideTableView.propTypes = {
+  tideTable: React.PropTypes.array
+}
+
+const TideTableViewContainer = createContainer(({date})=>{
+  return {
+    tideTable: TideTableCollection.find({
+      dateTime: {
+        "$gte": moment(date).startOf('day').toDate(),
+        "$lte": moment(date).endOf('day').toDate()
+      }
+    }).fetch()
+  }
+}, TideTableView);
 
 class WeatherButton extends React.Component {
 
@@ -96,11 +136,16 @@ class WeatherCardHeader extends React.Component {
 
   render(){
     return (
-      <div style={{"padding": "16px", "padding-bottom": "0px"}}>
+      <div style={{"padding": "16px", "padding-top": "0px", "padding-bottom": "0px"}}>
         <div style={{display: "inline-block", "vertical-align": "top"}}>
-          <div style={{"padding-bottom": "8px", display: "inline-block", "vertical-align": "top"}}>
+          <div style={{"padding-bottom": "8px", display: "inline-block", "vertical-align": "middle", "width": "60%"}}>
             <div style={{"font-size": "14pt"}}>{this.props.title}</div>
             <div style={{"font-size": "10pt"}}>{this.props.subtitle}</div>
+          </div>
+          <div style={{"display": "inline-block", "vertical-align": "middle", "width": "40%"}}>
+            <img src={this.props.icon}
+              style={{width: "64px", height: "64px"}}
+            />
           </div>
           <div>
             <SmallCard icon="images/weather/dawn.png" text={this.props.sunrise} />
@@ -108,16 +153,16 @@ class WeatherCardHeader extends React.Component {
             <SmallCard icon={getMoonIcon(this.props.moonphase)}
               text={getMoonPhaseName(this.props.moonphase)}
             />
+            <TideTableViewContainer date={this.props.date}/>
           </div>
         </div>
-        <img src={this.props.icon}
-          style={{width: "96px", height: "96px", "display": "inline-block", "vertical-align": "top"}}/>
       </div>
     )
   }
 }
 
 WeatherCardHeader.propTypes = {
+  date: React.PropTypes.object,
   icon: React.PropTypes.string,
   title: React.PropTypes.string,
   subtitle: React.PropTypes.string,
@@ -125,6 +170,21 @@ WeatherCardHeader.propTypes = {
   sunset: React.PropTypes.string,
   moonphase: React.PropTypes.number,
   weatherSymbol: React.PropTypes.string
+}
+
+class WeatherCardText extends React.Component {
+
+  render(){
+    return (
+      <CardText style={{"padding": "16px", "padding-top": "8px", "padding-bottom": "8px"}}>
+        {this.props.children}
+      </CardText>
+    );
+  }
+}
+
+WeatherCardText.propTypes = {
+  children: React.PropTypes.node
 }
 
 /**
@@ -222,6 +282,7 @@ export class WeatherPage extends React.Component {
               return (
                 <div key={this.dateToString(forecast.date)}>
                   <WeatherCardHeader
+                    date={forecast.date}
                     icon={forecast.icon}
                     title={this.dateToString(forecast.date)}
                     titleStyle={{"fontSize": "14pt"}}
@@ -231,12 +292,12 @@ export class WeatherPage extends React.Component {
                     moonphase={forecast.moonphase}
                     weatherSymbol={forecast.weatherSymbol}
                   />
-                  <CardText>{forecast.text}</CardText>
+                  <WeatherCardText>{forecast.text}</WeatherCardText>
                 </div>)
             })
           }
         </SwipeableViews>
-        <CardActions>
+        <CardActions style={{"padding-top": "0px"}}>
           {
             forecasts.map((forecast) => (
               <WeatherButton
@@ -300,7 +361,7 @@ export class WeatherPage extends React.Component {
   }
 
   dateTimeToString(dateTime){
-    return moment(dateTime).format("YYYY-MM-DD hh:mm");
+    return moment(dateTime).format("YYYY-MM-DD HH:mm");
   }
 
   getDayOfDate(dateTime){

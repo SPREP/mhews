@@ -113,10 +113,13 @@ class EarthquakePage extends React.Component {
 }
 
 function formatQuakeInformation(quake){
+  const distanceKm = Math.round(quake.distance_km);
+  const distanceMiles = Math.round(quake.distance_miles);
+
   if( Preferences.load("language") == "en"){
     let description = "An earthquake with magnitude "+quake.mw+" occurred in the "+quake.region;
     description += ", at the depth "+quake.depth+" km";
-    description += ", approximately "+Math.round(quake.distance_km)+" km ("+Math.round(quake.distance_miles)+" miles) ";
+    description += ", approximately "+distanceKm+" km ("+distanceMiles+" miles) ";
     description += quake.direction_en+ " of Apia. ";
 
     description += quake.description_en;
@@ -126,7 +129,7 @@ function formatQuakeInformation(quake){
   else{
     let description = "O le mafuie e tusa lona malosi ma le "+quake.mw+" ile fua mafuie sa afua mai ile motu o "+quake.region;
     description += ", ile loloto e "+quake.depth+" kilomita";
-    description += ", ile mamao e "+quake.distance_km+" kilomita ("+quake.distance_miles+" maila tautai) ";
+    description += ", ile mamao e "+distanceKm+" kilomita ("+distanceMiles+" maila tautai) ";
     description += quake.direction_ws+ " o Apia. ";
 
     description += quake.description_ws;

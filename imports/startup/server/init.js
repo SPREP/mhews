@@ -2,7 +2,8 @@ import { Meteor } from 'meteor/meteor';
 
 import {Warnings} from '../../api/warnings.js';
 import {CycloneBulletins} from '../../api/bulletin.js';
-import {WeatherForecasts, AdminWeatherForecasts, publishWeatherForecast} from '../../api/weather.js';
+import {WeatherForecasts, publishWeatherForecast} from '../../api/weather.js';
+import {TideTableCollection} from '../../api/tidetable.js';
 import {sendFcmNotification} from '../../api/fcm.js';
 
 Meteor.startup(() => {
@@ -18,6 +19,7 @@ Meteor.startup(() => {
   startPublishingCycloneBulletins();
   startPublishingWarnings();
   startPublishingWeather();
+  startPublishingTideTable();
 });
 
 function startPublishingCycloneBulletins(){
@@ -31,6 +33,32 @@ function startPublishingCycloneBulletins(){
   });
 }
 
+function startPublishingTideTable(){
+
+  TideTableCollection.find({
+    dateTime: {"$exists": false}
+  }).observe({
+    added: function(tide){
+      console.log("tide = "+JSON.stringify(tide));
+      console.log("dateTime = "+tide.date+" "+tide.time);
+      const dateTime = moment(tide.date+" "+tide.time, "MM/DD/YY HH:mm").toDate();
+      TideTableCollection.update({"_id": tide._id}, {"$set": {dateTime: dateTime}});
+    }
+  });
+
+  // The 2nd argument must use "function", not the arrow notations.
+  // See this guide https://guide.meteor.com/data-loading.html
+  Meteor.publish('tideTable', function() {
+    const now = moment();
+
+    return TideTableCollection.find(
+      {
+        dateTime: {"$gte": now.toDate(), "$lt": now.add(3, "months").toDate()}
+      }
+    );
+  });
+
+}
 function startPublishingWeather(){
 
   // The 2nd argument must use "function", not the arrow notations.

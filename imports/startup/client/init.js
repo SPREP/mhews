@@ -79,6 +79,8 @@ function subscribeForCollections(){
   // To receive the data from the cycloneBulletin collection
   Meteor.subscribe('cycloneBulletins');
 
+  Meteor.subscribe('tideTable');
+
   WeatherForecasts.init();
 }
 
