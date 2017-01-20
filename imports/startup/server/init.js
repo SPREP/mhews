@@ -39,10 +39,13 @@ function startPublishingTideTable(){
     dateTime: {"$exists": false}
   }).observe({
     added: function(tide){
-      console.log("tide = "+JSON.stringify(tide));
-      console.log("dateTime = "+tide.date+" "+tide.time);
-      const dateTime = moment(tide.date+" "+tide.time, "MM/DD/YY HH:mm").toDate();
-      TideTableCollection.update({"_id": tide._id}, {"$set": {dateTime: dateTime}});
+      const dateTime = moment(tide.date+" "+tide.time, "MM/DD/YY HH:mm");
+      // Add 1 hour during the daylight saving time.
+      // Reference: http://www.bom.gov.au/ntc/IDO60008/IDO60008.201701.pdf
+      if( dateTime.isDST() ){
+        dateTime.add(1, "hours");
+      }
+      TideTableCollection.update({"_id": tide._id}, {"$set": {dateTime: dateTime.toDate()}});
     }
   });
 

@@ -4,23 +4,22 @@ import { Meteor } from 'meteor/meteor';
 /* Imports from the material-ui */
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
-import FlatButton from 'material-ui/FlatButton';
-import Snackbar from 'material-ui/Snackbar';
-import Dialog from 'material-ui/Dialog';
 import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 
 /* i18n */
 import { translate } from 'react-i18next';
 
 /* Imports the mhews's components */
-import { createContainer } from 'meteor/react-meteor-data';
 import SwitchableContentContainer from './SwitchableContent.jsx';
+import ConnectionStatusIndicatorContainer from './ConnectionStatusIndicator.jsx';
 import DrawerMenu from './DrawerMenu.jsx';
 import {quitApp} from '../api/client/appcontrol.js';
+import {WeatherForecastObserver} from '../api/client/weatherForecastObserver.js';
 
 /* global navigator */
 
 const topPageName = Meteor.settings.public.topPage;
+
 
 class App extends React.Component {
 
@@ -35,7 +34,6 @@ class App extends React.Component {
     this.onBackKeyDown = this.onBackKeyDown.bind(this);
   }
 
-  // FIXME What to be done here is to pause the app, not close it.
   onBackKeyDown(){
     if( this.state.drawerOpen ){
       this.toggleDrawerOpen();
@@ -57,102 +55,18 @@ class App extends React.Component {
     this.setState({drawerOpen: open});
   }
 
-  renderDrawerMenu(){
-    return (
-      <DrawerMenu {...this.props}
-        drawerOpen={this.state.drawerOpen}
-        onQuit={quitApp}
-        onRequestChange={(open)=>{this.setDrawerOpen(open);}}
-        onPageSelection={(page) => {this.handlePageSelection(page);}}
-      />
-    );
-  }
-
-  renderSwitchableContent(page){
-    return (
-      <SwitchableContentContainer {...this.props}
-        page={page}
-        onPageSelection={(page) => {
-          this.handlePageSelection(page);
-        }}
-      />
-    );
-
-  }
-
-  renderConnectionStatus(){
-    const t = this.props.t;
-
-    return (
-      <Snackbar
-        open={!this.props.connected}
-        message={t("waiting-for-network")}
-        bodyStyle={{"width": "100%"}}
-        style={{"width": "100%"}}
-      />
-    );
-  }
-
-  renderSoftwareUpdateAvailability(){
-    const t = this.props.t;
-
-    if( !this.props.connected ){
-      return "";
+  componentDidMount(){
+    if( Meteor.isCordova ){
+      document.addEventListener("backbutton", this.onBackKeyDown);
     }
-    if( this.isSoftwareUpdateConfirmed ){
-      return "";
-    }
+    console.log("WeatherPage.componentDidMount()");
+    WeatherForecastObserver.start();
 
-    const actions = [
-      <FlatButton
-        label="Cancel"
-        primary={true}
-        onTouchTap={()=>{this.closeDialog()}}
-      />,
-      <FlatButton
-        label="Quit"
-        primary={true}
-        onTouchTap={quitApp}
-      />,
-    ];
-
-    return (
-      <div>
-        <Snackbar
-          open={this.props.softwareUpdateAvailable}
-          message={t("software-update-available")}
-          bodyStyle={{"width": "100%"}}
-          style={{"width": "100%"}}
-          action="Update"
-          autoHideDuration={5000}
-          onRequestClose={()=>{this.closeSoftwareUpdateSnackbar()}}
-          onActionTouchTap={()=>{this.askUserToRestartApp()}}
-        />
-        <Dialog
-          title="Software update"
-          actions={actions}
-          modal={false}
-          open={this.state.dialogOpen}
-          onRequestClose={()=>{this.closeDialog()}}
-          >
-          For installing the software update, the Application will be quit.
-          Please restart the application.
-          </Dialog>
-        </div>
-    );
   }
 
-  closeSoftwareUpdateSnackbar(){
-    this.isSoftwareUpdateConfirmed = true;
-  }
-
-  askUserToRestartApp(){
-    console.log("askUserToRestartApp()");
-    this.setState({dialogOpen: true});
-  }
-
-  closeDialog(){
-    this.setState({dialogOpen: false});
+  componentWillUnmount(){
+    console.log("WeatherPage.componentWillUmount()");
+    WeatherForecastObserver.stop();
   }
 
   render(){
@@ -160,14 +74,6 @@ class App extends React.Component {
     const page = this.state.page;
     const pageConfig = Meteor.settings.public.pages[page];
     const title = pageConfig.title;
-
-    // Change the back-button behavior
-    if( this.state.page != topPageName || this.state.drawerOpen ){
-      document.addEventListener("backbutton", this.onBackKeyDown);
-    }
-    else{
-      document.removeEventListener("backbutton", this.onBackKeyDown);
-    }
 
     return (
       <div>
@@ -178,28 +84,27 @@ class App extends React.Component {
           onLeftIconButtonTouchTap={()=>{this.toggleDrawerOpen()}}
           iconElementLeft={<IconButton><MenuIcon /></IconButton>}
         />
-        {this.state.drawerOpen ? this.renderDrawerMenu() : ""}
-        {!this.state.drawerOpen ? this.renderSwitchableContent(page): ""}
-        {!this.props.connected ? this.renderConnectionStatus(): ""}
-        {this.props.softwareUpdateAvailable ? this.renderSoftwareUpdateAvailability(): ""}
+        <DrawerMenu {...this.props}
+          drawerOpen={this.state.drawerOpen}
+          onQuit={quitApp}
+          onRequestChange={(open)=>{this.setDrawerOpen(open);}}
+          onPageSelection={(page) => {this.handlePageSelection(page);}}
+        />
+        <SwitchableContentContainer {...this.props}
+          page={page}
+          drawerOpen={this.state.drawerOpen}
+          onPageSelection={(page) => {
+            this.handlePageSelection(page);
+          }}
+        />
+        <ConnectionStatusIndicatorContainer t={t} />
       </div>
     );
   }
 }
 
 App.propTypes = {
-  t: React.PropTypes.func,
-  connected: React.PropTypes.bool,
-  softwareUpdateAvailable: React.PropTypes.bool
+  t: React.PropTypes.func
 }
 
-const AppContainer = createContainer(({t})=>{
-
-  return {
-    t,
-    connected: Meteor.status().connected,
-    softwareUpdateAvailable: false
-  }
-}, App);
-
-export default translate(['common'])(AppContainer);
+export default translate(['common'])(App);

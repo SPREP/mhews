@@ -18,30 +18,40 @@ class FileCacheClass {
     check(url, String);
 
     let entry = this.collection.findOne({url: url});
-    if( !entry ){
+    if( entry ){
+      console.log("filecache entry already exists. "+JSON.stringify(entry))
+    }
+    else{
       entry = {url: url};
       this.collection.insert(entry);
     }
-    return new FileCacheHandle(entry);
+    return new FileCacheHandle(entry, this.collection);
   }
 
   remove(url){
     this.collection.remove({url: url});
   }
 
-  onDownload(url, path){
-    this.collection.update({url: url}, {"$set": {path: path}});
+  onDownload(url, path, downloadDate){
+    this.collection.update({url: url}, {"$set": {path: path, date: downloadDate.toDate()}});
   }
 }
 
 class FileCacheHandle {
 
-  constructor({url, path}){
+  constructor({url, path, date}, collection){
     this.url = url;
     this.path = path;
     this.needDownload = new ReactiveVar(path ? false : true);
     this.source = new ReactiveVar(url);
+    this.date = date; // Download date
     this.startDownload = this.startDownload.bind(this);
+
+    collection.find({url: url}).observe({
+      changed: (document)=>{
+        this.date = document.date;
+      }
+    })
 
     Tracker.autorun(this.startDownload);
   }
@@ -61,7 +71,6 @@ class FileCacheHandle {
   startDownload(){
     console.log("startDownload autorun for "+this.url);
     if( Meteor.status().connected && this.needDownload.get()){
-      console.log("Condition met. Start downloading "+this.url);
       this.download();
       this.needDownload.set(false);
     }
@@ -75,22 +84,43 @@ class FileCacheHandle {
       var fileTransfer = new FileTransfer();
       const path = fileSystem.root.toURL() + md5(this.url) + getFileName(this.url);
       console.log("download destination = "+path);
+      console.log("Last download date ="+this.date);
+      console.log("If-Modified-Since header = "+ getIfModifiedSinceHeader(this.date));
+      const downloadDate = moment();
+
+      // Adjustment for the daylight saving tiem
+      if( downloadDate.isDST() ){
+        downloadDate.subtract(1, 'hours');
+      }
+
       fileTransfer.download(
         this.url,
         path,
         (entry)=>{
           console.log("Downloaded: "+this.url+" to "+entry.toURL());
           this.source.set(WebAppLocalServer.localFileSystemUrl(path));
-          FileCache.onDownload(this.url, path);
+          FileCache.onDownload(this.url, path, downloadDate);
           this.downloading = false;
         },
         (error)=>{
           console.log("Download failed: "+this.url+". Error = "+JSON.stringify(error));
           this.downloading = false;
+        },
+        false,
+        this.date ?
+        {
+          headers: {
+            "If-Modified-Since": getIfModifiedSinceHeader(this.date)
+          }
         }
+        : {}
       );
     });
   }
+}
+
+function getIfModifiedSinceHeader(date){
+  return moment(date).utc().format("ddd, DD MMM YYYY HH:mm:ss")+" GMT";
 }
 
 function getFileName(url){

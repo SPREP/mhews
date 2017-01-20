@@ -6,6 +6,15 @@ import { createContainer } from 'meteor/react-meteor-data';
 
 class SwitchableContent extends React.Component {
 
+  shouldComponentUpdate(nextProps, _nextState){
+    // Suppress rendering if the drawer is open. Otherwise it is too slow.
+    if(nextProps.drawerOpen){
+      return false;
+    }
+
+    return true;
+  }
+
   /**
   * Handle state change caused by the user choosing a menu.
   */
@@ -36,7 +45,8 @@ class SwitchableContent extends React.Component {
 SwitchableContent.propTypes = {
   page: React.PropTypes.string,
   t: React.PropTypes.func,
-  onPageSelection: React.PropTypes.func
+  onPageSelection: React.PropTypes.func,
+  drawerOpen: React.PropTypes.bool
 }
 
 function getPageConfig(page){

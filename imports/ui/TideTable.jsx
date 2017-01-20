@@ -7,7 +7,7 @@ class DailyTideTable extends React.Component {
 
   render(){
     let key = 0;
-    
+
     return (
       <table style={{"paddingLeft": "8px", "fontSize": "10pt", display: "inline-block", "verticalAlign": "top"}}>
         <thead>
@@ -46,6 +46,16 @@ export const DailyTideTableContainer = createContainer(({date})=>{
       dateTime: {
         "$gte": moment(date).startOf('day').toDate(),
         "$lte": moment(date).endOf('day').toDate()
+      }
+    },
+    {
+      transform: (tide)=>{
+        // Use the dateTime instead of the original (entered) tide.time,
+        // because tide.dateTime considers the Daylight Saving Time.
+        const mDateTime = moment(tide.dateTime);
+        tide.time = mDateTime.format("HH:mm");
+
+        return tide;
       }
     }).fetch()
   }

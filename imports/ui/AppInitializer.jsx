@@ -4,7 +4,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import InitPageContainer from './InitPage.jsx';
 import {Preferences} from '../api/client/preferences.js';
 
-import AppContainer from './App.jsx';
+import App from './App.jsx';
 import { createContainer } from 'meteor/react-meteor-data';
 
 import i18n from 'i18next';
@@ -46,7 +46,7 @@ class AppInitializer extends React.Component {
 
   renderAppContainer(){
     return(
-      <AppContainer {...this.props} />
+      <App {...this.props} />
     );
   }
 }

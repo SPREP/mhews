@@ -5,8 +5,8 @@ import SwipeableViews from 'react-swipeable-views';
 
 import {WeatherForecasts} from '../api/weather.js';
 import {Preferences} from '../api/client/preferences.js';
+import {WeatherForecastObserver} from '../api/client/weatherForecastObserver.js';
 
-import FileCache from '../api/client/filecache.js';
 import {weatherIcons} from '../api/weatherIcons.js';
 import SunCalc from 'suncalc';
 import {Moon} from '../api/moonutils.js';
@@ -16,41 +16,6 @@ import {SmallCard} from './SmallCard.jsx';
 const Months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 const WeekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-const surfaceChartUrl = "http://www.samet.gov.ws/images/surface_chart/latest_compact.png";
-
-const satelliteImageUrl = "http://www.samet.gov.ws/satellite/satellite_image_compact.png";
-
-let surfaceChartHandler;
-
-let satelliteImageHandler;
-
-let forecastCursor;
-
-Meteor.startup(()=>{
-  surfaceChartHandler = FileCache.add(surfaceChartUrl);
-  satelliteImageHandler = FileCache.add(satelliteImageUrl);
-  startObservingWeatherForecast();
-});
-
-// Trigger downloading the surface chart when the weather forecast is updated.
-// This assumes that the surface chart is updated before the forecast is published.
-// (Assumption on the SMD's workflow)
-function refreshSurfaceChart(forecast){
-  console.log("refreshSurfaceChart() for "+forecast._id);
-  if( surfaceChartHandler ){
-    surfaceChartHandler.refresh();
-  }
-}
-
-function startObservingWeatherForecast(){
-  console.log("startObservingWeatherForecast()");
-
-  forecastCursor = WeatherForecasts.find({lang: "en", in_effect: true});
-  forecastCursor.observe({
-    added: (forecast)=>{refreshSurfaceChart(forecast)}
-  });
-}
 
 class Nowcast extends React.Component {
   render(){
@@ -113,7 +78,7 @@ class WeatherSituation extends React.Component {
     return (
       <SwipeableViews>
         {
-          [surfaceChartHandler, satelliteImageHandler].map((imageHandler)=>{
+          WeatherForecastObserver.getHandlers().map((imageHandler)=>{
             key++;
 
             return (
