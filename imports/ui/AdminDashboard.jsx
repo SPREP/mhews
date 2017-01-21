@@ -7,7 +7,7 @@ import MenuItem from 'material-ui/MenuItem';
 
 import { createContainer } from 'meteor/react-meteor-data';
 
-import {MongoWeatherForecasts} from '../api/weather.js';
+import {MongoWeatherForecasts} from '../api/client/weather.js';
 import {weatherIcons} from '../api/weatherIcons.js';
 
 const style = {

@@ -1,5 +1,5 @@
 import FileCache from './filecache.js';
-import {WeatherForecasts} from '../weather.js';
+import {WeatherForecasts} from './weather.js';
 
 const surfaceChartUrl = "http://www.samet.gov.ws/images/surface_chart/latest_compact.png";
 

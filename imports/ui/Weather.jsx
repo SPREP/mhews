@@ -3,9 +3,10 @@ import {Card, CardHeader, CardActions, CardMedia, CardTitle, CardText} from 'mat
 import { createContainer } from 'meteor/react-meteor-data';
 import SwipeableViews from 'react-swipeable-views';
 
-import {WeatherForecasts} from '../api/weather.js';
+import {WeatherForecasts} from '../api/client/weather.js';
 import {Preferences} from '../api/client/preferences.js';
 import {WeatherForecastObserver} from '../api/client/weatherForecastObserver.js';
+import {Town} from '../api/towninfo.js';
 
 import {weatherIcons} from '../api/weatherIcons.js';
 import SunCalc from 'suncalc';
@@ -60,7 +61,7 @@ Nowcast.propTypes = {
   forecast: React.PropTypes.object
 }
 
-class WeatherSituation extends React.Component {
+class WeatherSituationImage extends React.Component {
 
   constructor(props){
     super(props);
@@ -72,6 +73,35 @@ class WeatherSituation extends React.Component {
   }
 
   render(){
+    return (
+      <CardMedia
+        overlay={this.state.displayCardMediaTitle ? this.props.cardTitle : undefined}
+        expandable={true}
+        onTouchTap={()=>{this.toggleDisplayCardMediaTitle()}}>
+        {
+          this.props.image ? <img src={this.props.image} /> : "Loading ..."
+        }
+      </CardMedia>
+    );
+  }
+}
+
+WeatherSituationImage.propTypes = {
+  cardTitle: React.PropTypes.node,
+  image: React.PropTypes.string
+}
+
+const WeatherSituationImageContainer = createContainer(({cardTitle, imageHandler})=>{
+  return {
+    cardTitle,
+    image: imageHandler.getSource()
+  }
+
+}, WeatherSituationImage);
+
+class WeatherSituation extends React.Component {
+
+  render(){
     const cardTitle = (<CardTitle title="Situation" subtitle={this.props.situation} />);
     let key = 0;
 
@@ -80,16 +110,12 @@ class WeatherSituation extends React.Component {
         {
           WeatherForecastObserver.getHandlers().map((imageHandler)=>{
             key++;
-
-            return (
-              <CardMedia
-                key={key}
-                overlay={this.state.displayCardMediaTitle ? cardTitle : undefined}
-                expandable={true}
-                onTouchTap={()=>{this.toggleDisplayCardMediaTitle()}}>
-                <img src={imageHandler.getSource()} />
-              </CardMedia>)
-            })
+            <WeatherSituationImageContainer
+              key={key}
+              cardTitle={cardTitle}
+              imageHandler={imageHandler}
+            />
+          })
         }
       </SwipeableViews>
     );
@@ -246,15 +272,10 @@ function dateToString(date, t){
   return month+" "+date.getDate()+" ("+day+")";
 }
 
-const Apia = {
-  lat: -13.815605,
-  lng: -171.780512
-};
-
 function getLocationForDistrict(_district){
   // Just return Apia for now.
   // TODO Set a representing location of each district, and return the location.
-  return Apia;
+  return Town.Apia;
 }
 
 function getWeatherIcon(weatherSymbol){

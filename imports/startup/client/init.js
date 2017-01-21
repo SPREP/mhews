@@ -1,13 +1,13 @@
-import {Warnings} from '../../api/warnings.js';
+import {Warnings} from '../../api/client/warnings.js';
 import {Preferences} from '../../api/client/preferences.js';
 import {playSound} from '../../api/client/mediautils.js';
-import {WeatherForecasts} from '../../api/weather.js';
+import {WeatherForecasts} from '../../api/client/weather.js';
 
 /* i18n */
 import i18nConfig from '../../api/i18n.js';
 import i18n from 'i18next';
 
-import {initFcmClient} from '../../api/fcm.js';
+import {initFcmClient} from '../../api/client/fcm.js';
 
 /* This plugin captures the tap event in React. */
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -26,15 +26,17 @@ Meteor.startup(()=>{
   // Call this function after the initTapEventPlugin().
   // Otherwise, some material-ui components won't work.
   initRouter();
+});
 
-  // Initializations that can be deferred. Hope it reduces the delay before the first screen appears.
-  Meteor.defer(()=>{
-    configReloader();
-    initFcm();
-    subscribeForCollections();
-    startWarningObserver();
-  })
-})
+// Initializations that can be deferred after the GUI is rendered.
+// To be executed in the componentDidMount() of the App.
+export function initAfterComponentMounted(){
+
+  configReloader();
+  initFcm();
+  subscribeForCollections();
+  startWarningObserver();
+}
 
 function initTapEventPlugin(){
 

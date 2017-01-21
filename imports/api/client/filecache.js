@@ -43,17 +43,25 @@ class FileCacheHandle {
     this.url = url;
     this.path = path;
     this.needDownload = new ReactiveVar(path ? false : true);
-    this.source = new ReactiveVar(url);
+    this.source = new ReactiveVar(path ? WebAppLocalServer.localFileSystemUrl(path) : undefined);
     this.date = date; // Download date
     this.startDownload = this.startDownload.bind(this);
 
     collection.find({url: url}).observe({
+      added: (document)=>{
+        this.date = document.date;
+      },
       changed: (document)=>{
         this.date = document.date;
       }
     })
 
-    Tracker.autorun(this.startDownload);
+    // Defer the start of the Tracker, because the connection observer won't be called immediately,
+    // due to slow startup of the GroundDB.
+    // TODO The code below to be tested. Especially make sure that the autorun keeps running.
+    setTimeout(()=>{
+      Tracker.autorun(this.startDownload);
+    }, 5000);
   }
 
   // Return the URL that can be used by a view component (e.g. img tag)
@@ -69,7 +77,6 @@ class FileCacheHandle {
 
   // Rerun when the connectivity status changes to Connected.
   startDownload(){
-    console.log("startDownload autorun for "+this.url);
     if( Meteor.status().connected && this.needDownload.get()){
       this.download();
       this.needDownload.set(false);

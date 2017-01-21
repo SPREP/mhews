@@ -7,7 +7,7 @@ import {Card, CardHeader} from 'material-ui/Card';
 import { createContainer } from 'meteor/react-meteor-data';
 //import i18n from 'i18next';
 
-import {Warnings} from '../api/warnings.js';
+import {Warnings} from '../api/client/warnings.js';
 import HeavyRainPage from './HeavyRain.jsx';
 import CyclonePage from './Cyclone.jsx';
 import EarthquakePage from './Earthquake.jsx';

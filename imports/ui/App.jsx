@@ -9,6 +9,8 @@ import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 /* i18n */
 import { translate } from 'react-i18next';
 
+import {initAfterComponentMounted} from '../startup/client/init.js';
+
 /* Imports the mhews's components */
 import SwitchableContentContainer from './SwitchableContent.jsx';
 import ConnectionStatusIndicatorContainer from './ConnectionStatusIndicator.jsx';
@@ -56,6 +58,8 @@ class App extends React.Component {
   }
 
   componentDidMount(){
+    initAfterComponentMounted();
+
     if( Meteor.isCordova ){
       document.addEventListener("backbutton", this.onBackKeyDown);
     }

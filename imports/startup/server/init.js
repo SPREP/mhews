@@ -1,10 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 
-import {Warnings} from '../../api/warnings.js';
+import {Warnings} from '../../api/server/warnings.js';
 import {CycloneBulletins} from '../../api/bulletin.js';
-import {WeatherForecasts, publishWeatherForecast} from '../../api/weather.js';
+import {WeatherForecasts, publishWeatherForecast} from '../../api/server/weather.js';
 import {TideTableCollection} from '../../api/tidetable.js';
-import {sendFcmNotification} from '../../api/fcm.js';
+import {sendFcmNotification} from '../../api/server/fcm.js';
 
 Meteor.startup(() => {
 

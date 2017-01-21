@@ -5,6 +5,13 @@ import {TideTableCollection} from '../api/tidetable.js';
 
 class DailyTideTable extends React.Component {
 
+  shouldComponentUpdate(newProps, _newState){
+    if( !newProps.tideTable ){
+      return false;
+    }
+    return true;
+  }
+
   render(){
     let key = 0;
 

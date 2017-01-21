@@ -1,7 +1,5 @@
 /* global Ground */
 import { Mongo } from 'meteor/mongo';
-import { check } from 'meteor/check';
-import {isClientIpAllowed} from './serverutils.js';
 
 const collectionName = "weatherForecast";
 
@@ -11,22 +9,11 @@ let GroundWeatherForecasts;
 
 let mongoCursor;
 
-if( Meteor.isClient ){
-  GroundWeatherForecasts = new Ground.Collection("groundWeatherForecast");
-  mongoCursor = MongoWeatherForecasts.find();
-  GroundWeatherForecasts.observeSource(mongoCursor);
-}
+GroundWeatherForecasts = new Ground.Collection("groundWeatherForecast");
+mongoCursor = MongoWeatherForecasts.find();
+GroundWeatherForecasts.observeSource(mongoCursor);
 
-export const WeatherForecasts = Meteor.isClient ? GroundWeatherForecasts : MongoWeatherForecasts;
-
-if( Meteor.isServer ){
-  // Allow this temporarily, so that AdminDashboard can update the weather symbol.
-  MongoWeatherForecasts.allow({
-    update: (_userId, _doc)=>{
-      return true;
-    }
-  })
-}
+export const WeatherForecasts = GroundWeatherForecasts;
 
 WeatherForecasts.init = ()=>{
   // To receive the data from the weatherForecast collection
@@ -83,24 +70,4 @@ function addUtilityMethods(forecast){
   }
 
   return forecast;
-}
-
-export function publishWeatherForecast(forecast){
-  console.log("Enter publishWeatherForecast.");
-
-  check(this.connection, Match.Where(isClientIpAllowed));
-//  check(forecast.bulletinId, Number);
-  check(forecast.issued_at, Date);
-  check(forecast.lang, Match.OneOf("en", "ws"));
-  check(forecast.situation, String);
-  check(forecast.forecasts, [{
-    district: String,
-    date: Date,
-    forecast: String
-  }]);
-
-  // Don't set in_effect to true here. It is set true after the weather icons have been specified.
-  forecast.in_effect = false;
-
-  return WeatherForecasts.insert(forecast);
 }
