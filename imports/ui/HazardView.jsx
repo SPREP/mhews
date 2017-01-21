@@ -7,7 +7,14 @@ import { translate } from 'react-i18next';
 
 class HazardView extends React.Component {
 
+  // FIXME The HazardView.render() method is called twice for each WarningList.render() call.
+  // It should be only once.
+  shouldComponentUpdate(nextProps, _nextState){
+    return true;
+  }
+
   render(){
+    console.log("HazardView.render()");
     const titleColor = getTitleColor(this.props.level);
 
     return(

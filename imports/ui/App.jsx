@@ -12,7 +12,7 @@ import { translate } from 'react-i18next';
 import {initAfterComponentMounted} from '../startup/client/init.js';
 
 /* Imports the mhews's components */
-import SwitchableContentContainer from './SwitchableContent.jsx';
+import SwitchableContent from './SwitchableContent.jsx';
 import ConnectionStatusIndicatorContainer from './ConnectionStatusIndicator.jsx';
 import DrawerMenu from './DrawerMenu.jsx';
 import {quitApp} from '../api/client/appcontrol.js';
@@ -88,20 +88,20 @@ class App extends React.Component {
           onLeftIconButtonTouchTap={()=>{this.toggleDrawerOpen()}}
           iconElementLeft={<IconButton><MenuIcon /></IconButton>}
         />
-        <DrawerMenu {...this.props}
+        <DrawerMenu
           drawerOpen={this.state.drawerOpen}
           onQuit={quitApp}
           onRequestChange={(open)=>{this.setDrawerOpen(open);}}
           onPageSelection={(page) => {this.handlePageSelection(page);}}
         />
-        <SwitchableContentContainer {...this.props}
+        <SwitchableContent
           page={page}
           drawerOpen={this.state.drawerOpen}
           onPageSelection={(page) => {
             this.handlePageSelection(page);
           }}
         />
-        <ConnectionStatusIndicatorContainer t={t} />
+        <ConnectionStatusIndicatorContainer />
       </div>
     );
   }

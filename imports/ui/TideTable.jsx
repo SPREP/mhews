@@ -1,5 +1,7 @@
 import React from 'react';
 import { createContainer } from 'meteor/react-meteor-data';
+/* i18n */
+import { translate } from 'react-i18next';
 
 import {TideTableCollection} from '../api/tidetable.js';
 
@@ -47,7 +49,7 @@ DailyTideTable.propTypes = {
   tideTable: React.PropTypes.array
 }
 
-export const DailyTideTableContainer = createContainer(({date})=>{
+const DailyTideTableContainer = createContainer(({date})=>{
   return {
     tideTable: TideTableCollection.find({
       dateTime: {
@@ -67,3 +69,5 @@ export const DailyTideTableContainer = createContainer(({date})=>{
     }).fetch()
   }
 }, DailyTideTable);
+
+export default translate(['common'])(DailyTideTableContainer);

@@ -7,6 +7,9 @@ import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import { createContainer } from 'meteor/react-meteor-data';
 import {Preferences} from '../api/client/preferences.js';
 
+/* i18n */
+import { translate } from 'react-i18next';
+
 const districts = [
   "upolu-north-northwest",
   "upolu-east-southwest",
@@ -97,14 +100,13 @@ PreferencesPage.propTypes = {
   onPageSelection: React.PropTypes.func
 }
 
-const PreferencesPageContainer = createContainer(({t, onPageSelection}) => {
+const PreferencesPageContainer = createContainer(({onPageSelection}) => {
   return {
     language: Preferences.load("language"),
     district: Preferences.load("district"),
-    t,
     onPageSelection
   }
 
 }, PreferencesPage);
 
-export default PreferencesPageContainer;
+export default translate(['common'])(PreferencesPageContainer);

@@ -6,6 +6,8 @@ import {Card, CardHeader} from 'material-ui/Card';
 
 import { createContainer } from 'meteor/react-meteor-data';
 //import i18n from 'i18next';
+/* i18n */
+import { translate } from 'react-i18next';
 
 import {Warnings} from '../api/client/warnings.js';
 import HeavyRainPage from './HeavyRain.jsx';
@@ -61,6 +63,7 @@ export class WarningList extends React.Component {
   }
 
   render(){
+    console.log("WarningList.render()");
     const warnings = this.props.warnings;
     const t = this.props.t;
 
@@ -69,18 +72,22 @@ export class WarningList extends React.Component {
       itemlist = warnings.map((warning) => {
         if( warning.type == "heavyRain"){
           return (
-            <HeavyRainPage {...this.props}
+            <HeavyRainPage
               key={warning._id}
               phenomena={warning}
+              isAdmin={this.props.isAdmin}
+              cancelWarning={this.props.cancelWarning}
               onExpandChange={(state)=>{this.onExpandChange(state, warning._id)}}
               expanded={this.getExpanded(warning._id)}
             />);
         }
         else if( warning.type == "cyclone"){
           return (
-            <CyclonePage {...this.props}
+            <CyclonePage
               key={warning._id}
               phenomena={warning}
+              isAdmin={this.props.isAdmin}
+              cancelWarning={this.props.cancelWarning}
               onExpandChange={(state)=>{this.onExpandChange(state, warning._id)}}
               expanded={this.getExpanded(warning._id)}
             />);
@@ -90,6 +97,8 @@ export class WarningList extends React.Component {
             <EarthquakePage {...this.props}
               key={warning._id}
               phenomena={warning}
+              isAdmin={this.props.isAdmin}
+              cancelWarning={this.props.cancelWarning}
               onExpandChange={(state)=>{this.onExpandChange(state, warning._id)}}
               expanded={this.getExpanded(warning._id)}
             />);
@@ -152,11 +161,10 @@ WarningList.propTypes = {
   cancelWarning: React.PropTypes.func
 }
 
-const WarningListContainer = createContainer(({t})=>{
+const WarningListContainer = createContainer(()=>{
   const isAdmin = !Meteor.isCordova; // FIXME This is not at all correct logic (^^;
 
   return {
-    t,
     isAdmin,
     warnings: Warnings.findWarningsInEffect().fetch(),
     cancelWarning: Warnings.cancelWarning
@@ -164,4 +172,4 @@ const WarningListContainer = createContainer(({t})=>{
 
 }, WarningList);
 
-export default WarningListContainer;
+export default translate(['common'])(WarningListContainer);

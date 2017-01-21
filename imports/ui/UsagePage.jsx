@@ -1,4 +1,8 @@
 import React from 'react';
+
+/* i18n */
+import { translate } from 'react-i18next';
+
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -138,4 +142,4 @@ UsagePage.propTypes = {
   onPageSelection: React.PropTypes.func
 }
 
-export default UsagePage;
+export default translate(['common'])(UsagePage);

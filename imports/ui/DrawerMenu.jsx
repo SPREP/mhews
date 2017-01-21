@@ -1,6 +1,9 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 
+/* i18n */
+import { translate } from 'react-i18next';
+
 /* Imports from the material-ui */
 import MenuItem from 'material-ui/MenuItem';
 import Drawer from 'material-ui/Drawer';
@@ -15,7 +18,7 @@ class DrawerMenu extends React.Component {
   }
 
   render(){
-    console.log("DrawMenu.render()");
+    console.log("DrawerMenu.render()");
 
     const menu = Meteor.settings.public.menu;
     const pages = Meteor.settings.public.pages;
@@ -71,4 +74,4 @@ DrawerMenu.propTypes = {
   t: React.PropTypes.func
 }
 
-export default DrawerMenu;
+export default translate(['common'])(DrawerMenu);

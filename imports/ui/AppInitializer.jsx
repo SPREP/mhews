@@ -12,9 +12,12 @@ import { I18nextProvider } from 'react-i18next';
 
 class AppInitializer extends React.Component {
 
+  componentDidMount(){
+    hideSplashScreen();
+  }
+
   render(){
     console.log("AppInitializer.render() - loaded = "+this.props.loaded+" appInitialized = "+this.props.appInitialized);
-    hideSplashScreen();
 
     if( !this.props.loaded ){
       return (<p>Loading data...</p>);
@@ -37,7 +40,7 @@ class AppInitializer extends React.Component {
 
   renderInitPage(){
     return (
-      <InitPageContainer {...this.props} onFinished={()=>{
+      <InitPageContainer onFinished={()=>{
         console.log("InitPageContainer.onFinished()");
         Preferences.save("appInitialized", true);
       }}
@@ -46,7 +49,7 @@ class AppInitializer extends React.Component {
 
   renderAppContainer(){
     return(
-      <App {...this.props} />
+      <App />
     );
   }
 }
@@ -59,7 +62,8 @@ function hideSplashScreen(){
 
 AppInitializer.propTypes = {
   loaded: React.PropTypes.bool,
-  appInitialized: React.PropTypes.string
+  appInitialized: React.PropTypes.string,
+  t: React.PropTypes.func
 }
 
 const AppInitializerContainer = createContainer(()=>{

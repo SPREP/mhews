@@ -11,8 +11,11 @@ import {Town} from '../api/towninfo.js';
 import {weatherIcons} from '../api/weatherIcons.js';
 import SunCalc from 'suncalc';
 import {Moon} from '../api/moonutils.js';
-import {DailyTideTableContainer} from './TideTable.jsx';
+import DailyTideTableContainer from './TideTable.jsx';
 import {SmallCard} from './SmallCard.jsx';
+
+/* i18n */
+import { translate } from 'react-i18next';
 
 const Months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -138,6 +141,20 @@ export class WeatherPage extends React.Component {
     this.state = {
       displayDate: null
     };
+  }
+
+  shouldComponentUpdate(nextProps, _nextState){
+    if( this.props.district != nextProps.district ){
+      return true;
+    }
+    if( this.props.forecast != nextProps.forecast ){
+      return true;
+    }
+    if( this.props.connected != nextProps.connected ){
+      return true;
+    }
+
+    return false;
   }
 
   validatePhenomena(){
@@ -290,15 +307,14 @@ WeatherPage.propTypes = {
   connected: React.PropTypes.bool
 }
 
-const WeatherPageContainer = createContainer(({t})=>{
+const WeatherPageContainer = createContainer(()=>{
   const language = Preferences.load("language");
 
   return {
-    t,
     district: Preferences.load("district"),
     forecast: WeatherForecasts.getLatestForecast(language),
     connected: Meteor.status().connected
   }
 }, WeatherPage);
 
-export default WeatherPageContainer;
+export default translate(['common'])(WeatherPageContainer);

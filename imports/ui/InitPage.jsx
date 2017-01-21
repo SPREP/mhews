@@ -9,6 +9,9 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 
+/* i18n */
+import { translate } from 'react-i18next';
+
 import { createContainer } from 'meteor/react-meteor-data';
 import {Preferences} from '../api/client/preferences.js';
 
@@ -157,7 +160,7 @@ InitPage.propTypes = {
   t: React.PropTypes.func
 }
 
-const InitPageContainer = createContainer(({onFinished, t})=>{
+const InitPageContainer = createContainer(({onFinished})=>{
   return {
     onFinished,
     selectedLanguage: selectedLanguage.get(),
@@ -178,10 +181,9 @@ const InitPageContainer = createContainer(({onFinished, t})=>{
       Preferences.save("language", language);
       Preferences.save("district", selectedDistrict.get());
       onFinished();
-    },
-    t
+    }
   }
 
 }, InitPage);
 
-export default InitPageContainer;
+export default translate(['common'])(InitPageContainer);

@@ -107,7 +107,7 @@ const i18nConfig = {
           "savaii-south": "Savaii South"
         },
         "is in effect in": "i aafiaga i le",
-        no_warning_in_effect: "No warning is in effect and no severe quake information.",
+        no_warning_in_effect: "No warnings in effect. No severe quakes within the last 24h.",
         no_weather_forecast_error: "Tulou e leai forecast...",
         situation: "Tulaga",
         loading_map: "Loading Google map...",

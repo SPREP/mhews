@@ -1,5 +1,7 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
+/* i18n */
+import { translate } from 'react-i18next';
 
 /* Imports from the material-ui */
 import Snackbar from 'material-ui/Snackbar';
@@ -27,11 +29,10 @@ ConnectionStatusIndicator.propTypes = {
   connected: React.PropTypes.bool
 }
 
-const ConnectionStatusIndicatorContainer = createContainer(({t})=>{
+const ConnectionStatusIndicatorContainer = createContainer(()=>{
   return {
-    t,
     connected: Meteor.status().connected
   }
 }, ConnectionStatusIndicator);
 
-export default ConnectionStatusIndicatorContainer;
+export default translate(['common'])(ConnectionStatusIndicatorContainer);

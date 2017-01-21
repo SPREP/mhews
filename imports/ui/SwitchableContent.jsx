@@ -2,13 +2,16 @@ import React from 'react';
 
 /* Imports the mhews's components */
 import {getReactComponentByName} from '../api/client/componentHelper.js';
-import { createContainer } from 'meteor/react-meteor-data';
 
 class SwitchableContent extends React.Component {
 
   shouldComponentUpdate(nextProps, _nextState){
-    // Suppress rendering if the drawer is open. Otherwise it is too slow.
+    // Suppress rendering if the drawer is open for better performance.
     if(nextProps.drawerOpen){
+      return false;
+    }
+    // Suppress rendering if the drawer was open but is closed without changing the page.
+    if(this.props.drawerOpen && !nextProps.drawerOpen && this.props.page == nextProps.page){
       return false;
     }
 
@@ -44,7 +47,6 @@ class SwitchableContent extends React.Component {
 
 SwitchableContent.propTypes = {
   page: React.PropTypes.string,
-  t: React.PropTypes.func,
   onPageSelection: React.PropTypes.func,
   drawerOpen: React.PropTypes.bool
 }
@@ -55,13 +57,4 @@ function getPageConfig(page){
   return config;
 }
 
-const SwitchableContentContainer = createContainer(({t, page, onPageSelection})=>{
-
-  return {
-    page,
-    t,
-    onPageSelection
-  }
-}, SwitchableContent);
-
-export default SwitchableContentContainer;
+export default SwitchableContent;
