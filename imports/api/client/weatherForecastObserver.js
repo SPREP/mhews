@@ -8,14 +8,8 @@ const satelliteImageUrl = "http://www.samet.gov.ws/satellite/satellite_image_com
 class WeatherForecastObserverClass {
 
   constructor(){
-    this.surfaceChartHandler = null;
-    this.satelliteImageHandler = null;
     this.forecastCursor = null;
     this.weatherForecastHandler = null;
-  }
-
-  start(){
-    console.log("startObservingWeatherForecast()");
 
     if( !this.surfaceChartHandler ){
       this.surfaceChartHandler = FileCache.add(surfaceChartUrl);
@@ -23,6 +17,11 @@ class WeatherForecastObserverClass {
     if( !this.satelliteImageHandler ){
       this.satelliteImageHandler = FileCache.add(satelliteImageUrl);
     }
+
+  }
+
+  start(){
+    console.log("startObservingWeatherForecast()");
 
     this.forecastCursor = WeatherForecasts.find({lang: "en", in_effect: true});
     this.weatherForecastHandler = this.forecastCursor.observe({
@@ -47,6 +46,9 @@ class WeatherForecastObserverClass {
     console.log("refreshSurfaceChart() for "+forecast._id);
     if( this.surfaceChartHandler ){
       this.surfaceChartHandler.refresh();
+    }
+    if( this.satelliteImageHandler ){
+      this.satelliteImageHandler.refresh();
     }
   }
 

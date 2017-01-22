@@ -32,10 +32,13 @@ Meteor.startup(()=>{
 // To be executed in the componentDidMount() of the App.
 export function initAfterComponentMounted(){
 
-  configReloader();
-  initFcm();
-  subscribeForCollections();
-  startWarningObserver();
+  Meteor.setTimeout(()=>{
+    initFcm();
+    subscribeForCollections();
+    startWarningObserver();
+
+  }, 3000);
+//  configReloader();
 }
 
 function initTapEventPlugin(){

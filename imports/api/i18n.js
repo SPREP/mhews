@@ -42,6 +42,7 @@ const i18nConfig = {
         no_weather_forecast_error: "Sorry there is no forecast... Perhaps the app failed to contact the server.",
         situation: "Situation",
         loading_map: "Loading Google map...",
+        loading_data: "Loading data...",
         month:{
           "Jan": "Jan",
           "Feb": "Feb",
@@ -111,6 +112,7 @@ const i18nConfig = {
         no_weather_forecast_error: "Tulou e leai forecast...",
         situation: "Tulaga",
         loading_map: "Loading Google map...",
+        loading_data: "Loading data...",
         month: {
           "Jan": "Ian",
           "Feb": "Fep",

@@ -20,7 +20,8 @@ class AppInitializer extends React.Component {
     console.log("AppInitializer.render() - loaded = "+this.props.loaded+" appInitialized = "+this.props.appInitialized);
 
     if( !this.props.loaded ){
-      return (<p>Loading data...</p>);
+      // Cannot use "t" here because not surrounded by I18nextProvider
+      return (<p>Loading data ...</p>);
     }
     else {
       // reload the appInitialized again here.

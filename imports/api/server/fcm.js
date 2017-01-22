@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor'
 import {getAreaId} from '../hazardArea.js';
 
 //var request = require('request');

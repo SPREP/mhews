@@ -76,6 +76,7 @@ class WeatherSituationImage extends React.Component {
   }
 
   render(){
+    console.log("WeatherSituationImage.render()");
     return (
       <CardMedia
         overlay={this.state.displayCardMediaTitle ? this.props.cardTitle : undefined}
@@ -105,19 +106,24 @@ const WeatherSituationImageContainer = createContainer(({cardTitle, imageHandler
 class WeatherSituation extends React.Component {
 
   render(){
+    console.log("WeatherSituation.render()");
+
     const cardTitle = (<CardTitle title="Situation" subtitle={this.props.situation} />);
     let key = 0;
+    console.log("getHandlers().length = "+WeatherForecastObserver.getHandlers().length);
 
     return (
       <SwipeableViews>
         {
           WeatherForecastObserver.getHandlers().map((imageHandler)=>{
             key++;
-            <WeatherSituationImageContainer
-              key={key}
-              cardTitle={cardTitle}
-              imageHandler={imageHandler}
-            />
+            console.log("getHandlers().map(): key = "+key);
+            return (
+              <WeatherSituationImageContainer
+                key={key}
+                cardTitle={cardTitle}
+                imageHandler={imageHandler}
+              />);
           })
         }
       </SwipeableViews>

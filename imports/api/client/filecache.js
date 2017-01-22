@@ -1,6 +1,5 @@
 import md5 from "blueimp-md5";
 
-/* global Ground */
 /* global LocalFileSystem */
 /* global FileTransfer */
 /* global WebAppLocalServer */
@@ -9,7 +8,28 @@ import md5 from "blueimp-md5";
 class FileCacheClass {
 
   constructor(){
-    this.collection = new Ground.Collection("filecache");
+    this.loadMap();
+  }
+
+  loadMap(){
+    let value = window.localStorage.getItem("file-cache");
+    if( value ){
+      try{
+        this.map = JSON.parse(value);
+      }
+      catch(e){
+        console.error("JSON.parse raised exception "+e);
+        value = undefined;
+      }
+    }
+    if(!value){
+      this.map = {};
+      this.saveMap();
+    }
+  }
+
+  saveMap(){
+    window.localStorage.setItem("file-cache", JSON.stringify(this.map));
   }
 
   // Add the file specified by the url to the cache.
@@ -17,51 +37,40 @@ class FileCacheClass {
   add(url){
     check(url, String);
 
-    let entry = this.collection.findOne({url: url});
-    if( entry ){
-      console.log("filecache entry already exists. "+JSON.stringify(entry))
+    if( !this.map[url] ){
+      this.map[url] = {path: undefined, date: undefined};
     }
     else{
-      entry = {url: url};
-      this.collection.insert(entry);
+      console.log(JSON.stringify(this.map));
     }
-    return new FileCacheHandle(entry, this.collection);
+
+    return new FileCacheHandle(url, this.map[url]);
   }
 
   remove(url){
-    this.collection.remove({url: url});
+    this.map[url] = undefined;
   }
 
   onDownload(url, path, downloadDate){
-    this.collection.update({url: url}, {"$set": {path: path, date: downloadDate.toDate()}});
+    this.map[url] = {path: path, date: downloadDate.toDate()};
+    this.saveMap();
   }
 }
 
 class FileCacheHandle {
 
-  constructor({url, path, date}, collection){
+  constructor(url, mapEntry){
+    console.log("mapEntry = "+JSON.stringify(mapEntry));
     this.url = url;
-    this.path = path;
-    this.needDownload = new ReactiveVar(path ? false : true);
-    this.source = new ReactiveVar(path ? WebAppLocalServer.localFileSystemUrl(path) : undefined);
-    this.date = date; // Download date
+    this.path = mapEntry.path;
+    this.date = mapEntry.date;
+
     this.startDownload = this.startDownload.bind(this);
 
-    collection.find({url: url}).observe({
-      added: (document)=>{
-        this.date = document.date;
-      },
-      changed: (document)=>{
-        this.date = document.date;
-      }
-    })
+    this.needDownload = new ReactiveVar(false);
+    this.source = new ReactiveVar(this.path ? WebAppLocalServer.localFileSystemUrl(this.path) : undefined);
 
-    // Defer the start of the Tracker, because the connection observer won't be called immediately,
-    // due to slow startup of the GroundDB.
-    // TODO The code below to be tested. Especially make sure that the autorun keeps running.
-    setTimeout(()=>{
-      Tracker.autorun(this.startDownload);
-    }, 5000);
+    Tracker.autorun(this.startDownload);
   }
 
   // Return the URL that can be used by a view component (e.g. img tag)
@@ -89,6 +98,11 @@ class FileCacheHandle {
     this.downloading = true;
     window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, (fileSystem)=>{
       var fileTransfer = new FileTransfer();
+      // FIXME:
+      // fileSystem.root returns two different paths:
+      // 1) /local-filesystem/data/data/...
+      // 2) file:///data/data/
+      // 2) is not readable by the image tag due to cross-domain origin restriction.
       const path = fileSystem.root.toURL() + md5(this.url) + getFileName(this.url);
       console.log("download destination = "+path);
       console.log("Last download date ="+this.date);
@@ -105,12 +119,21 @@ class FileCacheHandle {
         path,
         (entry)=>{
           console.log("Downloaded: "+this.url+" to "+entry.toURL());
+          this.date = downloadDate;
+          // WebAppLocalServer.localFileSystemUrl converts the "file:" URL to "http://localhost" URL.
+          // The http localhost URL contains a port number, which may vary between runs.
+          // So, in the FileCache we store the file URL, while the http URL must be set to the source.
           this.source.set(WebAppLocalServer.localFileSystemUrl(path));
           FileCache.onDownload(this.url, path, downloadDate);
           this.downloading = false;
         },
         (error)=>{
-          console.log("Download failed: "+this.url+". Error = "+JSON.stringify(error));
+          if( error.http_status == 304 ){
+            // Cached content is up to date. Nothing to do.
+          }
+          else{
+            console.log("Download failed: "+this.url+". Error = "+JSON.stringify(error));
+          }
           this.downloading = false;
         },
         false,
