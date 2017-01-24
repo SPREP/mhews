@@ -1,5 +1,5 @@
 import React from 'react';
-import HazardMap from './GoogleMapsNew.jsx';
+import HazardMap from './HazardMap.jsx';
 import * as GeoUtils from '../api/geoutils.js';
 import * as HazardArea from '../api/hazardArea.js';
 import HazardView from './HazardView.jsx';
