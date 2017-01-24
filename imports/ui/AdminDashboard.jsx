@@ -9,6 +9,7 @@ import { createContainer } from 'meteor/react-meteor-data';
 
 import {MongoWeatherForecasts} from '../api/client/weather.js';
 import {weatherIcons} from '../api/weatherIcons.js';
+import {WeatherForecasts} from '../api/client/weather.js';
 
 const style = {
   margin: 12,
@@ -168,6 +169,14 @@ class AdminDashboard extends React.Component {
       updateSaved: false
     }
     this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
+  }
+
+  componentDidMount(){
+    Meteor.subscribe("weatherForecast");
+  }
+
+  componentWillUnmount(){
+    Meteor.unsubscribe("weatherForecast");
   }
 
   changeIcon(forecastText, symbol){
