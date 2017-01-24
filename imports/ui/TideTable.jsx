@@ -8,7 +8,7 @@ import {TideTableCollection} from '../api/tidetable.js';
 class DailyTideTable extends React.Component {
 
   shouldComponentUpdate(newProps, _newState){
-    if( !newProps.tideTable ){
+    if( !newProps.tideTable || newProps.tideTable.length == 0 ){
       return false;
     }
     return true;

@@ -1,5 +1,5 @@
 import React from 'react';
-import GoogleMap from './GoogleMapJs.jsx';
+import HazardMap from './GoogleMapsNew.jsx';
 import * as GeoUtils from '../api/geoutils.js';
 import * as HazardArea from '../api/hazardArea.js';
 import HazardView from './HazardView.jsx';
@@ -48,21 +48,46 @@ class HeavyRainPage extends React.Component {
         console.log("render heavyRain");
 
         const onCancelCallback = this.props.isAdmin ? ()=>{this.props.cancelWarning(heavyRain.type, heavyRain.bulletinId)} : undefined;
+        const heavyRain = this.heavyRain;
+        const hazardAreas = HazardArea.findAreas(heavyRain.area, heavyRain.direction);
+        const circles = [];
+        const polygons = [];
+        const color = this.getWarningColor();
+
+        hazardAreas.forEach((hazardArea) =>{
+          if( hazardArea.shape == HazardArea.Shape.polygon ){
+            polygons.push({
+              path: hazardArea.vertices,
+              color: color
+            });
+          }
+          else if( hazardArea.shape == HazardArea.Shape.circle ){
+            circles.push({
+              center: hazardArea.center,
+              radius: hazardArea.radius,
+              color: color
+            });
+          }
+        });
 
         return(
           <HazardView
             avatar={Meteor.settings.public.notificationConfig.heavyRain.icon}
             headerTitle={"Heavy Rain"+" "+heavyRain.level}
-            headerSubTitle={moment(heavyRain.issued_at).format("YYYY-MM-DD hh:mm")}
+            headerSubTitle={moment(heavyRain.issued_at).format("YYYY-MM-DD HH:mm")}
             description={heavyRain.description_en}
             onCancel={onCancelCallback}
             level={heavyRain.level}
             onExpandChange={this.props.onExpandChange}
             expanded={this.props.expanded}
             >
-            <GoogleMap mapCenter={Samoa.center} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
-              {this.props.t("loading_map")}
-            </GoogleMap>
+            <HazardMap
+              mapCenter={Samoa.center}
+              zoom={this.zoom}
+              circles={circles}
+              polygons={polygons}
+              >
+            </HazardMap>
           </HazardView>
         );
       }
@@ -82,21 +107,6 @@ class HeavyRainPage extends React.Component {
 
   getWarningColor() {
     return '#FF0000';
-  }
-
-  drawWarningArea(map){
-    const heavyRain = this.heavyRain;
-//    const hazardAreas = HazardArea.simplifyAreas(HazardArea.findAreas(heavyRain.area, heavyRain.direction));
-    const hazardAreas = HazardArea.findAreas(heavyRain.area, heavyRain.direction);
-
-    hazardAreas.forEach((hazardArea) =>{
-      if( hazardArea.shape == HazardArea.Shape.polygon ){
-        map.addPolygon(hazardArea.vertices, this.getWarningColor());
-      }
-      else if( hazardArea.shape == HazardArea.Shape.circle ){
-        map.addCircle(hazardArea.center, hazardArea.radius, this.getWarningColor());
-      }
-    });
   }
 }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import GoogleMap from './GoogleMapJs.jsx';
+import HazardMap from './GoogleMapsNew.jsx';
 import * as GeoUtils from '../api/geoutils.js';
 import HazardView from './HazardView.jsx';
 import {Preferences} from '../api/client/preferences.js';
@@ -57,15 +57,26 @@ class EarthquakePage extends React.Component {
           <HazardView
             avatar={Meteor.settings.public.notificationConfig.earthquake.icon}
             headerTitle={headerTitle}
-            headerSubTitle={moment(quake.date_time).format("YYYY-MM-DD hh:mm")}
+            headerSubTitle={moment(quake.date_time).format("YYYY-MM-DD HH:mm")}
             description={description}
             onCancel={onCancelCallback}
             onExpandChange={this.props.onExpandChange}
             expanded={this.props.expanded}
             level={quake.level}>
-            <GoogleMap mapCenter={quake.epicenter} zoom={this.zoom} onReady={(map) => {this.handleOnReady(map)}}>
-              {this.props.t("loading_map")}
-            </GoogleMap>
+            <HazardMap
+              mapCenter={quake.epicenter}
+              zoom={this.zoom}
+              markers={
+                [
+                  {position: this.quake.epicenter, color: this.mwColor}
+                ]
+              }
+              circles={
+                [
+                  {center: this.quake.epicenter, radius: this.radius, color: this.mwColor}
+                ]
+              }>
+            </HazardMap>
           </HazardView>
 
         );
@@ -80,6 +91,8 @@ class EarthquakePage extends React.Component {
   }
 
   handleOnReady(map) {
+    console.log("Earthquake.handleOnReady()");
+
     this.drawEpicenter(map);
   }
 

@@ -119,6 +119,8 @@ class GoogleMap extends React.Component {
   }
 
   render() {
+    console.log("GoogleMap render()");
+    console.log("GoogleMaps.loaded() = "+this.props.loaded);
     return (
       <div className="map-container" ref={c => (this.container = c)}>
         {this.props.children}
@@ -127,15 +129,6 @@ class GoogleMap extends React.Component {
   }
 }
 
-/*
-GoogleMap.propTypes = {
-  loaded: PropTypes.bool.isRequired,
-  onReady: PropTypes.func.isRequired,
-  options: PropTypes.object,
-  mapOptions: PropTypes.func.isRequired,
-  children: PropTypes.node,
-};
-*/
 GoogleMap.propTypes = {
   loaded: React.PropTypes.bool,
   name: React.PropTypes.string,

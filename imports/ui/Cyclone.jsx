@@ -39,7 +39,7 @@ class CyclonePage extends React.Component {
       <HazardView
         avatar={Meteor.settings.public.notificationConfig.cyclone.icon}
         headerTitle={title}
-        headerSubTitle={moment(cyclone.issued_at).format("YYYY-MM-DD hh:mm")}
+        headerSubTitle={moment(cyclone.issued_at).format("YYYY-MM-DD HH:mm")}
         overlayTitle={name}
         overlaySubTitle={district}
         description={description}
