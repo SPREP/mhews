@@ -83,7 +83,7 @@ class WeatherSituationImage extends React.Component {
         expandable={true}
         onTouchTap={()=>{this.toggleDisplayCardMediaTitle()}}>
         {
-          this.props.image ? <img src={this.props.image} /> : "Loading ..."
+          this.props.image ? <img src={this.props.image} /> : <p>"Loading ..."</p>
         }
       </CardMedia>
     );
@@ -149,7 +149,7 @@ export class WeatherPage extends React.Component {
     };
   }
 
-  shouldComponentUpdate(nextProps, _nextState){
+  shouldComponentUpdate(nextProps, nextState){
     if( this.props.district != nextProps.district ){
       return true;
     }
@@ -157,6 +157,9 @@ export class WeatherPage extends React.Component {
       return true;
     }
     if( this.props.connected != nextProps.connected ){
+      return true;
+    }
+    if( this.state.displayDate != nextState.displayDate ){
       return true;
     }
 

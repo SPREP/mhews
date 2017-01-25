@@ -1,29 +1,30 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-
-/* Imports from the material-ui */
-import AppBar from 'material-ui/AppBar';
-import IconButton from 'material-ui/IconButton';
-import MenuIcon from 'material-ui/svg-icons/navigation/menu';
+import browserHistory from 'react-router/lib/browserHistory';
 
 /* i18n */
 import { translate } from 'react-i18next';
 
 import {initAfterComponentMounted} from '../startup/client/init.js';
 
+/* Imports from the material-ui */
+import AppBar from 'material-ui/AppBar';
+import IconButton from 'material-ui/IconButton';
+import MenuIcon from 'material-ui/svg-icons/navigation/menu';
+
 /* Imports the mhews's components */
-import SwitchableContent from './SwitchableContent.jsx';
+import {WeatherForecastObserver} from '../api/client/weatherForecastObserver.js';
+
 import ConnectionStatusIndicatorContainer from './ConnectionStatusIndicator.jsx';
 import DrawerMenu from './DrawerMenu.jsx';
 import {quitApp} from '../api/client/appcontrol.js';
-import {WeatherForecastObserver} from '../api/client/weatherForecastObserver.js';
 
 /* global navigator */
 
 const topPageName = Meteor.settings.public.topPage;
 
 
-class App extends React.Component {
+class AppClass extends React.Component {
 
   constructor(props){
     super(props);
@@ -36,6 +37,16 @@ class App extends React.Component {
     this.onBackKeyDown = this.onBackKeyDown.bind(this);
   }
 
+  handlePageSelection(page){
+    if( page == topPageName ){
+      browserHistory.push("/");
+    }
+    else{
+      browserHistory.push("/app/"+page);
+    }
+//    this.setState({page: page});
+  }
+
   onBackKeyDown(){
     if( this.state.drawerOpen ){
       this.toggleDrawerOpen();
@@ -43,10 +54,6 @@ class App extends React.Component {
     else{
       this.handlePageSelection(topPageName);
     }
-  }
-
-  handlePageSelection(page){
-    this.setState({page: page});
   }
 
   toggleDrawerOpen(){
@@ -58,6 +65,8 @@ class App extends React.Component {
   }
 
   componentDidMount(){
+    hideSplashScreen();
+
     initAfterComponentMounted();
 
     if( Meteor.isCordova ){
@@ -74,15 +83,14 @@ class App extends React.Component {
   }
 
   render(){
-    const t = this.props.t;
     const page = this.state.page;
     const pageConfig = Meteor.settings.public.pages[page];
-    const title = pageConfig.title;
+    const t = this.props.t;
 
     return (
       <div>
         <AppBar
-          title={t(title)}
+          title={t(pageConfig.title)}
           style={{"backgroundColor": "#F40000"}}
           titleStyle={{"fontSize": "18px"}}
           onLeftIconButtonTouchTap={()=>{this.toggleDrawerOpen()}}
@@ -94,21 +102,49 @@ class App extends React.Component {
           onRequestChange={(open)=>{this.setDrawerOpen(open);}}
           onPageSelection={(page) => {this.handlePageSelection(page);}}
         />
-        <SwitchableContent
-          page={page}
-          drawerOpen={this.state.drawerOpen}
-          onPageSelection={(page) => {
-            this.handlePageSelection(page);
-          }}
-        />
+        <AppChildWrapper
+          drawerOpen={this.state.drawerOpen}>
+          {this.props.children}
+        </AppChildWrapper>
         <ConnectionStatusIndicatorContainer />
       </div>
     );
   }
 }
 
-App.propTypes = {
-  t: React.PropTypes.func
+class AppChildWrapper extends React.Component {
+
+  shouldComponentUpdate(nextProps, _nextState){
+    // Suppress rendering if the drawer is open for better performance.
+    if(nextProps.drawerOpen){
+      return false;
+    }
+    return true;
+  }
+
+  render(){
+    return (
+      <div>
+        {this.props.children}
+      </div>
+    )
+  }
 }
 
-export default translate(['common'])(App);
+AppChildWrapper.propTypes = {
+  drawerOpen: React.PropTypes.bool,
+  children: React.PropTypes.node
+}
+
+function hideSplashScreen(){
+  if( Meteor.isCordova ){
+    navigator.splashscreen.hide();
+  }
+}
+
+AppClass.propTypes = {
+  t: React.PropTypes.func,
+  children: React.PropTypes.node
+}
+
+export default translate(['common'])(AppClass);

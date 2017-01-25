@@ -6,6 +6,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import { createContainer } from 'meteor/react-meteor-data';
 import {Preferences} from '../api/client/preferences.js';
+import browserHistory from 'react-router/lib/browserHistory';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -80,7 +81,7 @@ class PreferencesPage extends React.Component {
   savePreferences(){
     this.savePreference("language", this.selectedLanguage);
     this.savePreference("district", this.selectedDistrict);
-    this.props.onPageSelection(topPageName);
+    browserHistory.goBack();
   }
 
   savePreference(key, value){

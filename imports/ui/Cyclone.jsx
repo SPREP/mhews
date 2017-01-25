@@ -1,7 +1,9 @@
 import React from 'react';
 import HazardView from './HazardView.jsx';
-import {CycloneBulletins} from '../api/bulletin.js';
+import {Warnings} from '../api/client/warnings.js';
+import {Cyclone} from '../api/client/cyclone.js';
 
+import {createContainer} from 'meteor/react-meteor-data';
 /* i18n */
 import { translate } from 'react-i18next';
 
@@ -11,27 +13,24 @@ import { translate } from 'react-i18next';
  * On top, the warning or watch information is displayed.
  */
 
-class CyclonePage extends React.Component {
 
-  constructor(props){
-    super(props);
-    if( this.props.phenomena && this.validatePhenomena()){
-      this.cyclone = this.props.phenomena;
-    }
-  }
+class CyclonePage extends React.Component {
 
   validatePhenomena(){
     return true;
   }
 
   render(){
-    const cyclone = this.props.phenomena;
+    if( !this.props.phenomena ){
+      return <p>{"No cyclone information"}</p>
+    }
+
+    const cyclone = new Cyclone(this.props.phenomena);
     const name = cyclone.name;
     const district = cyclone.district;
-    const title = "Category " + cyclone.category + " " + cyclone.level;
-    const bulletin = getBulletin(cyclone.bulletinId);
-    const tc_info = bulletin ? bulletin.tc_info : null;
-    const description = formatDescription(tc_info);
+    const title = cyclone.getHeaderTitle();
+    const subTitle = cyclone.getSubTitle();
+    const description = cyclone.getDescription();
 
     const onCancelCallback = this.props.isAdmin ? ()=>{this.props.cancelWarning(cyclone.type, cyclone.bulletinId)} : undefined;
 
@@ -39,7 +38,7 @@ class CyclonePage extends React.Component {
       <HazardView
         avatar={Meteor.settings.public.notificationConfig.cyclone.icon}
         headerTitle={title}
-        headerSubTitle={moment(cyclone.issued_at).format("YYYY-MM-DD HH:mm")}
+        headerSubTitle={subTitle}
         overlayTitle={name}
         overlaySubTitle={district}
         description={description}
@@ -55,25 +54,6 @@ class CyclonePage extends React.Component {
 
 }
 
-function getBulletin(bulletinId){
-  return CycloneBulletins.findOne({id: bulletinId});
-}
-
-function formatDescription(tc_info){
-  if( !tc_info ) return "";
-
-  let description = "Tropical Cyclone "+tc_info.name+" was located "+tc_info.center.lat+","+tc_info.center.lng;
-  tc_info.neighbour_towns.forEach((town)=>{
-    description += " or about "+town.distance_km+"km ("+town.distance_miles+"miles) "
-    description += town.direction+" of "+town.name;
-  });
-  description += ".";
-
-  description += tc_info.situation_en + " " +tc_info.people_impact_en;
-
-  return description;
-}
-
 CyclonePage.propTypes = {
   phenomena: React.PropTypes.object,
   isAdmin: React.PropTypes.bool,
@@ -82,4 +62,14 @@ CyclonePage.propTypes = {
   expanded: React.PropTypes.bool
 }
 
-export default translate(['common'])(CyclonePage);
+const CyclonePageContainer = createContainer(({params})=>{
+  const id = params.id;
+
+  console.log("cyclonepagecontainer id = "+id);
+  return {
+    phenomena: Warnings.findOne({"_id": id, "type": "cyclone"}),
+    expanded: true
+  }
+}, CyclonePage);
+
+export default translate(['common'])(CyclonePageContainer);

@@ -68,9 +68,14 @@ class FileCacheHandle {
     this.startDownload = this.startDownload.bind(this);
 
     this.needDownload = new ReactiveVar(false);
-    this.source = new ReactiveVar(this.path ? WebAppLocalServer.localFileSystemUrl(this.path) : undefined);
 
-    Tracker.autorun(this.startDownload);
+    if( typeof LocalFileSystem == 'undefined' ){
+      this.source = new ReactiveVar(url);
+    }
+    else{
+      this.source = new ReactiveVar(this.path ? WebAppLocalServer.localFileSystemUrl(this.path) : undefined);
+      Tracker.autorun(this.startDownload);
+    }
   }
 
   // Return the URL that can be used by a view component (e.g. img tag)

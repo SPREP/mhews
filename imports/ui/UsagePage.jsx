@@ -93,7 +93,7 @@ class UsagePage extends React.Component {
                 <Card style={{minHeight: "100%"}}>
                   <CardMedia style={{margin: "0 auto"}}>
                     <img
-                      src={"images/screenshots/"+page.image}
+                      src={"/images/screenshots/"+page.image}
                       style={imageStyle}
                     />
                   </CardMedia>

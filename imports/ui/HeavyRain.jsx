@@ -3,6 +3,10 @@ import HazardMap from './HazardMap.jsx';
 import * as GeoUtils from '../api/geoutils.js';
 import * as HazardArea from '../api/hazardArea.js';
 import HazardView from './HazardView.jsx';
+import {Warnings} from '../api/client/warnings.js';
+import {HeavyRain} from '../api/client/heavyRain.js';
+
+import {createContainer} from 'meteor/react-meteor-data';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -35,20 +39,22 @@ class HeavyRainPage extends React.Component {
   }
 
   render(){
-    let heavyRain = this.props.phenomena;
 
-    if( heavyRain && this.validatePhenomena(heavyRain)){
-      this.heavyRain = heavyRain;
-      const longestDiagonal = GeoUtils.getLongestDiagonal(Samoa.area);
-      this.zoom = GeoUtils.getZoomLevel(longestDiagonal);
+    console.log("render heavyRain");
+    if( !this.props.phenomena ){
+      return(
+        <p>{"No heavyRain warning is in effect."}</p>
+      );
     }
+    else{
 
-    if( this.heavyRain ){
-      if( this.heavyRain.area ){
-        console.log("render heavyRain");
+      let heavyRain = new HeavyRain(this.props.phenomena);
+
+      if( this.validatePhenomena(heavyRain)){
+        const longestDiagonal = GeoUtils.getLongestDiagonal(Samoa.area);
+        this.zoom = GeoUtils.getZoomLevel(longestDiagonal);
 
         const onCancelCallback = this.props.isAdmin ? ()=>{this.props.cancelWarning(heavyRain.type, heavyRain.bulletinId)} : undefined;
-        const heavyRain = this.heavyRain;
         const hazardAreas = HazardArea.findAreas(heavyRain.area, heavyRain.direction);
         const circles = [];
         const polygons = [];
@@ -79,26 +85,25 @@ class HeavyRainPage extends React.Component {
             onCancel={onCancelCallback}
             level={heavyRain.level}
             onExpandChange={this.props.onExpandChange}
-            expanded={this.props.expanded}
-            >
+            expanded={this.props.expanded}>
             <HazardMap
               mapCenter={Samoa.center}
               zoom={this.zoom}
               circles={circles}
-              polygons={polygons}
-              >
+              polygons={polygons}>
             </HazardMap>
           </HazardView>
         );
       }
       else{
-        console.error("heavyRain.area is not defined.");
+        console.error("Unexpected heavy rain object "+JSON.stringify(heavyRain));
+        // FIXME This case should return as much as heavy rain information as possible.
+        return(
+          <p>{"No heavyRain warning is in effect."}</p>
+        );
+
       }
     }
-
-    return(
-      <p>{"No heavyRain warning is in effect."}</p>
-    );
   }
 
   handleOnReady(map) {
@@ -120,4 +125,13 @@ HeavyRainPage.propTypes = {
 
 }
 
-export default translate(['common'])(HeavyRainPage);
+const HeavyRainPageContainer = createContainer(({params})=>{
+  const id = params.id;
+
+  return {
+    phenomena: Warnings.findOne({"_id": id, "type": "heavyRain"}),
+    expanded: true
+  }
+}, HeavyRainPage);
+
+export default translate(['common'])(HeavyRainPageContainer);

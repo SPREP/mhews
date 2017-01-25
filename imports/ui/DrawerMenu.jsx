@@ -9,8 +9,13 @@ import MenuItem from 'material-ui/MenuItem';
 import Drawer from 'material-ui/Drawer';
 import CloseIcon from 'material-ui/svg-icons/navigation/close';
 
-/* Imports the mhews's components */
-import {getReactComponentByName} from '../api/client/componentHelper.js';
+// Icons
+import HomeIcon from 'material-ui/svg-icons/action/home';
+import SettingsIcon from 'material-ui/svg-icons/action/settings';
+//import WarningIcon from 'material-ui/svg-icons/alert/warning';
+//import WeatherIcon from 'material-ui/svg-icons/image/wb-sunny';
+import CopyrightIcon from 'material-ui/svg-icons/action/copyright';
+import InfoOutlineIcon from 'material-ui/svg-icons/action/info-outline';
 
 class DrawerMenu extends React.Component {
   constructor(props){
@@ -21,12 +26,33 @@ class DrawerMenu extends React.Component {
     console.log("DrawerMenu.render()");
 
     const menu = Meteor.settings.public.menu;
-    const pages = Meteor.settings.public.pages;
+    const pages = {
+      "topPage" : {
+        "component": "TopPage",
+        "title": "title.index",
+        "icon": HomeIcon
+      },
+      "usage" : {
+        "component": "UsagePage",
+        "title": "title.usage",
+        "icon": InfoOutlineIcon
+      },
+      "about":{
+        "component": "AboutAppPage",
+        "title": "title.aboutApp",
+        "icon": CopyrightIcon
+      },
+      "settings": {
+        "component": "PreferencesPageContainer",
+        "title": "title.settings",
+        "icon": SettingsIcon
+      }
+    }
 
     const children = menu.map((pageName) => {
       const page = pages[pageName];
       const title = page.title;
-      const icon = React.createElement(getReactComponentByName(page.icon));
+      const icon = React.createElement(page.icon);
       return (
         <MenuItem
           key={title}

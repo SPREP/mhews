@@ -83,10 +83,10 @@ class HazardMap extends React.Component {
           <div>Loading google map...</div>
         }
         containerElement={
-          <div id="hazardMapContainer" style={{ height: '300px', width: '100%' }} />
+          <div id="hazardMapContainer" style={{ height: '250px', width: '100%' }} />
         }
         mapElement={
-          <div id="hazardMapElement" style={{ height: '300px', width: '100%'}} />
+          <div id="hazardMapElement" style={{ height: '250px', width: '100%'}} />
         }>
       </HazardGoogleMapContainer>
     )
