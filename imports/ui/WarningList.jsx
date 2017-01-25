@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import Avatar from 'material-ui/Avatar';
 import Paper from 'material-ui/Paper';
 import {Card, CardHeader} from 'material-ui/Card';
+import RightArrowIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
 
 import { createContainer } from 'meteor/react-meteor-data';
 //import i18n from 'i18next';
@@ -157,7 +158,8 @@ class WarningCard extends React.Component {
   render(){
     const warning = this.props.warning;
     const t = this.props.t;
-
+    const avatarImage = getWarningTypeIcon(warning ? warning.type : noWarningKey );
+/*
     return (
       <Card key={warning._id}
         onTouchTap={()=>{openLink(warning.type+"/"+warning._id)}}>
@@ -169,6 +171,21 @@ class WarningCard extends React.Component {
         />
       </Card>
 
+    )
+    */
+
+    return (
+      <Paper style={getWarningStyle(warning.level)} zDepth={1}>
+        <div style={{padding: "16px"}}>
+          <img src={avatarImage} style={{display: "inline-block", width: "32px", height: "32px"}}/>
+          <div style={{display: "inline-block", paddingLeft: "8px", maxWidth: "70%"}}>
+            <div style={{fontSize: "11pt"}}>{warning.getHeaderTitle(t)}</div>
+            <div style={{fontSize: "9pt"}}>{warning.getSubTitle(t)}</div>
+          </div>
+          <RightArrowIcon style={{display: "inline-block", width: "32px", float: "right"}}
+            onTouchTap={()=>{openLink(warning.type+"/"+warning._id)}} />
+        </div>
+      </Paper>
     )
   }
 }

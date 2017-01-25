@@ -310,6 +310,7 @@ function getWeatherIcon(weatherSymbol){
 
 
 WeatherPage.propTypes = {
+  loaded: React.PropTypes.bool,
   forecast: React.PropTypes.object,
   district: React.PropTypes.string,
   t: React.PropTypes.func,
@@ -317,11 +318,24 @@ WeatherPage.propTypes = {
 }
 
 const WeatherPageContainer = createContainer(()=>{
-  const language = Preferences.load("language");
+  let language = Preferences.load("language");
+  let district = Preferences.load("district");
+  let loaded = Preferences.isLoaded();
+  if( loaded ){
+    // First time to use the app after the installation.
+    // Set the default values.
+    if( !language ){
+      language = "en";
+    }
+    if( !district ){
+      district = "upolu-north-northwest";
+    }
+  }
 
   return {
-    district: Preferences.load("district"),
-    forecast: WeatherForecasts.getLatestForecast(language),
+    loaded,
+    district,
+    forecast: language ? WeatherForecasts.getLatestForecast(language) : undefined,
     connected: Meteor.status().connected
   }
 }, WeatherPage);
