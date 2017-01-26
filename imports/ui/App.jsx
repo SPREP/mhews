@@ -90,7 +90,8 @@ class AppClass extends React.Component {
     return (
       <div>
         <AppBar
-          title={t(pageConfig.title)}
+//          title={t(pageConfig.title)}
+          title={t(getPageName(this.props.location.pathname))}
           style={{"backgroundColor": "#F40000"}}
           titleStyle={{"fontSize": "18px"}}
           onLeftIconButtonTouchTap={()=>{this.toggleDrawerOpen()}}
@@ -110,6 +111,11 @@ class AppClass extends React.Component {
       </div>
     );
   }
+}
+
+function getPageName(path){
+  const pathComponents = path.substring(1).split("/");
+  return "title." + (pathComponents.length > 1 ? pathComponents[1] : pathComponents[0]);
 }
 
 class AppChildWrapper extends React.Component {
@@ -144,7 +150,8 @@ function hideSplashScreen(){
 
 AppClass.propTypes = {
   t: React.PropTypes.func,
-  children: React.PropTypes.node
+  children: React.PropTypes.node,
+  location: React.PropTypes.object // Set by React Router
 }
 
 export default translate(['common'])(AppClass);

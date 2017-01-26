@@ -67,6 +67,7 @@ function getTitleColor(level){
 }
 
 HazardView.propTypes = {
+  t: React.PropTypes.func,
   avatar: React.PropTypes.string,
   headerTitle: React.PropTypes.string,
   headerSubTitle: React.PropTypes.string,

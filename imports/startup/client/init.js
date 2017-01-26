@@ -157,7 +157,13 @@ function handleFcmNotification(fcmData){
   console.log("FCM data received."+JSON.stringify(fcmData));
 
   Meteor.defer(()=>{
-    ReceptionTracker.onBackgroundReception(fcmData.bulletinId);
+    ReceptionTracker.onBackgroundReception({
+      bulletinId: fcmData.bulletinId,
+      type: fcmData.type,
+      level: fcmData.level,
+      in_effect: fcmData.in_effect,
+      issued_at: fcmData.issued_at
+    });
   })
 
 }

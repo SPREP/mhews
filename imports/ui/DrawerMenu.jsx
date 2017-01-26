@@ -29,7 +29,7 @@ class DrawerMenu extends React.Component {
     const pages = {
       "topPage" : {
         "component": "TopPage",
-        "title": "title.index",
+        "title": "title.app",
         "icon": HomeIcon
       },
       "usage" : {

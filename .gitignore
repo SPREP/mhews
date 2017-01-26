@@ -3,5 +3,7 @@ node_modules/
 cordova-build-override/platforms/android/google-services.json
 cordova-build-override/google-services.json
 settings.json
+settings_release.json
 mup.js
+deploy_scripts/mup*.js
 

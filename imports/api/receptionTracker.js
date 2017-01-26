@@ -17,8 +17,9 @@ export class ReceptionTrackerClass {
 
     Tracker.autorun(()=>{
       if( this.trackerId.get() && this.hasNewData.get()){
+        const trackerId = this.trackerId.get();
         this.queue.forEach((message)=>{
-          message.trackerId = this.trackerId;
+          message.trackerId = trackerId;
           ReceptionTrackerCollection.insert(message);
         });
         this.queue = [];
@@ -27,28 +28,16 @@ export class ReceptionTrackerClass {
     });
   }
 
-  onBackgroundReception(bulletinId){
-    this.insert({
-      bulletinId: bulletinId,
-      event: "backgroundReception",
-      reception_date: new Date()
-    });
+  onBackgroundReception(message){
+    this.insert(createTrackerMessage("backgroundReception", message));
   }
 
-  onForegroundReception(bulletinId){
-    this.insert({
-      bulletinId: bulletinId,
-      event: "foregroundReception",
-      reception_date: new Date()
-    });
+  onForegroundReception(message){
+    this.insert(createTrackerMessage("foregroundReception", message));
   }
 
-  onAccessingDetails(bulletinId){
-    this.insert({
-      bulletinId: bulletinId,
-      event: "accessDetails",
-      reception_date: new Date()
-    });
+  onAccessingDetails(message){
+    this.insert(createTrackerMessage("accessDetails", message));
   }
 
   setTrackerId(trackerId){
@@ -58,6 +47,14 @@ export class ReceptionTrackerClass {
   insert(message){
     this.queue.push(message);
     this.hasNewData.set(true);
+  }
+}
+
+function createTrackerMessage(event, ...message){
+  return {
+    message,
+    event: event,
+    reception_date: new Date()
   }
 }
 

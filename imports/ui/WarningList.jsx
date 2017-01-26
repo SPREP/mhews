@@ -157,7 +157,13 @@ const WarningListContainer = createContainer(()=>{
 function updateReceptionTracker(warnings){
   Meteor.defer(()=>{
     warnings.forEach((warning)=>{
-      ReceptionTracker.onForegroundReception(warning.bulletinId);
+      ReceptionTracker.onForegroundReception({
+        bulletinId: warning.bulletinId,
+        type: warning.type,
+        level: warning.level,
+        in_effect: warning.in_effect,
+        issued_at: warning.issued_at
+      });
     });
   });
 }
