@@ -85,7 +85,8 @@ class HeavyRainPage extends React.Component {
             onCancel={onCancelCallback}
             level={heavyRain.level}
             onExpandChange={this.props.onExpandChange}
-            expanded={this.props.expanded}>
+            expanded={this.props.expanded}
+            warning={heavyRain}>
             <HazardMap
               mapCenter={Samoa.center}
               zoom={this.zoom}

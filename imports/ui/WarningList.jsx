@@ -3,7 +3,6 @@ import { Meteor } from 'meteor/meteor';
 import Avatar from 'material-ui/Avatar';
 import Paper from 'material-ui/Paper';
 import {Card, CardHeader} from 'material-ui/Card';
-import RightArrowIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
 
 import { createContainer } from 'meteor/react-meteor-data';
 
@@ -15,7 +14,8 @@ import {Earthquake} from '../api/client/earthquake.js';
 import {HeavyRain} from '../api/client/heavyRain.js';
 import {Cyclone} from '../api/client/cyclone.js';
 
-import browserHistory from 'react-router/lib/browserHistory';
+import {WarningCard} from './WarningCard.jsx';
+
 import ReceptionTracker from '../api/receptionTracker.js';
 
 const noWarningKey = "no_warning_in_effect";
@@ -61,7 +61,6 @@ export class WarningList extends React.Component {
           <CardHeader
             avatar={renderAvatar()}
             title={t(noWarningKey)}
-            style={getWarningStyle()}
           />
         </Card>
       )
@@ -126,20 +125,6 @@ function getCapitalLetter(string){
   return string.slice(0,0);
 }
 
-function getWarningStyle(level){
-  if( level == "warning" ){
-    return {color: "#ff0000"};
-  }
-  else if( level == "watch"){
-    return {color: "#ffff00"};
-  }
-  return {color: "#000000"};
-}
-
-function openLink(path){
-  browserHistory.push("/app/"+path);
-}
-
 function renderAvatar(warning){
   const avatarImage = getWarningTypeIcon(warning ? warning.type : noWarningKey );
 
@@ -156,34 +141,6 @@ WarningList.propTypes = {
   t: React.PropTypes.func,
   isAdmin: React.PropTypes.bool,
   cancelWarning: React.PropTypes.func
-}
-
-class WarningCard extends React.Component {
-
-  render(){
-    const warning = this.props.warning;
-    const t = this.props.t;
-    const avatarImage = getWarningTypeIcon(warning ? warning.type : noWarningKey );
-
-    return (
-      <Paper style={getWarningStyle(warning.level)} zDepth={1}>
-        <div style={{padding: "16px"}}>
-          <img src={avatarImage} style={{display: "inline-block", width: "32px", height: "32px"}}/>
-          <div style={{display: "inline-block", paddingLeft: "8px", maxWidth: "70%"}}>
-            <div style={{fontSize: "11pt"}}>{warning.getHeaderTitle(t)}</div>
-            <div style={{fontSize: "9pt"}}>{warning.getSubTitle(t)}</div>
-          </div>
-          <RightArrowIcon style={{display: "inline-block", width: "32px", float: "right"}}
-            onTouchTap={()=>{openLink(warning.type+"/"+warning._id)}} />
-        </div>
-      </Paper>
-    )
-  }
-}
-
-WarningCard.propTypes = {
-  t: React.PropTypes.func,
-  warning: React.PropTypes.object
 }
 
 const WarningListContainer = createContainer(()=>{

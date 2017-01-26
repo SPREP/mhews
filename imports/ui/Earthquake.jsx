@@ -60,7 +60,8 @@ class EarthquakePage extends React.Component {
             onCancel={onCancelCallback}
             onExpandChange={this.props.onExpandChange}
             expanded={this.props.expanded}
-            level={quake.level}>
+            level={quake.level}
+            warning={quake}>
             <HazardMap
               mapCenter={quake.epicenter}
               zoom={this.zoom}

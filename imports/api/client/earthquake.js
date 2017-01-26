@@ -1,4 +1,4 @@
-import {Preferences} from './preferences.js';
+import i18n from 'i18next';
 
 export class Earthquake {
   constructor(phenomena){
@@ -21,7 +21,7 @@ export class Earthquake {
     const distanceKm = Math.round(quake.distance_km);
     const distanceMiles = Math.round(quake.distance_miles);
 
-    if( Preferences.load("language") == "en"){
+    if( i18n.language == "en"){
       let description = "An earthquake with magnitude "+quake.mw+" occurred in the "+quake.region;
       description += ", at the depth "+quake.depth+" km";
       description += ", approximately "+distanceKm+" km ("+distanceMiles+" miles) ";

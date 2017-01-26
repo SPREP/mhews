@@ -45,7 +45,8 @@ class CyclonePage extends React.Component {
         onCancel={onCancelCallback}
         onExpandChange={this.props.onExpandChange}
         expanded={this.props.expanded}
-        level={cyclone.level}>
+        level={cyclone.level}
+        warning={cyclone}>
 
         <img src="http://www.samet.gov.ws/TCModule/IDV60001.gif?1477450290515" />
       </HazardView>
