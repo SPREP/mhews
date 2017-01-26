@@ -127,7 +127,7 @@ const EarthquakePageContainer = createContainer(({params, expanded})=>{
   console.log("Earthquake id = "+id);
 
   return {
-    phenomena: Warnings.findOne({"_id": id, "type": "earthquake"}),
+    phenomena: Warnings.findOne({"_id": id}),
     expanded: expanded == undefined ? true : expanded
   }
 }, EarthquakePage);

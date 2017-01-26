@@ -29,6 +29,7 @@ export function initRouter(){
         <Route path="usage" component={UsagePage} />
         <Route path="settings" component={PreferencesPage} />
         <Route path="earthquake/:id" component={EarthquakePage} />
+        <Route path="tsunami/:id" component={EarthquakePage} />
         <Route path="heavyRain/:id" component={HeavyRainPage} />
         <Route path="cyclone/:id" component={CyclonePage} />
         <IndexRoute component={TopPage} />
