@@ -80,19 +80,22 @@ export class WarningCollection extends Mongo.Collection {
     const body = warning.direction ? warning.area + " " + warning.direction : warning.area;
     const ttl = 10 * 60; // 10min time to live
     // Destination topics are set by the fcm.js. Don't set "to" here.
+    // "click_action" is needed for cordova-plugin-fcm. However, setting it will prevent
+    // the app launch from tapping the notification if cordova-plugin-firebase is used.
     const fcmMessage = {
       "priority": "high",
       "time_to_live": ttl,
       "notification" : {
         "title" : title,
         "body" : body,
-        "click_action" : "FCM_PLUGIN_ACTIVITY",
+//        "click_action" : "FCM_PLUGIN_ACTIVITY",
         "sound": soundFile,
         "icon" : "myicon"
       },
       "data" : {
         "type": warning.type,
         "level": warning.level,
+        "bulletinId": warning.bulletinId,
         "in_effect": warning.in_effect,
         "issued_at": warning.issued_at,
         "description": warning.description

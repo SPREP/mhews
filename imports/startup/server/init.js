@@ -5,6 +5,7 @@ import {CycloneBulletins} from '../../api/server/bulletin.js';
 import {WeatherForecasts, publishWeatherForecast} from '../../api/server/weather.js';
 import {TideTableCollection} from '../../api/tidetable.js';
 import {sendFcmNotification} from '../../api/server/fcm.js';
+import {ReceptionTrackerCollection} from '../../api/receptionTracker.js';
 
 Meteor.startup(() => {
 
@@ -20,7 +21,16 @@ Meteor.startup(() => {
   startPublishingWarnings();
   startPublishingWeather();
   startPublishingTideTable();
+  startObservingReceptionTracker();
 });
+
+function startObservingReceptionTracker(){
+  ReceptionTrackerCollection.find({reception_date: {"$gte": new Date()}}).observe({
+    added: (message)=>{
+      console.log("Reception tracker message : "+JSON.stringify(message));
+    }
+  });
+}
 
 function startPublishingCycloneBulletins(){
 

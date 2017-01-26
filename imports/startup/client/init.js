@@ -2,6 +2,7 @@ import {Warnings} from '../../api/client/warnings.js';
 import {Preferences} from '../../api/client/preferences.js';
 import {playSound} from '../../api/client/mediautils.js';
 import {WeatherForecasts} from '../../api/client/weather.js';
+import ReceptionTracker from '../../api/receptionTracker.js';
 
 /* i18n */
 import i18nConfig from '../../api/i18n.js';
@@ -154,5 +155,9 @@ function playSoundEffect(warning, oldWarning){
 // So this function doesn't do anything.
 function handleFcmNotification(fcmData){
   console.log("FCM data received."+JSON.stringify(fcmData));
+
+  Meteor.defer(()=>{
+    ReceptionTracker.onBackgroundReception(fcmData.bulletinId);
+  })
 
 }

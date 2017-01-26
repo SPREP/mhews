@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
+import ReceptionTracker from '../receptionTracker.js';
 
-/* global FCMPlugin */
 /*
 
 Topic structure
@@ -24,18 +24,28 @@ const topicPrefix = Meteor.settings.public.topicPrefix;
 // Initialize the FCM plugin. To be called by client.
 export const initFcmClient = (callback) => {
 
+  // The callback function is called even for the initial token setting.
+  window.FirebasePlugin.onTokenRefresh((token)=>{
+    console.log("FCM token refreshed: "+token);
+    ReceptionTracker.setTrackerId(token);
+  });
+
   // TODO The client should regularly get the current location,
   // and subscribe to more specific area.
-  FCMPlugin.subscribeToTopic(topicPrefix);
+  window.FirebasePlugin.subscribe(topicPrefix);
 
-  FCMPlugin.onNotification(
-    callback,
-    (msg) => {
-      console.log('onNotification callback successfully registered: ' + msg);
+  window.FirebasePlugin.onNotificationOpen(
+    (notification)=>{
+      console.log("onNotificaitonOpen received "+notification);
+      callback(notification)
     },
     (err) => {
       console.error('Error registering onNotification callback: ' + err);
       // TODO Need to handle this error. Try to re-subscribe to the topic until it succeeds?
     }
   );
+
+  window.FirebasePlugin.getInfo((info)=>{
+    console.log("FCM info = "+JSON.stringify(info));
+  });
 }

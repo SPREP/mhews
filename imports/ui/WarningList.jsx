@@ -6,7 +6,7 @@ import {Card, CardHeader} from 'material-ui/Card';
 import RightArrowIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
 
 import { createContainer } from 'meteor/react-meteor-data';
-//import i18n from 'i18next';
+
 /* i18n */
 import { translate } from 'react-i18next';
 
@@ -16,6 +16,7 @@ import {HeavyRain} from '../api/client/heavyRain.js';
 import {Cyclone} from '../api/client/cyclone.js';
 
 import browserHistory from 'react-router/lib/browserHistory';
+import ReceptionTracker from '../api/receptionTracker.js';
 
 const noWarningKey = "no_warning_in_effect";
 
@@ -35,6 +36,10 @@ export class WarningList extends React.Component {
 
   getWarningDetails(warning){
     return warning.description_en;
+  }
+
+  componentDidMount(){
+    updateReceptionTracker(this.props.warnings);
   }
 
   render(){
@@ -159,20 +164,6 @@ class WarningCard extends React.Component {
     const warning = this.props.warning;
     const t = this.props.t;
     const avatarImage = getWarningTypeIcon(warning ? warning.type : noWarningKey );
-/*
-    return (
-      <Card key={warning._id}
-        onTouchTap={()=>{openLink(warning.type+"/"+warning._id)}}>
-        <CardHeader
-          avatar={renderAvatar(warning)}
-          title={warning.getHeaderTitle(t)}
-          subtitle={warning.getSubTitle(t)}
-          style={getWarningStyle(warning.level)}
-        />
-      </Card>
-
-    )
-    */
 
     return (
       <Paper style={getWarningStyle(warning.level)} zDepth={1}>
@@ -205,5 +196,13 @@ const WarningListContainer = createContainer(()=>{
   }
 
 }, WarningList);
+
+function updateReceptionTracker(warnings){
+  Meteor.defer(()=>{
+    warnings.forEach((warning)=>{
+      ReceptionTracker.onForegroundReception(warning.bulletinId);
+    });
+  });
+}
 
 export default translate(['common'])(WarningListContainer);

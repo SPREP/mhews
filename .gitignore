@@ -1,6 +1,7 @@
 node_modules/
 .DS_Store
 cordova-build-override/platforms/android/google-services.json
+cordova-build-override/google-services.json
 settings.json
 mup.js
 
