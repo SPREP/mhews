@@ -90,10 +90,11 @@ function startPublishingWeather(){
 
 function startPublishingWarnings(){
   // Start the timer which invalidates old information every 10min.
-  setInterval(Meteor.bindEnvironment(function(){
+  Meteor.setInterval(Meteor.bindEnvironment(function(){
     const before24hours = moment().subtract(24, 'hours').toDate();
+    console.log("Earthquake info older than "+before24hours+" will be in_effect.");
     Warnings.update(
-      {"type": "information", "in_effect": true, "issued_at": {"$lt": before24hours}},
+      {"type": "earthquake", "level": "information", "in_effect": true, "issued_at": {"$lt": before24hours}},
       {"$set": {"in_effect": false}},
       {multi: true});
   }), 600 * 1000);
