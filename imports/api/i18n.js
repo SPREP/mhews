@@ -70,7 +70,8 @@ const i18nConfig = {
         },
         HeavyRain: "Heavy Rain",
         "waiting-for-network": "Waiting for Network",
-        "software-update-available": "New software available."
+        "software-update-available": "New software available.",
+        weatherSituation: "Weather Situation"
       }
     },
     ws: {
@@ -142,7 +143,8 @@ const i18nConfig = {
         },
         HeavyRain: "Heavy Rain",
         "waiting-for-network": "Fa'atali mo le network",
-        "software-update-available": "New software available."
+        "software-update-available": "New software available.",
+        weatherSituation: "Weather Situation"
       }
     }
   },

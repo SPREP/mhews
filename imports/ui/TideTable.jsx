@@ -50,18 +50,22 @@ DailyTideTable.propTypes = {
 }
 
 const DailyTideTableContainer = createContainer(({date})=>{
+  console.log("tide table date = "+date);
+  console.log("tide table date start = "+moment(date).startOf('day').utc().toDate());
+  console.log("tide table date end = "+moment(date).endOf('day').utc().toDate());
+  
   return {
     tideTable: TideTableCollection.find({
       dateTime: {
-        "$gte": moment(date).startOf('day').toDate(),
-        "$lte": moment(date).endOf('day').toDate()
+        "$gte": moment(date).startOf('day').utc().toDate(),
+        "$lte": moment(date).endOf('day').utc().toDate()
       }
     },
     {
       transform: (tide)=>{
         // Use the dateTime instead of the original (entered) tide.time,
         // because tide.dateTime considers the Daylight Saving Time.
-        const mDateTime = moment(tide.dateTime);
+        const mDateTime = moment(tide.dateTime).local();
         tide.time = mDateTime.format("HH:mm");
 
         return tide;

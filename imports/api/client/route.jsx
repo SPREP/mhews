@@ -6,7 +6,6 @@ import IndexRedirect from 'react-router/lib/IndexRedirect'
 import Router from 'react-router/lib/Router'
 import browserHistory from 'react-router/lib/browserHistory'
 
-import AdminDashboardContainer from '../../ui/AdminDashboard.jsx';
 import TopPage from '../../ui/TopPage.jsx';
 import AboutAppPage from '../../ui/AboutAppPage.jsx';
 import UsagePage from '../../ui/UsagePage.jsx';
@@ -17,6 +16,10 @@ import CyclonePage from '../../ui/Cyclone.jsx';
 import App from '../../ui/App.jsx';
 import AppTemplate from '../../ui/AppTemplate.jsx';
 import InitPage from '../../ui/InitPage.jsx';
+
+import Admin from '../../ui/admin/Admin.jsx';
+import AdminDashboard from '../../ui/admin/AdminDashboard.jsx';
+import WeatherDayIconMatrix from '../../ui/admin/WeatherDayIconMatrix.jsx';
 
 export function initRouter(){
 
@@ -51,11 +54,15 @@ export function initRouterForBrowser(){
         <Route path="usage" component={UsagePage} />
         <Route path="settings" component={PreferencesPage} />
         <Route path="earthquake/:id" component={EarthquakePage} />
+        <Route path="tsunami/:id" component={EarthquakePage} />
         <Route path="heavyRain/:id" component={HeavyRainPage} />
         <Route path="cyclone/:id" component={CyclonePage} />
         <IndexRoute component={TopPage} />
       </Route>
-      <Route path="/admin" component={AdminDashboardContainer}/>
+      <Route path="/admin" component={Admin} >
+        <Route path="day-weather-matrix/:id" component={WeatherDayIconMatrix}/>
+        <IndexRoute component={AdminDashboard} />
+      </Route>e
       <IndexRedirect to="/app" />
     </Route>
   </Router>

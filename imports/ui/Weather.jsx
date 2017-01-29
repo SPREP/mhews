@@ -8,7 +8,7 @@ import {Preferences} from '../api/client/preferences.js';
 import {WeatherForecastObserver} from '../api/client/weatherForecastObserver.js';
 import {Town} from '../api/towninfo.js';
 
-import {weatherIcons} from '../api/weatherIcons.js';
+import {weatherIcons, selectPredominantWeatherSymbol} from '../api/weatherIcons.js';
 import SunCalc from 'suncalc';
 import {Moon} from '../api/moonutils.js';
 import DailyTideTableContainer from './TideTable.jsx';
@@ -22,46 +22,114 @@ const Months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 const WeekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 class Nowcast extends React.Component {
+
   render(){
     const forecast = this.props.forecast;
-    const moon = new Moon(forecast.date);
     const title = dateToString(forecast.date, this.props.t);
     const subtitle = this.props.t("district."+forecast.district);
-    const sunrise = moment(forecast.sunrise).format("HH:mm");
-    const sunset = moment(forecast.sunset).format("HH:mm");
+    const weatherIcon = getWeatherIcon(this.getWeatherSymbolForNow(forecast.weatherSymbols), moment());
+    const weatherSymbols = forecast.weatherSymbols.length > 1 ? forecast.weatherSymbols : [];
+    const listInterval = 24 / forecast.weatherSymbols.length;
 
     return (
-      <div>
-        <div style={{"padding": "16px", "paddingTop": "0px", "paddingBottom": "0px"}}>
+      <div style={{padding: "16px"}}>
+        <div style={{paddingBottom: "0px"}}>
           <div style={{display: "inline-block", "verticalAlign": "top"}}>
-            <div style={{"paddingBottom": "8px", display: "inline-block", "verticalAlign": "middle", "width": "60%"}}>
+            <div style={{paddingBottom: "8px", display: "inline-block", "verticalAlign": "middle", "width": "60%"}}>
               <div style={{"fontSize": "14pt"}}>{title}</div>
               <div style={{"fontSize": "10pt"}}>{subtitle}</div>
             </div>
+            {/*
             <div style={{"display": "inline-block", "verticalAlign": "middle", "width": "40%"}}>
-              <img src={forecast.icon}
+              <img src={weatherIcon}
                 style={{width: "64px", height: "64px"}}
               />
             </div>
+            */}
             <div>
-              <SmallCard icon="images/weather/dawn.png" text={sunrise} />
-              <SmallCard icon="images/weather/sunset.png" text={sunset} />
-              <SmallCard icon={moon.getIcon()} text={moon.getName()} />
-              <DailyTideTableContainer date={forecast.date}/>
+              {
+                weatherSymbols.map((symbol, index)=>{
+                  const startHour = index * listInterval;
+                  const endHour = (index+1) * listInterval;
+                  const referenceHour = (startHour + endHour) / 2;
+                  const text = startHour + "-" + endHour; // e.g. "0-6"
+                  return (
+                    <NowcastBadge
+                      key={index}
+                      icon={getWeatherIcon(symbol, moment().hour(referenceHour))}
+                      text={text}/>
+                  )
+                })
+              }
             </div>
           </div>
         </div>
-        <CardText style={{"padding": "16px", "paddingTop": "8px", "paddingBottom": "8px"}}>
+        <CardText style={{padding: "0px", paddingTop: "8px", paddingBottom: "16px"}}>
           {forecast.text}
         </CardText>
+        <AdditionalInfo forecast={forecast} />
       </div>
     )
+  }
+
+  getWeatherSymbolForNow(weatherSymbols){
+    const hoursPerDay = 24;
+    const currentHour = moment().hour();
+    const interval = hoursPerDay / weatherSymbols.length;
+    const index = Math.floor(currentHour / interval);
+    return weatherSymbols[index];
   }
 }
 
 Nowcast.propTypes = {
   t: React.PropTypes.func,
   forecast: React.PropTypes.object
+}
+
+class AdditionalInfo extends React.Component {
+
+  render(){
+    const forecast = this.props.forecast;
+    const moon = new Moon(forecast.date);
+    const sunrise = moment(forecast.sunrise).format("HH:mm");
+    const sunset = moment(forecast.sunset).format("HH:mm");
+
+    return (
+      <div>
+        <SmallCard icon="images/weather/dawn.png" text={sunrise} />
+        <SmallCard icon="images/weather/sunset.png" text={sunset} />
+        <SmallCard icon={moon.getIcon()} text={moon.getName()} />
+        <DailyTideTableContainer date={forecast.date}/>
+      </div>
+
+    )
+  }
+}
+
+AdditionalInfo.propTypes = {
+  forecast: React.PropTypes.object
+}
+
+class NowcastBadge extends React.Component {
+
+  render(){
+    return (
+      <div style={{"paddingRight": "16px", display: "inline-block", "verticalAlign": "top"}}
+        onTouchTap={this.props.onTouchTap}>
+        <img src={this.props.icon} style={{width: "48px", height: "48px"}}/>
+        <div style={{"fontSize": "10pt", width: "48px", "textAlign": "center"}}>
+          {this.props.text}
+        </div>
+      </div>
+
+    )
+  }
+}
+
+NowcastBadge.propTypes = {
+  icon: React.PropTypes.string,
+  text: React.PropTypes.string,
+  onTouchTap: React.PropTypes.func
 }
 
 class WeatherSituationImage extends React.Component {
@@ -136,6 +204,30 @@ WeatherSituation.propTypes = {
   situation: React.PropTypes.string
 }
 
+class ExtendedForecast extends React.Component {
+  render(){
+    const forecast = this.props.forecast;
+    const icon = getWeatherIcon(selectPredominantWeatherSymbol(forecast.weatherSymbols), moment().hour(12));
+
+    return (
+      <SmallCard
+        key={dateToString(forecast.date, this.props.t)}
+        style={{"padding": "5px 5px", "border": "none", "background": "none"}}
+        icon={icon}
+        text={getDayOfDate(forecast.date, this.props.t)}
+        onTouchTap={()=>{this.props.onSelected(forecast.date)}}
+      />
+    )
+  }
+
+}
+
+ExtendedForecast.propTypes = {
+  t: React.PropTypes.func,
+  forecast: React.PropTypes.object,
+  onSelected: React.PropTypes.func
+}
+
 /**
 * This page should show the latest weather forecast.
 * The latest forecast should be retrieved from the SmartMet product.
@@ -182,12 +274,6 @@ export class WeatherPage extends React.Component {
     // The Weather card expands/shrinks when the CardText is tapped.
     return (
       <Card>
-        <CardHeader
-          title="Weather Forecast"
-          showExpandableButton={true}
-          subtitle={"Issued at "+this.dateTimeToString(issuedAt)}
-        />
-        <WeatherSituation expandable={true} situation={situation} />
         <SwipeableViews index={displayDateIndex}>
           {
             forecasts.map((forecast) => {
@@ -203,17 +289,25 @@ export class WeatherPage extends React.Component {
         </SwipeableViews>
         <CardActions style={{"paddingTop": "0px"}}>
           {
-            forecasts.map((forecast) => (
-              <SmallCard
-                key={dateToString(forecast.date, this.props.t)}
-                style={{"padding": "5px 5px", "border": "none", "background": "none"}}
-                icon={forecast.icon}
-                text={this.getDayOfDate(forecast.date)}
-                onTouchTap={()=>{this.changeDisplayDate(forecast.date)}}
-              />
-            ))
+            forecasts.map((forecast)=>{
+              return (
+                <ExtendedForecast
+                  forecast={forecast}
+                  t={this.props.t}
+                  onSelected={(date)=>{this.changeDisplayDate(date)}}
+                />
+              )
+            })
           }
         </CardActions>
+
+        <CardHeader
+          title={this.props.t("weatherSituation")}
+          showExpandableButton={true}
+          subtitle={"Issued at "+this.dateTimeToString(issuedAt)}
+        />
+        <WeatherSituation expandable={true} situation={situation} />
+
       </Card>
     );
   }
@@ -258,10 +352,11 @@ export class WeatherPage extends React.Component {
     return moment(dateTime).format("YYYY-MM-DD HH:mm");
   }
 
-  getDayOfDate(dateTime){
-    const day = this.props.t("weekdays."+WeekDays[dateTime.getDay()]);
-    return day;
-  }
+}
+
+function getDayOfDate(dateTime, t){
+  const day = t("weekdays."+WeekDays[dateTime.getDay()]);
+  return day;
 }
 
 function getForecastsForDisplay(dates, bulletin, district){
@@ -274,9 +369,15 @@ function getForecastsForDisplay(dates, bulletin, district){
     else{
       forecastText = "No forecast is available for district = "+district+" on "+date.toDateString();
     }
-    const weatherIcon = getWeatherIcon(districtForecast.weatherSymbol);
     const location = getLocationForDistrict(district);
     const sunlightTimes = SunCalc.getTimes(date, location.lat, location.lng);
+    let weatherSymbols;
+    if( districtForecast.weatherSymbols ){
+      weatherSymbols = districtForecast.weatherSymbols;
+    }
+    else{
+      weatherSymbols = [districtForecast.weatherSymbol];
+    }
 
     return {
       date: date,
@@ -284,8 +385,7 @@ function getForecastsForDisplay(dates, bulletin, district){
       text: forecastText,
       sunrise: sunlightTimes.sunrise,
       sunset: sunlightTimes.sunset,
-      weatherSymbol: districtForecast.weatherSymbol,
-      icon: weatherIcon,
+      weatherSymbols: weatherSymbols
     }
 
   });
@@ -304,8 +404,13 @@ function getLocationForDistrict(_district){
   return Town.Apia;
 }
 
-function getWeatherIcon(weatherSymbol){
-  return "images/weather/"+weatherIcons.dayTime[weatherSymbol];
+// The referenceTime must be a moment object
+function getWeatherIcon(weatherSymbol, referenceTime){
+  const hour = referenceTime.hour();
+  const dayTime = hour > 6 && hour < 18;
+
+  const weatherIcon = dayTime ? weatherIcons.dayTime[weatherSymbol] : weatherIcons.nightTime[weatherSymbol];
+  return "images/weather/"+weatherIcon;
 }
 
 

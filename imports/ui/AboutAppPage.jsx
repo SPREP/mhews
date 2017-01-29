@@ -32,11 +32,8 @@ Samoa Meteorology Division issues the following hazard warning bulletins:
 "Warning" is severer than "Watch", and "Watch" is severer than "Advisory".
 
         <h3>Privacy Policy</h3>
+Please visit our <a href="#" onClick={()=>{cordova.InAppBrowser.open('http://www.samet.gov.ws/mhews/privacy_policy.html', '_system')}}>web site</a> for the latest privacy policy.
         <p>
-This application does not collect any information that can identify the user of the application.
-(e.g. phone number, device identify, e-mail address).
-This Privacy Policy will be updated accordingly if the future update of the application requires collection of user's information
-for providing a better service.
         </p>
         <h3>About Samoa Meteorology Division</h3>
         <p>

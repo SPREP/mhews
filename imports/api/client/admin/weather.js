@@ -1,0 +1,57 @@
+import {MongoWeatherForecasts} from '../weather.js';
+
+export function updateForecast(bulletin){
+  MongoWeatherForecasts.update(
+    {_id: bulletin._id},
+    {"$set": {forecasts: bulletin.forecasts, in_effect: true}}
+  );
+}
+
+export function updateForecastSamoan(bulletin){
+  const bulletinSamoan = findBulletinSamoan(bulletin);
+  if( bulletinSamoan ){
+    copyWeatherSymbols(bulletin, bulletinSamoan);
+    updateForecast(bulletinSamoan);
+  }
+  else{
+    console.warn("There is no Samoan bulletin for "+bulletin.issued_at+" "+bulletin.name);
+  }
+
+}
+
+function copyWeatherSymbols(bulletin, bulletinSamoan){
+  const forecastsSamoan = bulletinSamoan.forecasts;
+  bulletin.forecasts.forEach((forecast)=>{
+    const forecastSamoan = findInArray(forecastsSamoan, (element)=>{
+      return (element.district == forecast.district) &&
+      (moment(element.date).isSame(forecast.date));
+    });
+    if( forecastSamoan ){
+      forecastSamoan.weatherSymbols = forecast.weatherSymbols;
+    }
+    else{
+      console.warn("There is no forecast for "+forecast.district+" "+forecast.date);
+    }
+  });
+
+}
+
+function findInArray(array, condition){
+  for(let i= 0; i< array.length; i++){
+    const element = array[i];
+    if( condition(element) ) return element;
+  }
+
+  return null;
+}
+
+function findBulletinSamoan(bulletin){
+
+  return MongoWeatherForecasts.findOne(
+    {
+      name: bulletin.name,
+      issued_at: bulletin.issued_at,
+      lang: "ws"
+    }
+  );
+}
