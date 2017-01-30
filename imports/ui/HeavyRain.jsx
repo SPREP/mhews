@@ -39,11 +39,12 @@ class HeavyRainPage extends React.Component {
   }
 
   render(){
+    const t = this.props.t;
 
     console.log("render heavyRain");
     if( !this.props.phenomena ){
       return(
-        <p>{"No heavyRain warning is in effect."}</p>
+        <p>{t("no_data_to_display")}</p>
       );
     }
     else{
@@ -79,7 +80,7 @@ class HeavyRainPage extends React.Component {
         return(
           <HazardView
             avatar={Meteor.settings.public.notificationConfig.heavyRain.icon}
-            headerTitle={"Heavy Rain"+" "+heavyRain.level}
+            headerTitle={t("HeavyRain")+" "+t("level." + heavyRain.level.toLowerCase())}
             headerSubTitle={moment(heavyRain.issued_at).format("YYYY-MM-DD HH:mm")}
             description={heavyRain.description_en}
             onCancel={onCancelCallback}
@@ -100,7 +101,7 @@ class HeavyRainPage extends React.Component {
         console.error("Unexpected heavy rain object "+JSON.stringify(heavyRain));
         // FIXME This case should return as much as heavy rain information as possible.
         return(
-          <p>{"No heavyRain warning is in effect."}</p>
+          <p>{t("no_data_to_display")}</p>
         );
 
       }

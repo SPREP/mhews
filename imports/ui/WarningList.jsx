@@ -90,16 +90,18 @@ export class WarningList extends React.Component {
 }
 
 function getPhenomena(warning){
-  if( warning.type == "earthquake"){
+  const type = warning.type.toLowerCase();
+
+  if( type == "earthquake"){
     return new Earthquake(warning);
   }
-  else if( warning.type == "tsunami"){
+  else if( type == "tsunami"){
     return new Earthquake(warning);
   }
-  else if( warning.type == "heavyRain"){
+  else if( type == "heavyrain"){
     return new HeavyRain(warning);
   }
-  else if( warning.type == "cyclone"){
+  else if( type == "cyclone"){
     return new Cyclone(warning);
   }
   else{

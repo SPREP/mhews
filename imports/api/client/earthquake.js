@@ -1,4 +1,5 @@
 import i18n from 'i18next';
+import {toTitleCase} from '../strutils.js';
 
 export class Earthquake {
   constructor(phenomena){
@@ -9,7 +10,15 @@ export class Earthquake {
 
   getHeaderTitle(t){
     const quake = this;
-    return t(quake.type)+" "+t(quake.level)+" (Magnitude "+quake.mw+","+quake.region+") ";
+
+    if( i18n.language == "ws"){
+      return toTitleCase(t("level."+quake.level))+" mo "+t(quake.type)+" (Magnitude "+quake.mw+","+quake.region+") ";
+
+    }
+    else{
+      return toTitleCase(t(quake.type))+" "+t("level."+quake.level)+" (Magnitude "+quake.mw+","+quake.region+") ";
+
+    }
   }
 
   getSubTitle(){

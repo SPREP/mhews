@@ -24,13 +24,14 @@ class CyclonePage extends React.Component {
     if( !this.props.phenomena ){
       return <p>{"No cyclone information"}</p>
     }
+    const t = this.props.t;
 
     const cyclone = new Cyclone(this.props.phenomena);
     const name = cyclone.name;
     const district = cyclone.district;
-    const title = cyclone.getHeaderTitle();
-    const subTitle = cyclone.getSubTitle();
-    const description = cyclone.getDescription();
+    const title = cyclone.getHeaderTitle(t);
+    const subTitle = cyclone.getSubTitle(t);
+    const description = cyclone.getDescription(t);
 
     const onCancelCallback = this.props.isAdmin ? ()=>{this.props.cancelWarning(cyclone.type, cyclone.bulletinId)} : undefined;
 
@@ -48,7 +49,7 @@ class CyclonePage extends React.Component {
         level={cyclone.level}
         warning={cyclone}>
 
-        <img src="http://www.samet.gov.ws/TCModule/IDV60001.gif?1477450290515" />
+        <img src="http://www.samet.gov.ws/TCModule/cyclone_track.gif" />
       </HazardView>
     );
   }

@@ -16,14 +16,15 @@ class DailyTideTable extends React.Component {
 
   render(){
     let key = 0;
+    const t = this.props.t;
 
     return (
-      <table style={{"paddingLeft": "8px", "fontSize": "10pt", display: "inline-block", "verticalAlign": "top"}}>
+      <table style={{"paddingLeft": "0px", "fontSize": "8pt", display: "inline-block", "verticalAlign": "top"}}>
         <thead>
           <tr>
-            <th>Tide</th>
-            <th>Time</th>
-            <th>Height</th>
+            <th style={{fontSize: "8pt"}}>{t("Tide")}</th>
+            <th style={{fontSize: "8pt"}}>{t("Time")}</th>
+            <th style={{fontSize: "8pt"}}>{t("Height")}</th>
           </tr>
         </thead>
         <tbody>
@@ -32,7 +33,7 @@ class DailyTideTable extends React.Component {
               key++;
               return (
                 <tr key={key}>
-                  <td>{tide.tide}</td>
+                  <td>{t(tide.tide)}</td>
                   <td>{tide.time}</td>
                   <td>{tide.height+"m"}</td>
                 </tr>
@@ -46,14 +47,11 @@ class DailyTideTable extends React.Component {
 }
 
 DailyTideTable.propTypes = {
+  t: React.PropTypes.func,
   tideTable: React.PropTypes.array
 }
 
 const DailyTideTableContainer = createContainer(({date})=>{
-  console.log("tide table date = "+date);
-  console.log("tide table date start = "+moment(date).startOf('day').utc().toDate());
-  console.log("tide table date end = "+moment(date).endOf('day').utc().toDate());
-  
   return {
     tideTable: TideTableCollection.find({
       dateTime: {

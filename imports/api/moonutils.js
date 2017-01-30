@@ -32,14 +32,14 @@ function getMoonIcon(adjustedMoonPhase){
 }
 
 const moonNames = [
-  "New Moon",
-  "Waxing Crescent",
-  "First Quarter",
-  "Waxing Gibbous",
-  "Full Moon",
-  "Waning Gibbous",
-  "Last Quarter",
-  "Waning Crescent"
+  "new_moon",
+  "waxing_crescent",
+  "first_quarter",
+  "waxing_gibbous",
+  "full_moon",
+  "waning_gibbous",
+  "last_quarter",
+  "waning_crescent"
 ];
 
 function adjustMoonPhase(moonPhase, date){

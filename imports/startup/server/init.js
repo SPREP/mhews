@@ -66,7 +66,7 @@ function startPublishingTideTable(){
 
     return TideTableCollection.find(
       {
-        dateTime: {"$gte": now.toDate(), "$lt": now.add(3, "months").toDate()}
+        dateTime: {"$gte": now.subtract(5, "days").toDate(), "$lt": now.add(3, "months").toDate()}
       }
     );
   });
@@ -89,15 +89,16 @@ function startPublishingWeather(){
 }
 
 function startPublishingWarnings(){
-  // Start the timer which invalidates old information every 10min.
+  // Start the timer which invalidates old information every hour.
   Meteor.setInterval(Meteor.bindEnvironment(function(){
     const before24hours = moment().subtract(24, 'hours').toDate();
     console.log("Earthquake info older than "+before24hours+" will be in_effect.");
+    // Use the date_time instead of the issued_at, as the issued_at isn't reliable due to the IBL.
     Warnings.update(
-      {"type": "earthquake", "level": "information", "in_effect": true, "issued_at": {"$lt": before24hours}},
+      {"type": "earthquake", "level": "information", "in_effect": true, "date_time": {"$lt": before24hours}},
       {"$set": {"in_effect": false}},
       {multi: true});
-  }), 600 * 1000);
+  }), 3600 * 1000);
 
   // The 2nd argument must use "function", not the arrow notations.
   // See this guide https://guide.meteor.com/data-loading.html

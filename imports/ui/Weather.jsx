@@ -26,7 +26,7 @@ class Nowcast extends React.Component {
   render(){
     const forecast = this.props.forecast;
     const title = dateToString(forecast.date, this.props.t);
-    const subtitle = this.props.t("district."+forecast.district);
+    const subtitle = this.props.t("districts."+forecast.district);
     const weatherIcon = getWeatherIcon(this.getWeatherSymbolForNow(forecast.weatherSymbols), moment());
     const weatherSymbols = forecast.weatherSymbols.length > 1 ? forecast.weatherSymbols : [];
     const listInterval = 24 / forecast.weatherSymbols.length;
@@ -34,8 +34,8 @@ class Nowcast extends React.Component {
     return (
       <div style={{padding: "16px"}}>
         <div style={{paddingBottom: "0px"}}>
-          <div style={{display: "inline-block", "verticalAlign": "top"}}>
-            <div style={{paddingBottom: "8px", display: "inline-block", "verticalAlign": "middle", "width": "60%"}}>
+          <div style={{display: "inline-block", "verticalAlign": "top", maxWidth: "100%"}}>
+            <div style={{paddingBottom: "8px", display: "inline-block", "verticalAlign": "middle"}}>
               <div style={{"fontSize": "14pt"}}>{title}</div>
               <div style={{"fontSize": "10pt"}}>{subtitle}</div>
             </div>
@@ -52,7 +52,7 @@ class Nowcast extends React.Component {
                   const startHour = index * listInterval;
                   const endHour = (index+1) * listInterval;
                   const referenceHour = (startHour + endHour) / 2;
-                  const text = startHour + "-" + endHour; // e.g. "0-6"
+                  const text = this.formatForecastPeriod(startHour, endHour);
                   return (
                     <NowcastBadge
                       key={index}
@@ -67,9 +67,13 @@ class Nowcast extends React.Component {
         <CardText style={{padding: "0px", paddingTop: "8px", paddingBottom: "16px"}}>
           {forecast.text}
         </CardText>
-        <AdditionalInfo forecast={forecast} />
+        <AdditionalInfo t={this.props.t} forecast={forecast} />
       </div>
     )
+  }
+
+  formatForecastPeriod(startHour, endHour){
+    return startHour + "-" + endHour;
   }
 
   getWeatherSymbolForNow(weatherSymbols){
@@ -89,6 +93,7 @@ Nowcast.propTypes = {
 class AdditionalInfo extends React.Component {
 
   render(){
+    const t = this.props.t;
     const forecast = this.props.forecast;
     const moon = new Moon(forecast.date);
     const sunrise = moment(forecast.sunrise).format("HH:mm");
@@ -98,7 +103,7 @@ class AdditionalInfo extends React.Component {
       <div>
         <SmallCard icon="images/weather/dawn.png" text={sunrise} />
         <SmallCard icon="images/weather/sunset.png" text={sunset} />
-        <SmallCard icon={moon.getIcon()} text={moon.getName()} />
+        <SmallCard icon={moon.getIcon()} text={t("moon_phase."+moon.getName())} />
         <DailyTideTableContainer date={forecast.date}/>
       </div>
 
@@ -107,6 +112,7 @@ class AdditionalInfo extends React.Component {
 }
 
 AdditionalInfo.propTypes = {
+  t: React.PropTypes.func,
   forecast: React.PropTypes.object
 }
 
@@ -174,9 +180,10 @@ const WeatherSituationImageContainer = createContainer(({cardTitle, imageHandler
 class WeatherSituation extends React.Component {
 
   render(){
+    const t = this.props.t;
     console.log("WeatherSituation.render()");
 
-    const cardTitle = (<CardTitle title="Situation" subtitle={this.props.situation} />);
+    const cardTitle = (<CardTitle title={t("Situation")} subtitle={this.props.situation} />);
     let key = 0;
     console.log("getHandlers().length = "+WeatherForecastObserver.getHandlers().length);
 
@@ -201,6 +208,7 @@ class WeatherSituation extends React.Component {
 }
 
 WeatherSituation.propTypes = {
+  t: React.PropTypes.func,
   situation: React.PropTypes.string
 }
 
@@ -270,6 +278,7 @@ export class WeatherPage extends React.Component {
     const displayDateIndex = displayDate ? dates.indexOf(displayDate) : 0;
     const district = this.props.district;
     const forecasts = getForecastsForDisplay(dates, bulletin, district);
+    const t = this.props.t;
 
     // The Weather card expands/shrinks when the CardText is tapped.
     return (
@@ -287,7 +296,7 @@ export class WeatherPage extends React.Component {
             })
           }
         </SwipeableViews>
-        <CardActions style={{"paddingTop": "0px"}}>
+        <CardActions style={{"paddingTop": "0px", "paddingLeft": "16px"}}>
           {
             forecasts.map((forecast)=>{
               return (
@@ -302,11 +311,11 @@ export class WeatherPage extends React.Component {
         </CardActions>
 
         <CardHeader
-          title={this.props.t("weatherSituation")}
+          title={t("Weather")+" "+t("situation")}
           showExpandableButton={true}
-          subtitle={"Issued at "+this.dateTimeToString(issuedAt)}
+          subtitle={t("Issued_at")+" "+this.dateTimeToString(issuedAt)}
         />
-        <WeatherSituation expandable={true} situation={situation} />
+        <WeatherSituation t={t} expandable={true} situation={situation} />
 
       </Card>
     );

@@ -4,6 +4,9 @@ import { withGoogleMap } from "react-google-maps";
 import withScriptjs from "react-google-maps/lib/async/withScriptjs";
 import { createContainer } from 'meteor/react-meteor-data';
 
+/* i18n */
+import { translate } from 'react-i18next';
+
 // Wrap all `react-google-maps` components with `withGoogleMap` HOC
 // and name it GettingStartedGoogleMap
 const HazardGoogleMap = withScriptjs(
@@ -80,7 +83,7 @@ class HazardMap extends React.Component {
       <HazardGoogleMapContainer
         {...this.props}
         loadingElement={
-          <div>Loading google map...</div>
+          <div>{this.props.t("loading_map")}</div>
         }
         containerElement={
           <div id="hazardMapContainer" style={{ height: '250px', width: '100%' }} />
@@ -93,4 +96,8 @@ class HazardMap extends React.Component {
   }
 }
 
-export default HazardMap;
+HazardMap.propTypes = {
+  t: React.PropTypes.func
+}
+
+export default translate(['common'])(HazardMap);

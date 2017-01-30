@@ -85,7 +85,7 @@ class EarthquakePage extends React.Component {
       }
     }
     return(
-      <p>No earthquake / Tsunami warning in effect.</p>
+      <p>{this.props.t("no_data_to_display")}</p>
     );
   }
 

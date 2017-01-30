@@ -9,10 +9,9 @@ import RaisedButton from 'material-ui/RaisedButton';
 import {Card, CardMedia, CardActions, CardText} from 'material-ui/Card';
 
 import {playSoundNoDelay} from '../api/client/mediautils.js';
+import browserHistory from 'react-router/lib/browserHistory';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
-
-const topPageName = Meteor.settings.public.topPage;
 
 // Shows the usage when the user starts the app for the first time.
 // 1) Alarm list
@@ -112,7 +111,7 @@ class UsagePage extends React.Component {
                 disableTouchRipple={true}
                 disableFocusRipple={true}
                 primary={true}
-                onTouchTap={()=>{this.props.onPageSelection(topPageName)}}
+                onTouchTap={()=>{browserHistory.goBack()}}
                 style={{marginRight: 12}}
               />
             </CardActions>

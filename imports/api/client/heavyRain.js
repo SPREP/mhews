@@ -1,4 +1,7 @@
 import {Preferences} from './preferences.js';
+import {toTitleCase} from '../strutils.js';
+
+import i18n from 'i18next';
 
 export class HeavyRain {
   constructor(phenomena){
@@ -7,8 +10,13 @@ export class HeavyRain {
     }
   }
 
-  getHeaderTitle(_t){
-    return "Heavy Rain"+" "+this.level;
+  getHeaderTitle(t){
+    if( i18n.language == "ws"){
+      return toTitleCase(t("level."+this.level))+" o "+t("heavy_rain");
+    }
+    else{
+      return t("Heavy_rain")+" "+t("level."+this.level);
+    }
   }
 
   getSubTitle(){

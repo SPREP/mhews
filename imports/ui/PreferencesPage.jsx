@@ -10,6 +10,8 @@ import browserHistory from 'react-router/lib/browserHistory';
 
 /* i18n */
 import { translate } from 'react-i18next';
+import i18n from 'i18next';
+
 
 const districts = [
   "upolu-north-northwest",
@@ -18,8 +20,6 @@ const districts = [
   "savaii-northwest",
   "savaii-south"
 ];
-
-const topPageName = Meteor.settings.public.topPage;
 
 class PreferencesPage extends React.Component {
 
@@ -32,7 +32,7 @@ class PreferencesPage extends React.Component {
 
     return(
       <div>
-        <Subheader>Language</Subheader>
+        <Subheader>Language / Gagana</Subheader>
         <RadioButtonGroup name="language" onChange={(e, v)=>{this.changeLanguage(v)}} defaultSelected={lang}>
           <RadioButton
             key="en"
@@ -44,13 +44,13 @@ class PreferencesPage extends React.Component {
             value="ws"/>
         </RadioButtonGroup>
         <Divider />
-        <Subheader>District</Subheader>
+        <Subheader>District / Vaega</Subheader>
         <RadioButtonGroup name="district" onChange={(e, v)=>{this.changeDistrict(v)}} defaultSelected={district}>
           {
             districts.map((district)=>(
               <RadioButton
                 key={district}
-                label={this.props.t("district."+district)}
+                label={this.props.t("districts."+district)}
                 value={district} />
             ))
           }
@@ -72,6 +72,7 @@ class PreferencesPage extends React.Component {
   changeLanguage(lang) {
     console.log("changeLanguage = "+lang);
     this.selectedLanguage = lang;
+//    i18n.changeLanguage(lang);
   }
   changeDistrict(district){
     console.log("changeDistrict = "+district);
@@ -89,6 +90,7 @@ class PreferencesPage extends React.Component {
       console.error("Preferences local collection is not defined!!");
       return;
     }
+    console.log("Save preference "+key+" = "+value);
     Preferences.save(key, value);
   }
 }
