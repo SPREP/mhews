@@ -55,7 +55,7 @@ function startPublishingTideTable(){
       if( dateTime.isDST() ){
         dateTime.add(1, "hours");
       }
-      TideTableCollection.update({"_id": tide._id}, {"$set": {dateTime: dateTime.toDate()}});
+      TideTableCollection.update({"_id": tide._id}, {"$set": {dateTime: dateTime.utc().toDate()}});
     }
   });
 
