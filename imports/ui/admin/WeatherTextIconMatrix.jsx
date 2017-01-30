@@ -199,7 +199,9 @@ class WeatherTextIconMatrixPage extends React.Component {
       const forecastText = forecast.forecast;
       const weatherSymbol = textToWeatherSymbols[forecastText];
       // Repeat the same symbol for 4 times (every 6 hours)
-      forecast.weatherSymbols = [weatherSymbol, weatherSymbol, weatherSymbol, weatherSymbol];
+      if( weatherSymbol ){
+        forecast.weatherSymbols = [weatherSymbol, weatherSymbol, weatherSymbol, weatherSymbol];
+      }
     });
 
     updateForecast(bulletin);
