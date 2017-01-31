@@ -7,13 +7,6 @@ export const MongoWeatherForecasts = new Mongo.Collection(collectionName);
 
 export const WeatherForecasts = MongoWeatherForecasts;
 
-// Allow this temporarily, so that AdminDashboard can update the weather symbol.
-MongoWeatherForecasts.allow({
-  update: (_userId, _doc)=>{
-    return true;
-  }
-})
-
 export function publishWeatherForecast(forecast){
   console.log("Enter publishWeatherForecast.");
 
