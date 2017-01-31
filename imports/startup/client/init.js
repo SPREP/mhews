@@ -13,7 +13,7 @@ import {initFcmClient} from '../../api/client/fcm.js';
 /* This plugin captures the tap event in React. */
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
-import {initRouter, initRouterForBrowser} from '../../api/client/route.jsx';
+import {initRouter} from '../../api/client/route.jsx';
 
 /* global Reloader */
 
@@ -26,12 +26,7 @@ Meteor.startup(()=>{
 
   // Call this function after the initTapEventPlugin().
   // Otherwise, some material-ui components won't work.
-  if( Meteor.isCordova ){
-    initRouter();
-  }
-  else{
-    initRouterForBrowser();
-  }
+  initRouter();
 });
 
 // Initializations that can be deferred after the GUI is rendered.

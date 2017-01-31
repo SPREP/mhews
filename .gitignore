@@ -6,4 +6,5 @@ settings.json
 settings_release.json
 mup.js
 private/deploy_scripts/mup*.js
+private/parallel-access-mhews.js
 
