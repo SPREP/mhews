@@ -11,14 +11,19 @@ export class Earthquake {
   getHeaderTitle(t){
     const quake = this;
 
+    let title;
     if( i18n.language == "ws"){
-      return toTitleCase(t("level."+quake.level))+" mo "+t(quake.type)+" (Magnitude "+quake.mw+","+quake.region+") ";
-
+      title = toTitleCase(t("level."+quake.level))+" mo "+t(quake.type)+" (Magnitude "+quake.mw+","+quake.region+") ";
     }
     else{
-      return toTitleCase(t(quake.type))+" "+t("level."+quake.level)+" (Magnitude "+quake.mw+","+quake.region+") ";
-
+      title = toTitleCase(t(quake.type))+" "+t("level."+quake.level)+" (Magnitude "+quake.mw+","+quake.region+") ";
     }
+
+    if( quake.is_exercise ){
+      title = t("exercise").toUpperCase() + " " + title;
+    }
+
+    return title;
   }
 
   getSubTitle(){

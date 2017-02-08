@@ -76,7 +76,10 @@ export class WarningCollection extends Mongo.Collection {
   }
 
   toFcmMessage(warning, soundFile){
-    const title = warning.type + " " + warning.level;
+    let title = warning.type + " " + warning.level;
+    if( warning.is_exercise ){
+      title = "exercise".toUpperCase() + " " + title;
+    }
     const body = warning.direction ? warning.area + " " + warning.direction : warning.area;
     const ttl = 10 * 60; // 10min time to live
     // Destination topics are set by the fcm.js. Don't set "to" here.

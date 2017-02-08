@@ -41,11 +41,10 @@ class WarningCollectionServer extends WarningCollection {
     else {
       // FIXME: This cancellation does not work because IBL gives different bulletinNumber
       // from the warning bulletin to be cancelled.
-      return this.cancelWarning(warning);
+      return this.cancelWarning(warning.type, warning.bulletinId);
     }
   }
 
-  // This method can be called by a client or a server.
   cancelWarning(type, bulletinId){
     check(type, String);
     check(bulletinId, Number);

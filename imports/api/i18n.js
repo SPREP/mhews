@@ -13,7 +13,9 @@ const i18nConfig = {
         "heavyrain": "heavy rain",
         "language": "language",
         "district": "district",
+        "cancellation": "cancellation",
         "category": "category",
+        "exercise": "exercise",
         level : {
           advisory: "advisory",
           watch: "watch",
@@ -126,6 +128,7 @@ const i18nConfig = {
         "district": "vaega",
         "category": "vaega",
         "cancellation": "faaleaogaina",
+        "exercise": "faataitaiga",
         level : {
           advisory: "fautuaga",
           watch: "nofosauni",

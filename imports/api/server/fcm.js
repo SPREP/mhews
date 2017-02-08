@@ -1,16 +1,11 @@
 import { Meteor } from 'meteor/meteor'
 import {getAreaId} from '../hazardArea.js';
 
-//var request = require('request');
-var request;
-
-if( Meteor.isServer ){
-  request = require('request');
-}
+var request = require('request');
 
 const topicPrefix = Meteor.settings.public.topicPrefix;
 
-export const sendFcmNotification = (jsonBody, area, direction) => {
+export function sendFcmNotification(jsonBody, area, direction){
   const fcmApiKey = Meteor.settings.fcmApiKey;
   // For some reason, sending to multiple topics by using the "condition" attribute
   // didn't work. Send the same message twice to two topics by using the "to" attribute.
@@ -22,7 +17,11 @@ export const sendFcmNotification = (jsonBody, area, direction) => {
     "Authorization": "key="+fcmApiKey
   };
 
-  [topicPrefix, areaId].forEach((topic)=>{
+  // Send only to the top-level topic, to reduce the risk of throttling by the Firebase server.
+//  const topics = [topicPrefix, areaId];
+  const topics = [topicPrefix];
+
+  topics.forEach((topic)=>{
 
     jsonBody.to = "/topics/"+topic;
 
