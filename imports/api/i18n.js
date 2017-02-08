@@ -23,7 +23,7 @@ const i18nConfig = {
         title : {
           app: "Samoa Weather",
           weather: "Weather",
-          heavyRain: "Heavy Rain",
+          heavyrain: "Heavy Rain",
           earthquake: "Earthquake",
           tsunami: "Tsunami",
           warnings: "Effective Warnings",

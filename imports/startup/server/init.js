@@ -88,17 +88,23 @@ function startPublishingWeather(){
 
 }
 
+function obsoleteOldInformation(){
+  const before24hours = moment().subtract(24, 'hours').toDate();
+  console.log("Earthquake info older than "+before24hours+" will be in_effect.");
+  // Use the date_time instead of the issued_at, as the issued_at isn't reliable due to the IBL.
+  Warnings.update(
+    {"level": "information", "in_effect": true, "date_time": {"$lt": before24hours}},
+    {"$set": {"in_effect": false}},
+    {multi: true}
+  );
+
+}
+
 function startPublishingWarnings(){
+  // Check if there are any obsolete information at the startup.
+  Meteor.defer(Meteor.bindEnvironment(obsoleteOldInformation));
   // Start the timer which invalidates old information every hour.
-  Meteor.setInterval(Meteor.bindEnvironment(function(){
-    const before24hours = moment().subtract(24, 'hours').toDate();
-    console.log("Earthquake info older than "+before24hours+" will be in_effect.");
-    // Use the date_time instead of the issued_at, as the issued_at isn't reliable due to the IBL.
-    Warnings.update(
-      {"type": "earthquake", "level": "information", "in_effect": true, "date_time": {"$lt": before24hours}},
-      {"$set": {"in_effect": false}},
-      {multi: true});
-  }), 3600 * 1000);
+  Meteor.setInterval(Meteor.bindEnvironment(obsoleteOldInformation), 3600 * 1000);
 
   // The 2nd argument must use "function", not the arrow notations.
   // See this guide https://guide.meteor.com/data-loading.html

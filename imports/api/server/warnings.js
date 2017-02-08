@@ -23,10 +23,12 @@ class WarningCollectionServer extends WarningCollection {
     check(warning.description_en, String);
     check(warning.description_ws, String);
 
-    if( warning.type == "tsunami"){
+    if( warning.type == "tsunami" || warning.type == "earthquake"){
       check(warning.epicenter, {lat: Number, lng: Number});
       check(warning.mw, Number);
       check(warning.depth, Number);
+      warning.date_time = normalizeDateTime(warning.date_time);
+      check(warning.date_time, Date);
     }
     else if( warning.type == "heavyRain"){
       check(warning.area, String);
@@ -62,6 +64,13 @@ class WarningCollectionServer extends WarningCollection {
     super.insert(warning);
   }
 
+}
+
+function normalizeDateTime(dateTime){
+  if( !dateTime ){
+    return undefined;
+  }
+  return moment(dateTime).toDate();
 }
 
 function checkWarningType(type){
