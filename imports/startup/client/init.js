@@ -8,7 +8,7 @@ import ReceptionTracker from '../../api/receptionTracker.js';
 import i18nConfig from '../../api/i18n.js';
 import i18n from 'i18next';
 
-import {initFcmClient} from '../../api/client/fcm.js';
+import {PushClient} from '../../api/client/pushclient.js';
 
 /* This plugin captures the tap event in React. */
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -64,9 +64,7 @@ function initTapEventPlugin(){
 function initFcm(){
 
   if( Meteor.isCordova ){
-    initFcmClient((data)=>{
-      handleFcmNotification(data)
-    });
+    new PushClient().start(onPushReceive);
   }
 }
 
@@ -147,8 +145,8 @@ function playSoundEffect(warning, oldWarning){
 
 // Unfortunately the FCM is unreliable.
 // Don't rely on the FCM but observe the Meteor collection to notify the user of a new warning.
-// So this function doesn't do anything.
-function handleFcmNotification(fcmData){
+// So this function doesn't do anything except for updating the tracker.
+function onPushReceive(fcmData){
   console.log("FCM data received."+JSON.stringify(fcmData));
 
   Meteor.defer(()=>{

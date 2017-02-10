@@ -57,6 +57,6 @@ function getWarningTypeIcon(type){
     return config.icon;
   }
   else{
-    return "images/warning.png";
+    return "/images/warning.png";
   }
 }

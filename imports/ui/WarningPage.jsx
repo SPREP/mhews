@@ -3,8 +3,9 @@ import HazardMap from './HazardMap.jsx';
 import * as GeoUtils from '../api/geoutils.js';
 import * as HazardArea from '../api/hazardArea.js';
 import HazardView from './HazardView.jsx';
+import {Warnings} from '../api/client/warnings.js';
 
-import {createWarningContainer} from './WarningPage.jsx';
+import {createContainer} from 'meteor/react-meteor-data';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -22,7 +23,7 @@ const Samoa = {
   ]
 };
 
-class HeavyRainPage extends React.Component {
+class WarningPage extends React.Component {
 
   validatePhenomena(phenomena){
     if( !phenomena.area ){
@@ -39,7 +40,7 @@ class HeavyRainPage extends React.Component {
   render(){
     const t = this.props.t;
 
-    console.log("render heavyRain");
+    console.log("render WarningPage");
     if( !this.props.phenomena ){
       return(
         <p>{t("no_data_to_display")}</p>
@@ -47,14 +48,14 @@ class HeavyRainPage extends React.Component {
     }
     else{
 
-      let heavyRain = this.props.phenomena;
+      let warning = this.props.phenomena;
 
-      if( this.validatePhenomena(heavyRain)){
+      if( this.validatePhenomena(warning)){
         const longestDiagonal = GeoUtils.getLongestDiagonal(Samoa.area);
         this.zoom = GeoUtils.getZoomLevel(longestDiagonal);
 
-        const onCancelCallback = this.props.isAdmin ? ()=>{this.props.cancelWarning(heavyRain.type, heavyRain.bulletinId)} : undefined;
-        const hazardAreas = HazardArea.findAreas(heavyRain.area, heavyRain.direction);
+        const onCancelCallback = this.props.isAdmin ? ()=>{this.props.cancelWarning(warning.type, warning.bulletinId)} : undefined;
+        const hazardAreas = HazardArea.findAreas(warning.area, warning.direction);
         const circles = [];
         const polygons = [];
         const color = this.getWarningColor();
@@ -77,15 +78,14 @@ class HeavyRainPage extends React.Component {
 
         return(
           <HazardView
-            avatar={Meteor.settings.public.notificationConfig.heavyRain.icon}
-            headerTitle={t("HeavyRain")+" "+t("level." + heavyRain.level.toLowerCase())}
-            headerSubTitle={moment(heavyRain.issued_at).format("YYYY-MM-DD HH:mm")}
-            description={heavyRain.description_en}
+            headerTitle={warning.getHeaderTitle(t)}
+            headerSubTitle={warning.getSubTitle(t)}
+            description={warning.getDescription()}
             onCancel={onCancelCallback}
-            level={heavyRain.level}
+            level={warning.level}
             onExpandChange={this.props.onExpandChange}
             expanded={this.props.expanded}
-            warning={heavyRain}>
+            warning={warning}>
             <HazardMap
               mapCenter={Samoa.center}
               zoom={this.zoom}
@@ -96,8 +96,8 @@ class HeavyRainPage extends React.Component {
         );
       }
       else{
-        console.error("Unexpected heavy rain object "+JSON.stringify(heavyRain));
-        // FIXME This case should return as much as heavy rain information as possible.
+        console.error("Unexpected warning object "+JSON.stringify(warning));
+        // FIXME This case should return as much warning information as possible.
         return(
           <p>{t("no_data_to_display")}</p>
         );
@@ -115,7 +115,7 @@ class HeavyRainPage extends React.Component {
   }
 }
 
-HeavyRainPage.propTypes = {
+WarningPage.propTypes = {
   t: React.PropTypes.func,
   phenomena: React.PropTypes.object,
   isAdmin: React.PropTypes.bool,
@@ -125,6 +125,17 @@ HeavyRainPage.propTypes = {
 
 }
 
-const HeavyRainPageContainer = createWarningContainer(HeavyRainPage);
+export function createWarningContainer(warningPage){
+  return createContainer(({params})=>{
+    const id = params.id;
 
-export default translate(['common'])(HeavyRainPageContainer);
+    return {
+      phenomena: Warnings.findOne({"_id": id}),
+      expanded: true
+    }
+  }, warningPage);
+}
+
+const WarningPageContainer = createWarningContainer(WarningPage);
+
+export default translate(['common'])(WarningPageContainer);

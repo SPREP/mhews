@@ -1,14 +1,17 @@
 import { check } from 'meteor/check';
 import {WarningCollection} from '../warnings.js';
+import {Earthquake} from '../model/earthquake.js';
+import {Cyclone} from '../model/cyclone.js';
+import {HeavyRain} from '../model/heavyRain.js';
+import {Warning} from '../model/warning.js';
 
 class WarningCollectionClient extends WarningCollection {
 
-  constructor(...args){
-    super(...args);
+  constructor(name, args){
+    super(name, args ? _.extend(args, {transform: transform}) : {transform: transform});
     this.cancelWarning = this.cancelWarning.bind(this);
   }
 
-  // This method can be called by a client or a server.
   cancelWarning(type, bulletinId){
     check(type, String);
     check(bulletinId, Number);
@@ -25,8 +28,16 @@ class WarningCollectionClient extends WarningCollection {
     });
 
   }
+}
 
-
+function transform(warning){
+  switch(warning.type.toLowerCase()){
+    case "tsunami": return new Earthquake(warning);
+    case "earthquake": return new Earthquake(warning);
+    case "cyclone": return new Cyclone(warning);
+    case "heavyrain": return new HeavyRain(warning);
+    default: return new Warning(warning);
+  }
 }
 
 export const Warnings = new WarningCollectionClient("warnings");

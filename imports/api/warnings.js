@@ -75,58 +75,24 @@ export class WarningCollection extends Mongo.Collection {
     return l1 > l2;
   }
 
-  toFcmMessage(warning, soundFile){
-    let title = warning.type + " " + warning.level;
-    if( warning.is_exercise ){
-      title = "exercise".toUpperCase() + " " + title;
+  isCancelled(id){
+    const warning = super.findOne({_id: id});
+    return !(warning && warning.in_effect);
+  }
+
+  // True if there is a severer warning of the same kind as the one specified by id.
+  hasSevererWarning(id){
+    const warning = super.findOne({_id: id, in_effect: true});
+    if( !warning ){
+      return false;
     }
-    const body = warning.direction ? warning.area + " " + warning.direction : warning.area;
-    const ttl = 10 * 60; // 10min time to live
-    // Destination topics are set by the fcm.js. Don't set "to" here.
-    // "click_action" is needed for cordova-plugin-fcm. However, setting it will prevent
-    // the app launch from tapping the notification if cordova-plugin-firebase is used.
-    const fcmMessage = {
-      "priority": "high",
-      "time_to_live": ttl,
-      "notification" : {
-        "title" : title,
-        "body" : body,
-//        "click_action" : "FCM_PLUGIN_ACTIVITY",
-        "sound": soundFile,
-        "icon" : "myicon"
-      },
-      "data" : {
-        "type": warning.type,
-        "level": warning.level,
-        "bulletinId": warning.bulletinId,
-        "in_effect": warning.in_effect,
-        "issued_at": warning.issued_at,
-        "description": warning.description
+    super.find({in_effect: true, type: warning.type}).forEach((anotherWarning)=>{
+      if( this.isMoreSignificant(anotherWarning, warning)){
+        return true;
       }
-    };
+    });
 
-    if( !warning.in_effect ){
-      fcmMessage.notification.title = "Cancel "+title;
-    }
-
-    if( warning.type == "tsunami" || warning.type == "earthquake" ){
-      const mw = warning.mw;
-      fcmMessage.notification.body = body + " (Magnitude "+mw+")";
-      fcmMessage.data.epicenter_lat = warning.epicenter.lat;
-      fcmMessage.data.epicenter_lng = warning.epicenter.lng;
-      fcmMessage.data.mw = mw;
-      fcmMessage.data.depth = warning.epicenter.depth;
-    }
-    else if( warning.type == "heavyRain" ){
-      fcmMessage.data.area = warning.area;
-      fcmMessage.data.direction = warning.direction;
-    }
-    else if( warning.type == "cyclone" ){
-      fcmMessage.data.name = warning.name; // Name of the TC
-      fcmMessage.data.category = warning.category;
-    }
-
-    return fcmMessage;
+    return false;
   }
 
   // FCM cannot deliver layered JSON, so epicenter is represented by two attributes.

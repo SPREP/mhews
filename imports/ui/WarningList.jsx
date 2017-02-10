@@ -10,10 +10,6 @@ import { createContainer } from 'meteor/react-meteor-data';
 import { translate } from 'react-i18next';
 
 import {Warnings} from '../api/client/warnings.js';
-import {Earthquake} from '../api/client/earthquake.js';
-import {HeavyRain} from '../api/client/heavyRain.js';
-import {Cyclone} from '../api/client/cyclone.js';
-
 import {WarningCard} from './WarningCard.jsx';
 
 import ReceptionTracker from '../api/receptionTracker.js';
@@ -51,7 +47,7 @@ export class WarningList extends React.Component {
     if( warnings && warnings.length > 0 ){
       itemlist = warnings.map((warning, index) => {
         return (
-          <WarningCard key={index} t={t} warning={getPhenomena(warning)} />
+          <WarningCard key={index} t={t} warning={warning} />
         )
       })
     }
@@ -87,27 +83,6 @@ export class WarningList extends React.Component {
   getExpanded(warningId){
     return this.state.expandedWarningId == warningId;
   }
-}
-
-function getPhenomena(warning){
-  const type = warning.type.toLowerCase();
-
-  if( type == "earthquake"){
-    return new Earthquake(warning);
-  }
-  else if( type == "tsunami"){
-    return new Earthquake(warning);
-  }
-  else if( type == "heavyrain"){
-    return new HeavyRain(warning);
-  }
-  else if( type == "cyclone"){
-    return new Cyclone(warning);
-  }
-  else{
-    return warning;
-  }
-
 }
 
 function getWarningTypeIcon(type){

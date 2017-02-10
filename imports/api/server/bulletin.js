@@ -64,12 +64,10 @@ class BulletinCollectionServer extends BulletinCollection {
 
   }
 
-  // Server side only (private)
   findPreviousBulletin(bulletin){
     return Warnings.findOne(this.prevBulletinSelectorFunc(bulletin));
   }
 
-  // Server side only
   cancelBulletin(bulletinId){
     const bulletin = this.findOne({id: bulletinId, in_effect: true});
     if( !bulletin ){
@@ -81,7 +79,6 @@ class BulletinCollectionServer extends BulletinCollection {
     this.update({id: bulletinId}, {"$set": {in_effect: false}});
   }
 
-  //  Server side only (private)
   extractWarnings(bulletin){
     bulletin.warnings.forEach((warning)=>{
       check(warning.type, String);

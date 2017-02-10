@@ -18,6 +18,7 @@ import {WeatherForecastObserver} from '../api/client/weatherForecastObserver.js'
 import ConnectionStatusIndicatorContainer from './ConnectionStatusIndicator.jsx';
 import DrawerMenu from './DrawerMenu.jsx';
 import {quitApp} from '../api/client/appcontrol.js';
+import {toTitleCase} from '../api/strutils.js';
 
 /* global navigator */
 
@@ -91,7 +92,7 @@ class AppClass extends React.Component {
       <div>
         <AppBar
 //          title={t(pageConfig.title)}
-          title={t(getPageName(this.props.location.pathname))}
+          title={getTitle(getPageName(this.props.location.pathname), t)}
           style={{"backgroundColor": "#F40000"}}
           titleStyle={{"fontSize": "18px"}}
           onLeftIconButtonTouchTap={()=>{this.toggleDrawerOpen()}}
@@ -113,9 +114,21 @@ class AppClass extends React.Component {
   }
 }
 
+function getTitle(pageName, t){
+  const translateKey = "title." + pageName;
+  const translated = t(translateKey);
+  if( translated != translateKey ){
+    return translated;
+  }
+  else{
+    // The key does not exist in the i18n dictionary
+    return toTitleCase(pageName);
+  }
+}
+
 function getPageName(path){
   const pathComponents = path.substring(1).split("/");
-  return "title." + (pathComponents.length > 1 ? pathComponents[1] : pathComponents[0]);
+  return (pathComponents.length > 1 ? pathComponents[1] : pathComponents[0]);
 }
 
 class AppChildWrapper extends React.Component {

@@ -2,9 +2,7 @@ import React from 'react';
 import HazardMap from './HazardMap.jsx';
 import * as GeoUtils from '../api/geoutils.js';
 import HazardView from './HazardView.jsx';
-import {Warnings} from '../api/client/warnings.js';
-import {Earthquake} from '../api/client/earthquake.js';
-import {createContainer} from 'meteor/react-meteor-data';
+import {createWarningContainer} from './WarningPage.jsx';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -34,7 +32,7 @@ class EarthquakePage extends React.Component {
   render(){
 
     if( this.props.phenomena ){
-      let quake = new Earthquake(this.props.phenomena);
+      let quake = this.props.phenomena;
       console.log("quake = "+ quake ? JSON.stringify(quake) : "undefined");
 
       if(this.validatePhenomena(quake)){
@@ -122,14 +120,6 @@ EarthquakePage.propTypes = {
 
 }
 
-const EarthquakePageContainer = createContainer(({params, expanded})=>{
-  const id = params.id;
-  console.log("Earthquake id = "+id);
-
-  return {
-    phenomena: Warnings.findOne({"_id": id}),
-    expanded: expanded == undefined ? true : expanded
-  }
-}, EarthquakePage);
+const EarthquakePageContainer = createWarningContainer(EarthquakePage);
 
 export default translate(['common'])(EarthquakePageContainer);

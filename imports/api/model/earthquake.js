@@ -1,11 +1,10 @@
 import i18n from 'i18next';
 import {toTitleCase} from '../strutils.js';
+import {Warning} from './warning.js';
 
-export class Earthquake {
+export class Earthquake extends Warning {
   constructor(phenomena){
-    for(let key in phenomena){
-      this[key] = phenomena[key];
-    }
+    super(phenomena);
   }
 
   getHeaderTitle(t){

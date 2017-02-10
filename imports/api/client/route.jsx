@@ -10,8 +10,8 @@ import TopPage from '../../ui/TopPage.jsx';
 import AboutAppPage from '../../ui/AboutAppPage.jsx';
 import UsagePage from '../../ui/UsagePage.jsx';
 import PreferencesPage from '../../ui/PreferencesPage.jsx';
+import WarningPage from '../../ui/WarningPage.jsx';
 import EarthquakePage from '../../ui/Earthquake.jsx';
-import HeavyRainPage from '../../ui/HeavyRain.jsx';
 import CyclonePage from '../../ui/Cyclone.jsx';
 import App from '../../ui/App.jsx';
 import AppTemplate from '../../ui/AppTemplate.jsx';
@@ -29,8 +29,9 @@ export function initRouter(){
         <Route path="settings" component={PreferencesPage} />
         <Route path="earthquake/:id" component={EarthquakePage} />
         <Route path="tsunami/:id" component={EarthquakePage} />
-        <Route path="heavyRain/:id" component={HeavyRainPage} />
+        <Route path="heavyRain/:id" component={WarningPage} />
         <Route path="cyclone/:id" component={CyclonePage} />
+        <Route path="*/:id" component={WarningPage} />
         <IndexRoute component={TopPage} />
       </Route>
       <IndexRedirect to="/app" />

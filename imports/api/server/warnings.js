@@ -16,7 +16,7 @@ class WarningCollectionServer extends WarningCollection {
 
     check(this.connection, Match.Where(isClientIpAllowed));
     check(warning.bulletinId, Number);
-    check(warning.type, Match.Where(checkWarningType));
+//    check(warning.type, Match.Where(checkWarningType));
     check(warning.level, Match.OneOf(...Warnings.listLevels()));
     check(warning.in_effect, Match.OneOf(true, false));
     check(warning.issued_at, Date);

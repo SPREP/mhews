@@ -1,12 +1,12 @@
-import {CycloneBulletins} from './bulletin.js';
+import {CycloneBulletins} from '../client/bulletin.js';
+import {Warning} from './warning.js';
+
 
 import i18n from 'i18next';
 
-export class Cyclone {
+export class Cyclone extends Warning {
   constructor(phenomena){
-    for(let key in phenomena){
-      this[key] = phenomena[key];
-    }
+    super(phenomena);
   }
 
   getHeaderTitle(t){

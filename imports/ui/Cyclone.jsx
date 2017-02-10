@@ -1,9 +1,9 @@
 import React from 'react';
 import HazardView from './HazardView.jsx';
 import {Warnings} from '../api/client/warnings.js';
-import {Cyclone} from '../api/client/cyclone.js';
 
-import {createContainer} from 'meteor/react-meteor-data';
+import {createWarningContainer} from './WarningPage.jsx';
+
 /* i18n */
 import { translate } from 'react-i18next';
 
@@ -26,7 +26,7 @@ class CyclonePage extends React.Component {
     }
     const t = this.props.t;
 
-    const cyclone = new Cyclone(this.props.phenomena);
+    const cyclone = this.props.phenomena;
     const name = cyclone.name;
     const district = cyclone.district;
     const title = cyclone.getHeaderTitle(t);
@@ -57,6 +57,7 @@ class CyclonePage extends React.Component {
 }
 
 CyclonePage.propTypes = {
+  t: React.PropTypes.func,
   phenomena: React.PropTypes.object,
   isAdmin: React.PropTypes.bool,
   cancelWarning: React.PropTypes.func,
@@ -64,14 +65,6 @@ CyclonePage.propTypes = {
   expanded: React.PropTypes.bool
 }
 
-const CyclonePageContainer = createContainer(({params})=>{
-  const id = params.id;
-
-  console.log("cyclonepagecontainer id = "+id);
-  return {
-    phenomena: Warnings.findOne({"_id": id, "type": "cyclone"}),
-    expanded: true
-  }
-}, CyclonePage);
+const CyclonePageContainer = createWarningContainer(CyclonePage);
 
 export default translate(['common'])(CyclonePageContainer);
