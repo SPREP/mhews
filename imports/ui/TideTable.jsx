@@ -5,6 +5,8 @@ import { translate } from 'react-i18next';
 
 import {TideTableCollection} from '../api/tidetable.js';
 
+import './css/TideTable.css';
+
 class DailyTideTable extends React.Component {
 
   shouldComponentUpdate(newProps, _newState){
@@ -19,12 +21,12 @@ class DailyTideTable extends React.Component {
     const t = this.props.t;
 
     return (
-      <table style={{"paddingLeft": "0px", "fontSize": "8pt", display: "inline-block", "verticalAlign": "top"}}>
+      <table className="tidetable">
         <thead>
           <tr>
-            <th style={{fontSize: "8pt"}}>{t("Tide")}</th>
-            <th style={{fontSize: "8pt"}}>{t("Time")}</th>
-            <th style={{fontSize: "8pt"}}>{t("Height")}</th>
+            <th className="tidetable">{t("Tide")}</th>
+            <th className="tidetable">{t("Time")}</th>
+            <th className="tidetable">{t("Height")}</th>
           </tr>
         </thead>
         <tbody>

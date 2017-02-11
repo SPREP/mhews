@@ -1,0 +1,9 @@
+div#hazardMapContainer {
+  height: 250px;
+  width: 100%;
+}
+
+div#hazardMapElement {
+  height: 250px;
+  width: 100%;
+}

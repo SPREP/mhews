@@ -7,11 +7,19 @@ export class Warning {
   }
 
   getHeaderTitle(t){
+    let title = toTitleCase(this.doGetHeaderTitle(t));
+    if( this.is_exercise ){
+      title = t("exercise").toUpperCase() + " " + title;
+    }
+    return title;
+  }
+
+  doGetHeaderTitle(t){
     if( i18n.language == "ws"){
-      return toTitleCase(t("level."+this.level) +" o "+t(this.type));
+      return t("level."+this.level) +" o "+t(this.type);
     }
     else{
-      return toTitleCase(t(this.type)+" "+t("level."+this.level));
+      return t(this.type)+" "+t("level."+this.level);
     }
   }
 

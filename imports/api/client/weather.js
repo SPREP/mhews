@@ -1,3 +1,10 @@
+/*
+
+Weather forecast is pushed from the server through the Mongo Collection.
+Forecasts are stored locally into the GroundDB for offline use.
+
+*/
+
 /* global Ground */
 import { Mongo } from 'meteor/mongo';
 
@@ -5,46 +12,82 @@ const collectionName = "weatherForecast";
 
 export const MongoWeatherForecasts = new Mongo.Collection(collectionName);
 
-let GroundWeatherForecasts;
+class WeatherForecastsCollection extends Ground.Collection {
 
-let mongoCursor;
+  constructor(collectionName){
+    super(collectionName);
+    this.collectionName = collectionName;
 
-GroundWeatherForecasts = new Ground.Collection("groundWeatherForecast");
-mongoCursor = MongoWeatherForecasts.find();
-GroundWeatherForecasts.observeSource(mongoCursor);
+    this.forecastCursor = null;
+    this.weatherForecastHandler = null;
 
-export const WeatherForecasts = GroundWeatherForecasts;
+  }
 
-WeatherForecasts.init = ()=>{
-  // To receive the data from the weatherForecast collection
-  Meteor.subscribe(collectionName, ()=>{
-    // Remove all documents not in current subscription
-    console.log("Calling ground.keep()");
-    GroundWeatherForecasts.keep(mongoCursor);
-  });
+  start(){
+    // To receive the data from the weatherForecast collection
+    Meteor.subscribe(this.collectionName, ()=>{
+      // Make GroundDB observe the Mongo db and copy the data to the local storage.
+      const mongoCursor = MongoWeatherForecasts.find();
+      this.observeSource(mongoCursor);
+
+      // Remove all documents not in current subscription
+      console.log("Calling ground.keep()");
+      this.keep(mongoCursor);
+    });
+
+  }
+
+  stop(){
+    if( this.forecastUpdateHandler ){
+      this.forecastUpdateHandler.stop();
+      this.forecastUpdateHandler = null;
+    }
+
+    Meteor.unsubscribe(this.collection);
+    // TODO What's the right unsubscribe operation for the GroundDB??
+  }
+
+  // Call the callback function when the weather forecast is updated.
+  onForecastUpdate(callback){
+
+    const cursor = WeatherForecasts.find({lang: "en", in_effect: true});
+    this.forecastUpdatehandler = cursor.observe({
+      added: callback
+    });
+  }
+
+  getLatestForecast(lng){
+    let forecasts = WeatherForecasts.find(
+      {lang: lng, in_effect: true},
+      {sort: {'issued_at': -1}}
+    ).fetch();
+
+    let data = null;
+    if( !forecasts ){
+      console.error("No matching data.");
+    }
+    else{
+      data = forecasts[0];
+    }
+    return data ? new ForecastWrapper(data) : null;
+  }
 }
 
-WeatherForecasts.getLatestForecast = (lng)=>{
-  let forecasts = WeatherForecasts.find({lang: lng, in_effect: true}, {sort: {'issued_at': -1}}).fetch();
-  let data = null;
-  if( !forecasts ){
-    console.error("No matching data.");
-  }
-  else{
-    data = forecasts[0];
-  }
-  return data ? addUtilityMethods(data) : null;
-}
+export const WeatherForecasts = new WeatherForecastsCollection("groundWeatherForecast");
 
 function isSameDate(date1, date2){
   // moment.isSame with "day" in the second argument will check year+month+day
   return moment(date1).isSame(moment(date2), "day");
 }
 
-function addUtilityMethods(forecast){
-  forecast.getDistrictForecast = (district, date) => {
+class ForecastWrapper {
+  constructor(forecast){
+    _.extend(this, forecast);
+  }
+
+  getDistrictForecast(district, date){
     let result = null;
-    forecast.forecasts.forEach((districtForecast) => {
+    this.forecasts.forEach((districtForecast) => {
       if(districtForecast.district == district && isSameDate(districtForecast.date, date)){
         result = districtForecast;
       }
@@ -53,11 +96,11 @@ function addUtilityMethods(forecast){
     return result;
   }
 
-  forecast.listForecastDates = () => {
+  listForecastDates(){
     const dates = [];
 
     // Add the dates from the districtForecast, but remove duplicates.
-    forecast.forecasts.forEach((districtForecast) => {
+    this.forecasts.forEach((districtForecast) => {
       const date = districtForecast.date;
       if( !dates.find(function(element){
         return element.getTime() == date.getTime();
@@ -69,5 +112,4 @@ function addUtilityMethods(forecast){
     return dates;
   }
 
-  return forecast;
 }

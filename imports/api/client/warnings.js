@@ -30,6 +30,8 @@ class WarningCollectionClient extends WarningCollection {
   }
 }
 
+// This transform function is run by the Meteor Collection when it returns a data entry
+// and wraps the data by one of the warning entity classes.
 function transform(warning){
   switch(warning.type.toLowerCase()){
     case "tsunami": return new Earthquake(warning);

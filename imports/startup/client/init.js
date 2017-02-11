@@ -1,7 +1,6 @@
 import {Warnings} from '../../api/client/warnings.js';
 import {Preferences} from '../../api/client/preferences.js';
 import {playSound} from '../../api/client/mediautils.js';
-import {WeatherForecasts} from '../../api/client/weather.js';
 import ReceptionTracker from '../../api/receptionTracker.js';
 
 /* i18n */
@@ -14,6 +13,9 @@ import {PushClient} from '../../api/client/pushclient.js';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import {initRouter} from '../../api/client/route.jsx';
+
+
+let pushClient = null;
 
 /* global Reloader */
 
@@ -34,11 +36,11 @@ Meteor.startup(()=>{
 export function initAfterComponentMounted(){
 
   Meteor.setTimeout(()=>{
-    initFcm();
+    initPushClient();
     subscribeForCollections();
     startWarningObserver();
 
-  }, 3000);
+  }, 1000);
 //  configReloader();
 }
 
@@ -61,10 +63,15 @@ function initTapEventPlugin(){
 
 }
 
-function initFcm(){
+function initPushClient(){
 
   if( Meteor.isCordova ){
-    new PushClient().start(onPushReceive);
+    pushClient = new PushClient();
+    pushClient.start(onPushReceive);
+
+    Tracker.autorun(()=>{
+      pushClient.receiveExerciseMessages(Preferences.load("exercise") == "true");
+    });
   }
 }
 
@@ -85,7 +92,6 @@ function subscribeForCollections(){
 
   Meteor.subscribe('tideTable');
 
-  WeatherForecasts.init();
 }
 
 function startWarningObserver(){

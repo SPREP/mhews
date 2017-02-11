@@ -7,6 +7,8 @@ import { createContainer } from 'meteor/react-meteor-data';
 /* i18n */
 import { translate } from 'react-i18next';
 
+import './css/HazardMap.css';
+
 // Wrap all `react-google-maps` components with `withGoogleMap` HOC
 // and name it GettingStartedGoogleMap
 const HazardGoogleMap = withScriptjs(
@@ -86,10 +88,10 @@ class HazardMap extends React.Component {
           <div>{this.props.t("loading_map")}</div>
         }
         containerElement={
-          <div id="hazardMapContainer" style={{ height: '250px', width: '100%' }} />
+          <div id="hazardMapContainer"/>
         }
         mapElement={
-          <div id="hazardMapElement" style={{ height: '250px', width: '100%'}} />
+          <div id="hazardMapElement"/>
         }>
       </HazardGoogleMapContainer>
     )

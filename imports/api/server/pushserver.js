@@ -11,10 +11,13 @@ const headers = {
   "Authorization": "key="+fcmApiKey
 };
 
-// FIXME
-// The PushServer should be started on only one server when multiple servers are off-loading.
+// PushServer checks incoming warning messages in the Warning Collection,
+// and send push notification to the mobile clients.
+// The current implementation relies on the Google Firebase.
 export class PushServer {
 
+  // TODO
+  // The PushServer should be started on only one server when multiple servers are off-loading.
   start(){
     // Observe the Warnings collection to send push message when the result set has changed.
     this.handle = Warnings.find({in_effect: true}).observe({
@@ -61,7 +64,7 @@ function pushWarning(warning, needsAttention){
   const message = new PushMessage(warning, needsAttention);
   if( warning.type == "tsunami" && warning.in_effect ){
     message.repeat(5).interval(3*60).collapse(warning.type).cancelIf(()=>{
-      return Warnings.isCancelled(warning._id) && Warnings.hasSevererWarning(warning._id);
+      return Warnings.isCancelled(warning._id) || Warnings.hasSevererWarning(warning._id);
     });
   }
   message.send((warning)=>{
@@ -139,11 +142,22 @@ export class PushMessage {
   }
 
   doSend(onSuccess, onError){
-    const topics = [topicPrefix];
+    const topics = [];
+
+    // Special handling for PACWAVE17 exercise to avoid sounding the tsunami alarm
+    // by the old version of the app which cannot display exercise message properly.
+    // To be removed after new versions have been deployed.
+    if( this.body.data.is_exercise ){
+      topics.push(topicPrefix + "_exercise");
+    }
+    else{
+      topics.push(topicPrefix);
+    }
 
     topics.forEach((topic)=>{
 
-      this.body.to = "/topics/"+topic;
+      this.body.to = "/topics/"+ topic;
+
 
       if( this.resend.collapseKey ){
         this.body.collapse_key = this.resend.collapseKey;
@@ -164,13 +178,19 @@ export class PushMessage {
       }
       request.post(options, Meteor.bindEnvironment((error, response)=>{
         if (!error && response.statusCode == 200) {
-          console.log("FCM message was successfully sent for warning "+this.warning.bulletinId);
+          console.log("FCM message was successfully sent on topic "+topic+" for warning "+this.warning.bulletinId);
           if( onSuccess ){
             onSuccess(this.warning);
           }
         }
         else {
-          console.log('error: '+ response.statusCode+ " "+response.statusMessage);
+          if( error ){
+            console.log("error: "+error);
+          }
+          if( response ){
+            console.log('error response: '+ response.statusCode+ " "+response.statusMessage);
+          }
+
           if( this.serverError.retryCount++ < this.serverError.maxRetry ){
             console.log("Retry sending FCM message after "+this.getInterval()+" seconds");
             Meteor.setTimeout(this.send, this.getInterval()*1000);
@@ -199,6 +219,13 @@ function warningToFcmMessage(warning, soundFile){
     title = "exercise".toUpperCase() + " " + title;
   }
   // FIXME: warning.area and warning.direction are not defined for Tsunami warning.
+  if( !warning.area ){
+    warning.area = "Samoa";
+  }
+  if( !warning.direction ){
+    warning.area = "Whole Area";
+  }
+
   const body = warning.direction ? warning.area + " " + warning.direction : warning.area;
   // Destination topics are set by the send function. Don't set "to" here.
   // "click_action" is needed for cordova-plugin-fcm. However, setting it will prevent
@@ -217,8 +244,10 @@ function warningToFcmMessage(warning, soundFile){
       "level": warning.level,
       "bulletinId": warning.bulletinId,
       "in_effect": warning.in_effect,
+      "is_exercise": warning.is_exercise,
       "issued_at": warning.issued_at,
-      "description": warning.description
+      "description_en": warning.description_en,
+      "description_ws": warning.description_ws
     }
   };
 

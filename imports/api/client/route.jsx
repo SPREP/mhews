@@ -17,6 +17,7 @@ import App from '../../ui/App.jsx';
 import AppTemplate from '../../ui/AppTemplate.jsx';
 import InitPage from '../../ui/InitPage.jsx';
 
+// Initialize the React Router that takes care of the display transition.
 export function initRouter(){
 
   render(

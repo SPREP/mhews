@@ -1,0 +1,44 @@
+.nowcast_div1 {
+  padding: 16px;
+}
+
+.nowcast_div2 {
+  padding-bottom: 0px;
+}
+
+.nowcast_div3 {
+  display: inline-block;
+  vertical-align: top;
+  max-width: 100%;
+}
+
+.nowcast_div4 {
+  padding-bottom: 8px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.nowcast_title {
+  font-size: 14pt;
+}
+
+.nowcast_subtitle {
+  font-size: 10pt;
+}
+
+.nowcast_badge_div1 {
+  padding-right: 16px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.nowcast_badge_div2 {
+  font-size: 10pt;
+  width: 48px;
+  text-align: center;
+}
+
+.nowcast_badge_image {
+  width: 48px;
+  height: 48px;
+}

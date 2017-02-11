@@ -1,142 +1,22 @@
 import React from 'react';
-import {Card, CardHeader, CardActions, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {Card, CardHeader, CardActions, CardMedia, CardTitle} from 'material-ui/Card';
 import { createContainer } from 'meteor/react-meteor-data';
 import SwipeableViews from 'react-swipeable-views';
 
 import {WeatherForecasts} from '../api/client/weather.js';
 import {Preferences} from '../api/client/preferences.js';
-import {WeatherForecastObserver} from '../api/client/weatherForecastObserver.js';
+import FileCache from '../api/client/filecache.js';
 import {Town} from '../api/towninfo.js';
 
-import {weatherIcons, selectPredominantWeatherSymbol} from '../api/weatherIcons.js';
+import {getWeatherIcon, selectPredominantWeatherSymbol} from '../api/weatherIcons.js';
 import SunCalc from 'suncalc';
-import {Moon} from '../api/moonutils.js';
-import DailyTideTableContainer from './TideTable.jsx';
 import {SmallCard} from './SmallCard.jsx';
+import {Nowcast} from './Nowcast.jsx';
 
 /* i18n */
 import { translate } from 'react-i18next';
 
-const Months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-const WeekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-class Nowcast extends React.Component {
-
-  render(){
-    const forecast = this.props.forecast;
-    const title = dateToString(forecast.date, this.props.t);
-    const subtitle = this.props.t("districts."+forecast.district);
-    const weatherIcon = getWeatherIcon(this.getWeatherSymbolForNow(forecast.weatherSymbols), moment());
-    const weatherSymbols = forecast.weatherSymbols.length > 1 ? forecast.weatherSymbols : [];
-    const listInterval = 24 / forecast.weatherSymbols.length;
-
-    return (
-      <div style={{padding: "16px"}}>
-        <div style={{paddingBottom: "0px"}}>
-          <div style={{display: "inline-block", "verticalAlign": "top", maxWidth: "100%"}}>
-            <div style={{paddingBottom: "8px", display: "inline-block", "verticalAlign": "middle"}}>
-              <div style={{"fontSize": "14pt"}}>{title}</div>
-              <div style={{"fontSize": "10pt"}}>{subtitle}</div>
-            </div>
-            {/*
-            <div style={{"display": "inline-block", "verticalAlign": "middle", "width": "40%"}}>
-              <img src={weatherIcon}
-                style={{width: "64px", height: "64px"}}
-              />
-            </div>
-            */}
-            <div>
-              {
-                weatherSymbols.map((symbol, index)=>{
-                  const startHour = index * listInterval;
-                  const endHour = (index+1) * listInterval;
-                  const referenceHour = (startHour + endHour) / 2;
-                  const text = this.formatForecastPeriod(startHour, endHour);
-                  return (
-                    <NowcastBadge
-                      key={index}
-                      icon={getWeatherIcon(symbol, moment().hour(referenceHour))}
-                      text={text}/>
-                  )
-                })
-              }
-            </div>
-          </div>
-        </div>
-        <CardText style={{padding: "0px", paddingTop: "8px", paddingBottom: "16px"}}>
-          {forecast.text}
-        </CardText>
-        <AdditionalInfo t={this.props.t} forecast={forecast} />
-      </div>
-    )
-  }
-
-  formatForecastPeriod(startHour, endHour){
-    return startHour + "-" + endHour;
-  }
-
-  getWeatherSymbolForNow(weatherSymbols){
-    const hoursPerDay = 24;
-    const currentHour = moment().hour();
-    const interval = hoursPerDay / weatherSymbols.length;
-    const index = Math.floor(currentHour / interval);
-    return weatherSymbols[index];
-  }
-}
-
-Nowcast.propTypes = {
-  t: React.PropTypes.func,
-  forecast: React.PropTypes.object
-}
-
-class AdditionalInfo extends React.Component {
-
-  render(){
-    const t = this.props.t;
-    const forecast = this.props.forecast;
-    const moon = new Moon(forecast.date);
-    const sunrise = moment(forecast.sunrise).format("HH:mm");
-    const sunset = moment(forecast.sunset).format("HH:mm");
-
-    return (
-      <div>
-        <SmallCard icon="images/weather/dawn.png" text={sunrise} />
-        <SmallCard icon="images/weather/sunset.png" text={sunset} />
-        <SmallCard icon={moon.getIcon()} text={t("moon_phase."+moon.getName())} />
-        <DailyTideTableContainer date={forecast.date}/>
-      </div>
-
-    )
-  }
-}
-
-AdditionalInfo.propTypes = {
-  t: React.PropTypes.func,
-  forecast: React.PropTypes.object
-}
-
-class NowcastBadge extends React.Component {
-
-  render(){
-    return (
-      <div style={{"paddingRight": "16px", display: "inline-block", "verticalAlign": "top"}}
-        onTouchTap={this.props.onTouchTap}>
-        <img src={this.props.icon} style={{width: "48px", height: "48px"}}/>
-        <div style={{"fontSize": "10pt", width: "48px", "textAlign": "center"}}>
-          {this.props.text}
-        </div>
-      </div>
-
-    )
-  }
-}
-
-NowcastBadge.propTypes = {
-  icon: React.PropTypes.string,
-  text: React.PropTypes.string,
-  onTouchTap: React.PropTypes.func
-}
+import {getDayOfDate} from '../api/strutils.js';
 
 class WeatherSituationImage extends React.Component {
 
@@ -179,18 +59,36 @@ const WeatherSituationImageContainer = createContainer(({cardTitle, imageHandler
 
 class WeatherSituation extends React.Component {
 
+  constructor(props){
+    super(props);
+    this.imageUrls = [
+      Meteor.settings.public.cacheFiles.surfaceChart,
+      Meteor.settings.public.cacheFiles.satelliteImage
+    ]
+  }
+
+  getImageHandlers(){
+    const handlers = [];
+    this.imageUrls.forEach((url)=>{
+      const handler = FileCache.get(url);
+      if( handler ){
+        handlers.push(handler);
+      }
+    })
+    return handlers;
+  }
+
   render(){
     const t = this.props.t;
     console.log("WeatherSituation.render()");
 
     const cardTitle = (<CardTitle title={t("Situation")} subtitle={this.props.situation} />);
     let key = 0;
-    console.log("getHandlers().length = "+WeatherForecastObserver.getHandlers().length);
 
     return (
       <SwipeableViews>
         {
-          WeatherForecastObserver.getHandlers().map((imageHandler)=>{
+          this.getImageHandlers().map((imageHandler)=>{
             key++;
             console.log("getHandlers().map(): key = "+key);
             return (
@@ -219,7 +117,7 @@ class ExtendedForecast extends React.Component {
 
     return (
       <SmallCard
-        key={dateToString(forecast.date, this.props.t)}
+        key={forecast.date.toString()}
         style={{"padding": "5px 5px", "border": "none", "background": "none"}}
         icon={icon}
         text={getDayOfDate(forecast.date, this.props.t)}
@@ -285,10 +183,10 @@ export class WeatherPage extends React.Component {
       <Card>
         <SwipeableViews index={displayDateIndex}>
           {
-            forecasts.map((forecast) => {
+            forecasts.map((forecast, index) => {
               return (
                 <Nowcast
-                  key={dateToString(forecast.date, this.props.t)}
+                  key={index}
                   forecast={forecast}
                   t={this.props.t}
                 />
@@ -327,12 +225,6 @@ export class WeatherPage extends React.Component {
     }
   }
 
-  getShortDateStr(date){
-    const t = this.props.t;
-
-    return t("month."+Months[date.getMonth()]) + "-" + date.getDate();
-  }
-
   renderNoForecast(){
     const t = this.props.t;
 
@@ -361,11 +253,6 @@ export class WeatherPage extends React.Component {
     return moment(dateTime).format("YYYY-MM-DD HH:mm");
   }
 
-}
-
-function getDayOfDate(dateTime, t){
-  const day = t("weekdays."+WeekDays[dateTime.getDay()]);
-  return day;
 }
 
 function getForecastsForDisplay(dates, bulletin, district){
@@ -400,28 +287,11 @@ function getForecastsForDisplay(dates, bulletin, district){
   });
 }
 
-// Convert a date object into string depending on the set language.
-function dateToString(date, t){
-  const day = t("weekdays."+WeekDays[date.getDay()]);
-  const month = t("month."+Months[date.getMonth()]);
-  return month+" "+date.getDate()+" ("+day+")";
-}
-
 function getLocationForDistrict(_district){
   // Just return Apia for now.
   // TODO Set a representing location of each district, and return the location.
   return Town.Apia;
 }
-
-// The referenceTime must be a moment object
-function getWeatherIcon(weatherSymbol, referenceTime){
-  const hour = referenceTime.hour();
-  const dayTime = hour > 6 && hour < 18;
-
-  const weatherIcon = dayTime ? weatherIcons.dayTime[weatherSymbol] : weatherIcons.nightTime[weatherSymbol];
-  return "images/weather/"+weatherIcon;
-}
-
 
 WeatherPage.propTypes = {
   loaded: React.PropTypes.bool,

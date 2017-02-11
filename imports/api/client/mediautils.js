@@ -3,6 +3,9 @@
 let soundEffectQueue = [];
 let timer = null;
 
+// Play the given alarm sound file for warning the user.
+// To avoid multiple sound files to be played in parallel, this function waits for a certain period
+// and play the most significant alarm sound file given during the period.
 export function playSound(soundFile){
   soundEffectQueue.push(soundFile);
   let selectedSound = null;

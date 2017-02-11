@@ -97,3 +97,12 @@ function sortMap(hash){
     return a.value - b.value;
   });
 }
+
+// The referenceTime must be a moment object
+export function getWeatherIcon(weatherSymbol, referenceTime){
+  const hour = referenceTime.hour();
+  const dayTime = hour > 6 && hour < 18;
+
+  const weatherIcon = dayTime ? weatherIcons.dayTime[weatherSymbol] : weatherIcons.nightTime[weatherSymbol];
+  return "images/weather/"+weatherIcon;
+}

@@ -43,7 +43,7 @@ const moonNames = [
 ];
 
 function adjustMoonPhase(moonPhase, date){
-    if( isClosest(moonPhase, 0.0, date)){
+  if( isClosest(moonPhase, 0.0, date)){
     return 0;
   }
   else if( isClosest(moonPhase, 0.25, date)){

@@ -87,7 +87,7 @@ export class WarningCollection extends Mongo.Collection {
       return false;
     }
     super.find({in_effect: true, type: warning.type}).forEach((anotherWarning)=>{
-      if( this.isMoreSignificant(anotherWarning, warning)){
+      if( this.isMoreSignificant(anotherWarning.level, warning.level)){
         return true;
       }
     });

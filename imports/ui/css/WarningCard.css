@@ -1,0 +1,29 @@
+.warningcard_outerDiv {
+  padding: 16px;
+}
+
+.warningcard_innerDiv1 {
+  display: inline-block;
+  padding-left: 8px;
+  max-width: 70%;
+}
+
+.warningcard_innerDiv2 {
+  width: 32px;
+  height: 32px;
+  float: right;
+}
+
+.warningcard_image {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+}
+
+.warningcard_headerTitle {
+  font-size: 11pt;
+}
+
+.warningcard_subTitle {
+  font-size: 9pt;
+}

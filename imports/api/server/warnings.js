@@ -11,6 +11,7 @@ class WarningCollectionServer extends WarningCollection {
   }
 
   // This method is called from the server.
+  // TODO Move this method to the Admin app so that it is not accessed from the Internet side.
   publishWarning(warning){
     console.log("Enter publishWarning");
 
@@ -33,6 +34,14 @@ class WarningCollectionServer extends WarningCollection {
     else if( warning.type == "heavyRain"){
       check(warning.area, String);
       check(warning.direction, String);
+    }
+
+    // Old version of the app cannot show "Exercise" in the warning list title
+    // Set it to the description.
+    // This codes are to be removed after the new version of the app is well deployed.
+    if( warning.is_exercise ){
+      warning.description_en = "EXERCISE "+ warning.description_en;
+      warning.description_ws = "FAATAITAIGA "+ warning.description_ws;
     }
 
     if( warning.in_effect ){

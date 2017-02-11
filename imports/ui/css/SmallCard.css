@@ -1,0 +1,17 @@
+
+.smallcard_outerDiv {
+  padding-right: 16px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.smallcard_innerDiv {
+  font-size: 10pt;
+  width: 34px;
+  text-align: center;
+}
+
+.smallcard_image {
+  width: 32px;
+  height: 32px;
+}

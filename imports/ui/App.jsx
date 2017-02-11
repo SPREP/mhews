@@ -13,7 +13,8 @@ import IconButton from 'material-ui/IconButton';
 import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 
 /* Imports the mhews's components */
-import {WeatherForecastObserver} from '../api/client/weatherForecastObserver.js';
+import {WeatherForecasts} from '../api/client/weather.js';
+import FileCache from '../api/client/filecache.js';
 
 import ConnectionStatusIndicatorContainer from './ConnectionStatusIndicator.jsx';
 import DrawerMenu from './DrawerMenu.jsx';
@@ -24,6 +25,9 @@ import {toTitleCase} from '../api/strutils.js';
 
 const topPageName = Meteor.settings.public.topPage;
 
+const surfaceChartUrl = Meteor.settings.public.cacheFiles.surfaceChart;
+
+const satelliteImageUrl = Meteor.settings.public.cacheFiles.satelliteImage;
 
 class AppClass extends React.Component {
 
@@ -74,13 +78,13 @@ class AppClass extends React.Component {
       document.addEventListener("backbutton", this.onBackKeyDown);
     }
     console.log("WeatherPage.componentDidMount()");
-    WeatherForecastObserver.start();
-
+    WeatherForecasts.start();
+    WeatherForecasts.onForecastUpdate(refreshWeatherChart);
   }
 
   componentWillUnmount(){
     console.log("WeatherPage.componentWillUmount()");
-    WeatherForecastObserver.stop();
+    WeatherForecasts.stop();
   }
 
   render(){
@@ -112,6 +116,18 @@ class AppClass extends React.Component {
       </div>
     );
   }
+}
+
+// Weather charts such as the surface streamline analysis should have been updated
+// before the weather forecast is updated. This function trigger refresh the charts in the cache.
+function refreshWeatherChart(_forecast){
+  [surfaceChartUrl, satelliteImageUrl].forEach((url)=>{
+
+    const handle = FileCache.get(url);
+    if( handle ){
+      handle.refresh();
+    }
+  });
 }
 
 function getTitle(pageName, t){

@@ -4,6 +4,8 @@ import browserHistory from 'react-router/lib/browserHistory';
 
 import Paper from 'material-ui/Paper';
 
+import './css/WarningCard.css';
+
 export class WarningCard extends React.Component {
 
   render(){
@@ -13,13 +15,13 @@ export class WarningCard extends React.Component {
 
     return (
       <Paper style={getWarningStyle(warning.level)} zDepth={1}>
-        <div style={{padding: "16px"}}>
-          <img src={avatarImage} style={{display: "inline-block", width: "32px", height: "32px"}}/>
-          <div style={{display: "inline-block", paddingLeft: "8px", maxWidth: "70%"}}>
-            <div style={{fontSize: "11pt"}}>{warning.getHeaderTitle(t)}</div>
-            <div style={{fontSize: "9pt"}}>{warning.getSubTitle(t)}</div>
+        <div className="warningcard_outerDiv">
+          <img src={avatarImage} className="warningcard_image"/>
+          <div className="warningcard_innerDiv1">
+            <div className="warningcard_headerTitle">{warning.getHeaderTitle(t)}</div>
+            <div className="warningcard_subTitle">{warning.getSubTitle(t)}</div>
           </div>
-          <div style={{width: "32px", height: "32px", float: "right"}}
+          <div className="warningcard_innerDiv2"
             onTouchTap={()=>{openLink(warning.type+"/"+warning._id)}}>
             <RightArrowIcon style={{display: "inline-block", width: "32px"}} />
           </div>

@@ -2,15 +2,16 @@ import { Meteor } from 'meteor/meteor';
 
 import {Warnings} from '../../api/server/warnings.js';
 import {CycloneBulletins} from '../../api/server/bulletin.js';
-import {WeatherForecasts, publishWeatherForecast} from '../../api/server/weather.js';
+import {WeatherForecasts} from '../../api/server/weather.js';
 import {TideTableCollection} from '../../api/tidetable.js';
 import {PushServer} from '../../api/server/pushserver.js';
 import {ReceptionTrackerCollection} from '../../api/receptionTracker.js';
 
 Meteor.startup(() => {
 
+  // TODO Move this all to the Admin app to prevent access from the Internet.
   Meteor.methods({
-    publishWeatherForecast: publishWeatherForecast,
+    publishWeatherForecast: WeatherForecasts.publish,
     publishWarning: Warnings.publishWarning,
     cancelWarning: Warnings.cancelWarning,
     publishBulletin: CycloneBulletins.publishBulletin,
@@ -71,8 +72,8 @@ function startPublishingTideTable(){
       }
     );
   });
-
 }
+
 function startPublishingWeather(){
 
   // The 2nd argument must use "function", not the arrow notations.

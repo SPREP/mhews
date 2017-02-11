@@ -1,7 +1,5 @@
 import {CycloneBulletins} from '../client/bulletin.js';
 import {Warning} from './warning.js';
-
-
 import i18n from 'i18next';
 
 export class Cyclone extends Warning {
@@ -9,7 +7,7 @@ export class Cyclone extends Warning {
     super(phenomena);
   }
 
-  getHeaderTitle(t){
+  doGetHeaderTitle(t){
 
     return t("Cyclone")+" "+t("category") + " "+ this.category + " " + t("level."+this.level.toLowerCase());
   }

@@ -9,6 +9,7 @@ class FileCacheClass {
 
   constructor(){
     this.loadMap();
+    this.handles = {};
   }
 
   loadMap(){
@@ -45,6 +46,11 @@ class FileCacheClass {
     }
 
     return new FileCacheHandle(url, this.map[url]);
+  }
+
+  // Get the handle for the URL
+  get(url){
+    return this.handles[url];
   }
 
   remove(url){

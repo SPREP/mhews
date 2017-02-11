@@ -1,0 +1,10 @@
+table.tidetable {
+  padding-left: 0px;
+  fontSize: 8pt;
+  display: inline-block;
+  vertical-align: top;
+}
+
+th.tidetable {
+  font-size: 8pt
+}
