@@ -113,11 +113,5 @@ describe('Warnings', function() {
       });
     });
 
-    describe("isMoreSignificant()", function() {
-      it("Information is less significant than Advisory", function(){
-        assert.equal(false, Warnings.isMoreSignificant("information", "advisory"));
-        assert.equal(true, Warnings.isMoreSignificant("advisory", "information"));
-      });
-    });
   }
 });

@@ -45,7 +45,9 @@ class FileCacheClass {
       console.log(JSON.stringify(this.map));
     }
 
-    return new FileCacheHandle(url, this.map[url]);
+    const handle = new FileCacheHandle(url, this.map[url]);
+    this.handles[url] = handle;
+    return handle;
   }
 
   // Get the handle for the URL
@@ -55,6 +57,7 @@ class FileCacheClass {
 
   remove(url){
     this.map[url] = undefined;
+    this.handles[url] = undefined;
   }
 
   onDownload(url, path, downloadDate){

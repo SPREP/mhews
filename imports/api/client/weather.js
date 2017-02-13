@@ -5,13 +5,9 @@ Forecasts are stored locally into the GroundDB for offline use.
 
 */
 
+import {WeatherForecasts} from '../weathers.js';
+
 /* global Ground */
-import { Mongo } from 'meteor/mongo';
-
-const collectionName = "weatherForecast";
-
-export const MongoWeatherForecasts = new Mongo.Collection(collectionName);
-
 class WeatherForecastsCollection extends Ground.Collection {
 
   constructor(collectionName){
@@ -24,10 +20,14 @@ class WeatherForecastsCollection extends Ground.Collection {
   }
 
   start(){
+    console.log("WeatherForecastsCollection.start");
+
     // To receive the data from the weatherForecast collection
-    Meteor.subscribe(this.collectionName, ()=>{
+    Meteor.subscribe("weatherForecast", ()=>{
+      console.log("Meteor.subscribe weather callback.");
+
       // Make GroundDB observe the Mongo db and copy the data to the local storage.
-      const mongoCursor = MongoWeatherForecasts.find();
+      const mongoCursor = WeatherForecasts.find();
       this.observeSource(mongoCursor);
 
       // Remove all documents not in current subscription
@@ -73,8 +73,6 @@ class WeatherForecastsCollection extends Ground.Collection {
   }
 }
 
-export const WeatherForecasts = new WeatherForecastsCollection("groundWeatherForecast");
-
 function isSameDate(date1, date2){
   // moment.isSame with "day" in the second argument will check year+month+day
   return moment(date1).isSame(moment(date2), "day");
@@ -113,3 +111,5 @@ class ForecastWrapper {
   }
 
 }
+
+export default new WeatherForecastsCollection("groundWeatherForecast");

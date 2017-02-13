@@ -1,13 +1,26 @@
+import { Meteor } from 'meteor/meteor';
+
 import { check } from 'meteor/check';
 import {Warnings} from "./warnings.js";
-import {BulletinCollection} from "../bulletin.js";
+import {CycloneBulletins} from '../../api/bulletin.js';
 
-class BulletinCollectionServer extends BulletinCollection {
+class BulletinsServer {
 
-  constructor(collectionName, prevBulletinSelectorFunc){
-    super(collectionName);
+  constructor(bulletinCollection, prevBulletinSelectorFunc){
+    _.extend(this, bulletinCollection);
+
     this.prevBulletinSelectorFunc = prevBulletinSelectorFunc;
     this.publishBulletin = this.publishBulletin.bind(this);
+  }
+
+  start(){
+    // The 2nd argument must use "function", not the arrow notations.
+    // See this guide https://guide.meteor.com/data-loading.html
+    Meteor.publish('cycloneBulletins', ()=>{
+      // Only publish the forecasts which is in effect.
+      // Returns the Cursor, not each document.
+      return this.find({'in_effect': true});
+    });
   }
   /*
   Server side only
@@ -101,12 +114,17 @@ export function removeOneIf(array, condition){
   return element;
 }
 
-export const CycloneBulletins = new BulletinCollectionServer("cycloneBulletins", function(bulletin){
-  return {"$and": [
+function createBulletinsServer(bulletinCollection){
+  return new BulletinsServer(bulletinCollection, function(bulletin){
+    return {"$and": [
       {in_effect: true},
       {"$or":[
         {id: bulletin.id},
         {tc_info: {name: bulletin.tc_info.name}}
       ]}
     ]}
-});
+  });
+
+}
+
+export default createBulletinsServer(CycloneBulletins);

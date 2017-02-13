@@ -9,10 +9,11 @@ import { createContainer } from 'meteor/react-meteor-data';
 /* i18n */
 import { translate } from 'react-i18next';
 
-import {Warnings} from '../api/client/warnings.js';
+import Warnings from '../api/client/warnings.js';
 import {WarningCard} from './WarningCard.jsx';
 
 import ReceptionTracker from '../api/receptionTracker.js';
+import {Preferences} from '../api/client/preferences.js';
 
 const noWarningKey = "no_warning_in_effect";
 
@@ -122,10 +123,11 @@ WarningList.propTypes = {
 
 const WarningListContainer = createContainer(()=>{
   const isAdmin = !Meteor.isCordova; // FIXME This is not at all correct logic (^^;
+  const joinExercise = Preferences.load("exercise") == "true";
 
   return {
     isAdmin,
-    warnings: Warnings.findWarningsInEffect().fetch(),
+    warnings: Warnings.findWarningsInEffect(undefined, undefined, undefined, joinExercise).fetch(),
     cancelWarning: Warnings.cancelWarning
   }
 

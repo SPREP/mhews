@@ -1,12 +1,27 @@
+import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import {isClientIpAllowed} from './serverutils.js';
+import {WeatherForecasts} from '../weathers.js';
 
-const collectionName = "weatherForecast";
+class WeatherServer {
 
-class WeatherForecastCollection extends Mongo.Collection {
+  constructor(collection){
+    _.extend(this, collection);
+  }
 
-  constructor(){
-    super(collectionName);
+  start(){
+    // The 2nd argument must use "function", not the arrow notations.
+    // See this guide https://guide.meteor.com/data-loading.html
+    Meteor.publish('weatherForecast', ()=>{
+      // Publish the recent 3 forecasts regardless if it is in effect,
+      // so that the admin dashboard can receive the forecasts that hasn't been in effect yet.
+      // Returns the Cursor, not each document.
+      return this.find({}, {
+        sort: {issued_at: -1},
+        limit: 3
+      });
+    });
+
   }
 
   publish(forecast){
@@ -26,9 +41,9 @@ class WeatherForecastCollection extends Mongo.Collection {
     // Don't set in_effect to true here. It is set true after the weather icons have been specified.
     forecast.in_effect = false;
 
-    return WeatherForecasts.insert(forecast);
+    return this.insert(forecast);
   }
 
 }
 
-export const WeatherForecasts = new WeatherForecastCollection();
+export default new WeatherServer(WeatherForecasts);

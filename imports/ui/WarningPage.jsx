@@ -3,7 +3,7 @@ import HazardMap from './HazardMap.jsx';
 import * as GeoUtils from '../api/geoutils.js';
 import * as HazardArea from '../api/hazardArea.js';
 import HazardView from './HazardView.jsx';
-import {Warnings} from '../api/client/warnings.js';
+import Warnings from '../api/client/warnings.js';
 
 import {createContainer} from 'meteor/react-meteor-data';
 

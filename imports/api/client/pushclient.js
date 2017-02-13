@@ -52,4 +52,20 @@ export class PushClient {
     }
 
   }
+
+  // TODO This method is not currently used.
+  // FCM cannot deliver layered JSON, so epicenter is represented by two attributes.
+  // This function put them back into the same data structure as a client publishes to the server.
+  createWarningFromFcmMessage(data){
+    data.issued_at = moment(data.issued_at).toDate();
+    data.epicenter = {
+      lat: parseFloat(data.epicenter_lat),
+      lng: parseFloat(data.epicenter_lng),
+    }
+    data.mw = parseFloat(data.mw);
+    data.depth = parseFloat(data.depth);
+
+    return data;
+  }
+
 }

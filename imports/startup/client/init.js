@@ -1,4 +1,4 @@
-import {Warnings} from '../../api/client/warnings.js';
+import Warnings from '../../api/client/warnings.js';
 import {Preferences} from '../../api/client/preferences.js';
 import {playSound} from '../../api/client/mediautils.js';
 import ReceptionTracker from '../../api/receptionTracker.js';
@@ -14,6 +14,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import {initRouter} from '../../api/client/route.jsx';
 
+import FileCache from '../../api/client/filecache.js';
 
 let pushClient = null;
 
@@ -39,6 +40,7 @@ export function initAfterComponentMounted(){
     initPushClient();
     subscribeForCollections();
     startWarningObserver();
+    cacheFiles();
 
   }, 1000);
 //  configReloader();
@@ -94,24 +96,43 @@ function subscribeForCollections(){
 
 }
 
+function cacheFiles(){
+  const cacheFiles = Meteor.settings.public.cacheFiles;
+  for(let key in cacheFiles ){
+    const url = cacheFiles[key];
+    FileCache.add(url);
+  }
+}
+
+let handleForWarningObserver;
+
 function startWarningObserver(){
 
-  // Observe the warnings collection and play the sound effect
-  Warnings.findWarningsInEffect().observe({
-    added: (warning)=>{
-      console.log("observe.added");
-      playSoundEffect(warning);
-    },
-    changed: (warning)=>{
-      console.log("observe.changed");
-      playSoundEffect(warning);
-    },
-    removed: (warning)=>{
-      console.log("observe.removed");
-      warning.in_effect = false;
-      playSoundEffect(warning);
+  Tracker.autorun(()=>{
+    const joinExercise = Preferences.load("exercise") == "true";
+
+    if( handleForWarningObserver ){
+      handleForWarningObserver.stop();
     }
-  });
+
+    // Observe the warnings collection and play the sound effect
+    handleForWarningObserver = Warnings.findWarningsInEffect(undefined, undefined, undefined, joinExercise).observe({
+      added: (warning)=>{
+        console.log("observe.added");
+        playSoundEffect(warning);
+      },
+      changed: (warning)=>{
+        console.log("observe.changed");
+        playSoundEffect(warning);
+      },
+      removed: (warning)=>{
+        console.log("observe.removed");
+        warning.in_effect = false;
+        playSoundEffect(warning);
+      }
+    });
+
+  })
 }
 
 function starti18nTracker(){
@@ -141,7 +162,7 @@ function playSoundEffect(warning, oldWarning){
     console.error("Unknown hazard type "+warning.type);
     return;
   }
-  if(Warnings.changeNeedsAttention(warning, oldWarning)){
+  if(warning.changeNeedsAttention(oldWarning)){
     playSound(config.sound);
   }
   else{

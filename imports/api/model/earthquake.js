@@ -4,6 +4,17 @@ import {Warning} from './warning.js';
 export class Earthquake extends Warning {
   constructor(phenomena){
     super(phenomena);
+    this.date_time = normalizeDateTime(this.date_time);
+  }
+
+  check(){
+    super.check();
+
+    check(this.epicenter, {lat: Number, lng: Number});
+    check(this.mw, Number);
+    check(this.depth, Number);
+    check(this.date_time, Date);
+
   }
 
   doGetHeaderTitle(t){
@@ -48,4 +59,18 @@ export class Earthquake extends Warning {
 
     }
   }
+
+  isSameEvent(another){
+    return this.date_time == another.date_time && this.region == another.region;
+  }
+}
+
+function normalizeDateTime(dateTime){
+  if( !dateTime ){
+    return undefined;
+  }
+  if( moment.isDate(dateTime)){
+    return dateTime;
+  }
+  return moment(dateTime).toDate();
 }

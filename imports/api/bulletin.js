@@ -1,5 +1,3 @@
 import { Mongo } from 'meteor/mongo';
 
-export class BulletinCollection extends Mongo.Collection{
-
-}
+export const CycloneBulletins = new Mongo.Collection("cycloneBulletins");

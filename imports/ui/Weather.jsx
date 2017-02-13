@@ -3,7 +3,7 @@ import {Card, CardHeader, CardActions, CardMedia, CardTitle} from 'material-ui/C
 import { createContainer } from 'meteor/react-meteor-data';
 import SwipeableViews from 'react-swipeable-views';
 
-import {WeatherForecasts} from '../api/client/weather.js';
+import WeatherForecasts from '../api/client/weather.js';
 import {Preferences} from '../api/client/preferences.js';
 import FileCache from '../api/client/filecache.js';
 import {Town} from '../api/towninfo.js';
@@ -49,9 +49,8 @@ WeatherSituationImage.propTypes = {
   image: React.PropTypes.string
 }
 
-const WeatherSituationImageContainer = createContainer(({cardTitle, imageHandler})=>{
+const WeatherSituationImageContainer = createContainer(({imageHandler})=>{
   return {
-    cardTitle,
     image: imageHandler.getSource()
   }
 
@@ -73,6 +72,9 @@ class WeatherSituation extends React.Component {
       const handler = FileCache.get(url);
       if( handler ){
         handlers.push(handler);
+      }
+      else{
+        console.error("No handler for image "+url);
       }
     })
     return handlers;

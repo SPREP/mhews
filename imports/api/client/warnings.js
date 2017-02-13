@@ -1,14 +1,10 @@
 import { check } from 'meteor/check';
-import {WarningCollection} from '../warnings.js';
-import {Earthquake} from '../model/earthquake.js';
-import {Cyclone} from '../model/cyclone.js';
-import {HeavyRain} from '../model/heavyRain.js';
-import {Warning} from '../model/warning.js';
+import Warnings from '../warnings.js';
 
-class WarningCollectionClient extends WarningCollection {
+class WarningCollectionClient {
 
-  constructor(name, args){
-    super(name, args ? _.extend(args, {transform: transform}) : {transform: transform});
+  constructor(collection){
+    _.extend(this, collection);
     this.cancelWarning = this.cancelWarning.bind(this);
   }
 
@@ -30,16 +26,4 @@ class WarningCollectionClient extends WarningCollection {
   }
 }
 
-// This transform function is run by the Meteor Collection when it returns a data entry
-// and wraps the data by one of the warning entity classes.
-function transform(warning){
-  switch(warning.type.toLowerCase()){
-    case "tsunami": return new Earthquake(warning);
-    case "earthquake": return new Earthquake(warning);
-    case "cyclone": return new Cyclone(warning);
-    case "heavyrain": return new HeavyRain(warning);
-    default: return new Warning(warning);
-  }
-}
-
-export const Warnings = new WarningCollectionClient("warnings");
+export default new WarningCollectionClient(Warnings);

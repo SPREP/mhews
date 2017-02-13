@@ -1,4 +1,4 @@
-import {CycloneBulletins} from '../client/bulletin.js';
+import {CycloneBulletins} from '../bulletin.js';
 import {Warning} from './warning.js';
 import i18n from 'i18next';
 
@@ -7,8 +7,11 @@ export class Cyclone extends Warning {
     super(phenomena);
   }
 
-  doGetHeaderTitle(t){
+  check(){
+    super.check();
+  }
 
+  doGetHeaderTitle(t){
     return t("Cyclone")+" "+t("category") + " "+ this.category + " " + t("level."+this.level.toLowerCase());
   }
 
@@ -60,4 +63,7 @@ export class Cyclone extends Warning {
     return this.bulletin;
   }
 
+  isSameEvent(another){
+    return this.area == another.area && this.direction == another.direction;
+  }
 }

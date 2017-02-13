@@ -13,7 +13,7 @@ import IconButton from 'material-ui/IconButton';
 import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 
 /* Imports the mhews's components */
-import {WeatherForecasts} from '../api/client/weather.js';
+import WeatherForecasts from '../api/client/weather.js';
 import FileCache from '../api/client/filecache.js';
 
 import ConnectionStatusIndicatorContainer from './ConnectionStatusIndicator.jsx';

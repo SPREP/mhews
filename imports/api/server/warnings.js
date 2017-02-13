@@ -1,40 +1,51 @@
+import { Meteor } from 'meteor/meteor';
+
 import { check } from 'meteor/check';
 import {isClientIpAllowed} from './serverutils.js';
-import {WarningCollection} from '../warnings.js';
+import Warnings from '../warnings.js';
+import WarningFactory from '../model/warningFactory.js';
 
-class WarningCollectionServer extends WarningCollection {
+class WarningCollectionServer {
 
-  constructor(...args){
-    super(...args);
+  constructor(collection){
+    _.extend(this, collection);
     this.cancelWarning = this.cancelWarning.bind(this);
     this.publishWarning = this.publishWarning.bind(this);
   }
 
-  // This method is called from the server.
+  start(){
+    Meteor.publish('warnings', ()=>{
+      // Only returns the effective warnings.
+      return this.find({in_effect: true});
+    });
+    // Check if there are any obsolete information at the startup.
+//    Meteor.defer(Meteor.bindEnvironment(this.obsoleteOldInformation));
+    Meteor.defer(()=>{this.obsoleteOldInformation()});
+    // Start the timer which invalidates old information every hour.
+    Meteor.setInterval(()=>{this.obsoleteOldInformation()}, 3600 * 1000);
+
+  }
+
+  obsoleteOldInformation(){
+    const before24hours = moment().subtract(24, 'hours').toDate();
+    console.log("Earthquake info older than "+before24hours+" will be in_effect.");
+    // Use the date_time instead of the issued_at, as the issued_at isn't reliable due to the IBL.
+    this.update(
+      {"level": "information", "in_effect": true, "date_time": {"$lt": before24hours}},
+      {"$set": {"in_effect": false}},
+      {multi: true}
+    );
+
+  }
+
   // TODO Move this method to the Admin app so that it is not accessed from the Internet side.
   publishWarning(warning){
     console.log("Enter publishWarning");
 
     check(this.connection, Match.Where(isClientIpAllowed));
-    check(warning.bulletinId, Number);
-//    check(warning.type, Match.Where(checkWarningType));
-    check(warning.level, Match.OneOf(...Warnings.listLevels()));
-    check(warning.in_effect, Match.OneOf(true, false));
-    check(warning.issued_at, Date);
-    check(warning.description_en, String);
-    check(warning.description_ws, String);
 
-    if( warning.type == "tsunami" || warning.type == "earthquake"){
-      check(warning.epicenter, {lat: Number, lng: Number});
-      check(warning.mw, Number);
-      check(warning.depth, Number);
-      warning.date_time = normalizeDateTime(warning.date_time);
-      check(warning.date_time, Date);
-    }
-    else if( warning.type == "heavyRain"){
-      check(warning.area, String);
-      check(warning.direction, String);
-    }
+    warning = WarningFactory.create(warning);
+    warning.check();
 
     // Old version of the app cannot show "Exercise" in the warning list title
     // Set it to the description.
@@ -59,34 +70,9 @@ class WarningCollectionServer extends WarningCollection {
     check(bulletinId, Number);
 
     let selector = {type: type, bulletinId: bulletinId, in_effect: true};
-    super.update(selector, {"$set": {in_effect: false}});
-  }
-
-  insert(warning){
-    check(warning.bulletinId, Number);
-    check(warning.type, String);
-    check(warning.issued_at, Date);
-
-//    let selector = {type: warning.type, bulletinId: warning.bulletinId, in_effect: true};
-//    super.upsert(selector, warning);
-    super.insert(warning);
+    this.update(selector, {"$set": {in_effect: false}});
   }
 
 }
 
-function normalizeDateTime(dateTime){
-  if( !dateTime ){
-    return undefined;
-  }
-  return moment(dateTime).toDate();
-}
-
-function checkWarningType(type){
-  const hazardTypes = Warnings.getHazardTypes();
-  for(let i= 0; i< hazardTypes.length; i++ ){
-    if( hazardTypes[i] == type ) return true;
-  }
-  return false;
-}
-
-export const Warnings = new WarningCollectionServer("warnings");
+export default new WarningCollectionServer(Warnings);
