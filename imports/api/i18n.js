@@ -71,7 +71,7 @@ const i18nConfig = {
         loading_map: "Loading Google map...",
         loading_data: "Loading data...",
         issued_at: "issued at",
-        take_part_in_exercise: "Take part in exercise.",        
+        join_exercise: "Join exercise",
         month:{
           "jan": "Jan",
           "feb": "Feb",
@@ -186,7 +186,7 @@ const i18nConfig = {
         loading_map: "Loading Google map...",
         loading_data: "Loading data...",
         issued_at: "issued at",
-        take_part_in_exercise: "Take part in exercise.",
+        join_exercise: "Join exercise",
         month:{
           "jan": "Ianuari",
           "feb": "Fepuari",

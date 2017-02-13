@@ -21,6 +21,8 @@ const districts = [
   "savaii-south"
 ];
 
+const divStyle = {padding: "8px"};
+
 class PreferencesPage extends React.Component {
 
   render(){
@@ -34,47 +36,54 @@ class PreferencesPage extends React.Component {
 
     return(
       <div>
-        <Subheader>Language / Gagana</Subheader>
-        <RadioButtonGroup name="language" onChange={(e, v)=>{this.changeLanguage(v)}} defaultSelected={lang}>
-          <RadioButton
-            key="en"
-            label="English"
-            value="en"/>
-          <RadioButton
-            key="ws"
-            label="Samoan"
-            value="ws"/>
-        </RadioButtonGroup>
-        <Divider />
-        <Subheader>District / Vaega</Subheader>
-        <RadioButtonGroup name="district" onChange={(e, v)=>{this.changeDistrict(v)}} defaultSelected={district}>
-          {
-            districts.map((district)=>(
+        <div style={divStyle}>
+          <Subheader>Language / Gagana</Subheader>
+          <RadioButtonGroup name="language" onChange={(e, v)=>{this.changeLanguage(v)}} defaultSelected={lang}>
+            <RadioButton
+              key="en"
+              label="English"
+              value="en"/>
               <RadioButton
-                key={district}
-                label={t("districts."+district)}
-                value={district} />
-            ))
-          }
-        </RadioButtonGroup>
+                key="ws"
+                label="Samoan"
+                value="ws"/>
+              </RadioButtonGroup>
+            </div>
         <Divider />
-        <Subheader>Exercise / Faataitaiga</Subheader>
-        <Toggle
-          label={t("take_part_in_exercise")}
-          labelPosition="right"
-          defaultToggled={this.exercise}
-          onToggle={(e, v)=>{this.changeExercise(v)}}
-        />
+        <div style={divStyle}>
+          <Subheader>District / Vaega</Subheader>
+          <RadioButtonGroup name="district" onChange={(e, v)=>{this.changeDistrict(v)}} defaultSelected={district}>
+            {
+              districts.map((district)=>(
+                <RadioButton
+                  key={district}
+                  label={t("districts."+district)}
+                  value={district} />
+                ))
+              }
+            </RadioButtonGroup>
+          </div>
         <Divider />
-        <RaisedButton
-          label="Save"
-          disableTouchRipple={true}
-          disableFocusRipple={true}
-          primary={true}
-          onTouchTap={()=>{this.savePreferences()}}
-          style={{marginRight: 12}}
-        />
-
+        <div style={divStyle}>
+          <Subheader>Exercise / Faataitaiga</Subheader>
+          <Toggle
+            label={t("join_exercise")}
+            labelPosition="right"
+            defaultToggled={this.exercise}
+            onToggle={(e, v)=>{this.changeExercise(v)}}
+          />
+        </div>
+        <Divider />
+        <div style={divStyle}>
+          <RaisedButton
+            label="Save"
+            disableTouchRipple={true}
+            disableFocusRipple={true}
+            primary={true}
+            onTouchTap={()=>{this.savePreferences()}}
+            style={{marginRight: 12}}
+          />
+        </div>
       </div>
 
     );

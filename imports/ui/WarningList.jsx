@@ -2,7 +2,6 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import Avatar from 'material-ui/Avatar';
 import Paper from 'material-ui/Paper';
-import {Card, CardHeader} from 'material-ui/Card';
 
 import { createContainer } from 'meteor/react-meteor-data';
 
@@ -54,12 +53,7 @@ export class WarningList extends React.Component {
     }
     else{
       itemlist.push(
-        <Card key={noWarningKey}>
-          <CardHeader
-            avatar={renderAvatar()}
-            title={t(noWarningKey)}
-          />
-        </Card>
+        <WarningCard t={t} />
       )
     }
 

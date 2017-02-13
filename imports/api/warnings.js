@@ -21,7 +21,7 @@ export class WarningCollection extends Mongo.Collection {
       selector.direction = direction;
     }
     if(!joinExercise){
-      selector.is_exericse = false;
+      selector.is_exercise = {"$ne": true};
     }
     // Return the Cursor instead of the result.
     return super.find(selector, {sort: [["issued_at", "desc"]]});
