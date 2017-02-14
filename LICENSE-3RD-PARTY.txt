@@ -1,0 +1,37 @@
+This software uses the following 3rd party software.
+
+Meteor and its standard plugins: MIT License, https://www.meteor.com/
+
+Apache Cordova and its standard plugins: Apache License version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+
+cordova-plugin-firebase: MIT License, https://www.npmjs.com/package/cordova-plugin-firebase
+
+ground:db: MIT License, https://github.com/GroundMeteor/db/blob/grounddb-caching-2016/LICENSE.md
+
+momentjs: MIT License, https://github.com/moment/moment/blob/develop/LICENSE
+
+Geolib: MIT License, https://github.com/manuelbieh/Geolib/blob/master/LICENSE
+
+Reactjs: BSD License, https://github.com/facebook/react/blob/master/LICENSE
+
+Underscorejs: MIT License https://github.com/jashkenas/underscore/blob/master/LICENSE
+
+Babel: MIT License https://github.com/babel/babel/blob/master/LICENSE
+
+Javascript-MD5: MIT License, https://github.com/blueimp/JavaScript-MD5
+
+i18next: MIT License, https://github.com/i18next/i18next/blob/master/LICENSE
+
+Material-ui: MIT License, https://github.com/callemall/material-ui/blob/master/LICENSE
+
+React-google-maps: MIT License, https://github.com/tomchentw/react-google-maps/blob/master/LICENSE
+
+react-motion: MIT License, https://github.com/chenglou/react-motion/blob/master/LICENSE
+
+react-swiptable-views: MIT License, https://github.com/oliviertassinari/react-swipeable-views
+
+react-tap-event-plugin: MIT License, https://github.com/zilverline/react-tap-event-plugin/blob/master/LICENSE
+
+request/request: Apache License version 2.0, https://github.com/request/request/blob/master/LICENSE
+
+suncalc: a proprietary license, https://github.com/mourner/suncalc/blob/master/LICENSE
