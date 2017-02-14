@@ -16,6 +16,7 @@ import SettingsIcon from 'material-ui/svg-icons/action/settings';
 //import WeatherIcon from 'material-ui/svg-icons/image/wb-sunny';
 import CopyrightIcon from 'material-ui/svg-icons/action/copyright';
 import InfoOutlineIcon from 'material-ui/svg-icons/action/info-outline';
+import LinkIcon from 'material-ui/svg-icons/content/link';
 
 class DrawerMenu extends React.Component {
   constructor(props){
@@ -31,6 +32,11 @@ class DrawerMenu extends React.Component {
         "component": "TopPage",
         "title": "title.app",
         "icon": HomeIcon
+      },
+      "climate" : {
+        "component": "ClimatePage",
+        "title": "title.climate",
+        "icon": LinkIcon
       },
       "usage" : {
         "component": "UsagePage",

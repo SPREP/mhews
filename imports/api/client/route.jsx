@@ -16,6 +16,7 @@ import CyclonePage from '../../ui/Cyclone.jsx';
 import App from '../../ui/App.jsx';
 import AppTemplate from '../../ui/AppTemplate.jsx';
 import InitPage from '../../ui/InitPage.jsx';
+import ClimatePage from '../../ui/ClimatePage.jsx';
 
 // Initialize the React Router that takes care of the display transition.
 export function initRouter(){
@@ -33,6 +34,7 @@ export function initRouter(){
         <Route path="heavyRain/:id" component={WarningPage} />
         <Route path="cyclone/:id" component={CyclonePage} />
         <Route path="*/:id" component={WarningPage} />
+        <Route path="climate" component={ClimatePage} />
         <IndexRoute component={TopPage} />
       </Route>
       <IndexRedirect to="/app" />

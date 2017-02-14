@@ -9,10 +9,12 @@ class TideTableServer {
   }
 
   start(){
+    console.log("TideTableServer started.");
+
     this.find({
       dateTime: {"$exists": false}
     }).observe({
-      added: function(tide){
+      added: (tide)=>{
         const dateTime = moment(tide.date+" "+tide.time, "MM/DD/YY HH:mm");
         // Add 1 hour during the daylight saving time.
         // Reference: http://www.bom.gov.au/ntc/IDO60008/IDO60008.201701.pdf

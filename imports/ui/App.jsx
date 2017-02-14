@@ -21,6 +21,8 @@ import DrawerMenu from './DrawerMenu.jsx';
 import {quitApp} from '../api/client/appcontrol.js';
 import {toTitleCase} from '../api/strutils.js';
 
+import './css/App.css';
+
 /* global navigator */
 
 const topPageName = Meteor.settings.public.topPage;
@@ -93,7 +95,7 @@ class AppClass extends React.Component {
     const t = this.props.t;
 
     return (
-      <div>
+      <div className="app">
         <AppBar
 //          title={t(pageConfig.title)}
           title={getTitle(getPageName(this.props.location.pathname), t)}

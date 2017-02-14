@@ -24,6 +24,7 @@ const i18nConfig = {
         },
         title : {
           app: "Samoa Weather",
+          climate: "Climate",
           weather: "Weather",
           heavyrain: "Heavy Rain",
           earthquake: "Earthquake",
@@ -119,6 +120,7 @@ const i18nConfig = {
     ws: {
       common: {
         "weather": "tau",
+        "climate": "climate",
         "earthquake": "mafui'e",
         "tsunami": "sunami",
         "cyclone": "afa",
