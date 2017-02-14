@@ -16,7 +16,6 @@ shell-server@0.2.1            # Server-side component of the `meteor shell` comm
 
 react-meteor-data
 practicalmeteor:mocha
-dburles:google-maps
 outatime:geolib
 check@1.2.4
 momentjs:moment

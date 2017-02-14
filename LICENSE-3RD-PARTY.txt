@@ -1,37 +1,46 @@
+
+[3rd party software]
+
 This software uses the following 3rd party software.
 
-Meteor and its standard plugins: MIT License, https://www.meteor.com/
+- Meteor and its standard plugins: MIT License, https://www.meteor.com/
+- Apache Cordova and its standard plugins: Apache License version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+- cordova-plugin-firebase: MIT License, https://www.npmjs.com/package/cordova-plugin-firebase
+- ground:db: MIT License, https://github.com/GroundMeteor/db/blob/grounddb-caching-2016/LICENSE.md
+- momentjs: MIT License, https://github.com/moment/moment/blob/develop/LICENSE
+- Geolib: MIT License, https://github.com/manuelbieh/Geolib/blob/master/LICENSE
+- Reactjs: BSD License, https://github.com/facebook/react/blob/master/LICENSE
+- Underscorejs: MIT License https://github.com/jashkenas/underscore/blob/master/LICENSE
+- Babel: MIT License https://github.com/babel/babel/blob/master/LICENSE
+- Javascript-MD5: MIT License, https://github.com/blueimp/JavaScript-MD5
+- i18next: MIT License, https://github.com/i18next/i18next/blob/master/LICENSE
+- Material-ui: MIT License, https://github.com/callemall/material-ui/blob/master/LICENSE
+- React-google-maps: MIT License, https://github.com/tomchentw/react-google-maps/blob/master/LICENSE
+- react-motion: MIT License, https://github.com/chenglou/react-motion/blob/master/LICENSE
+- react-swiptable-views: MIT License, https://github.com/oliviertassinari/react-swipeable-views
+- react-tap-event-plugin: MIT License, https://github.com/zilverline/react-tap-event-plugin/blob/master/LICENSE
+- request: Apache License version 2.0, https://github.com/request/request/blob/master/LICENSE
+- suncalc: a proprietary license, https://github.com/mourner/suncalc/blob/master/LICENSE
 
-Apache Cordova and its standard plugins: Apache License version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+[3rd party images]
 
-cordova-plugin-firebase: MIT License, https://www.npmjs.com/package/cordova-plugin-firebase
+This software uses 3rd party icons from www.flaticon.com, made by the following authors.
+- Earthquake free icon: Vignesh Oviyan (Flaticon Basic License)
+- Storm free icon: Eucalyp (Flaticon Basic License)
+- Tornade free icon: Hand Drawn Goods (CC 3.0 BY)
+- Tsunami free icon: Nikita Golubev (Flaticon Basic License)
+- Wind free icon: Darius Dan (Flaticon Basic License)
+- Moon Phase 4: Freepik (Flaticon Basic License)
+- Color Emotion Assets: Baianat (CC 3.0 BY)
+- Warning free icon: Roundicons (Flaticon Basic License)
 
-ground:db: MIT License, https://github.com/GroundMeteor/db/blob/grounddb-caching-2016/LICENSE.md
+Creative Commons 3.0: https://creativecommons.org/licenses/by/3.0/
+Flaticon Basic License: http://file000.flaticon.com/downloads/license/license.pdf
 
-momentjs: MIT License, https://github.com/moment/moment/blob/develop/LICENSE
+[3rd party sound files]
 
-Geolib: MIT License, https://github.com/manuelbieh/Geolib/blob/master/LICENSE
+This software uses 3rd party sound effects made by the following authors.
+- Text Message Alert 4: Daniel Simion (CC Attribution 3.0), from soundbible.com
+- Warning Signal: CatsPaw64, (CC0 1.0 Public Domain Dedication), from www.freesound.org
 
-Reactjs: BSD License, https://github.com/facebook/react/blob/master/LICENSE
-
-Underscorejs: MIT License https://github.com/jashkenas/underscore/blob/master/LICENSE
-
-Babel: MIT License https://github.com/babel/babel/blob/master/LICENSE
-
-Javascript-MD5: MIT License, https://github.com/blueimp/JavaScript-MD5
-
-i18next: MIT License, https://github.com/i18next/i18next/blob/master/LICENSE
-
-Material-ui: MIT License, https://github.com/callemall/material-ui/blob/master/LICENSE
-
-React-google-maps: MIT License, https://github.com/tomchentw/react-google-maps/blob/master/LICENSE
-
-react-motion: MIT License, https://github.com/chenglou/react-motion/blob/master/LICENSE
-
-react-swiptable-views: MIT License, https://github.com/oliviertassinari/react-swipeable-views
-
-react-tap-event-plugin: MIT License, https://github.com/zilverline/react-tap-event-plugin/blob/master/LICENSE
-
-request/request: Apache License version 2.0, https://github.com/request/request/blob/master/LICENSE
-
-suncalc: a proprietary license, https://github.com/mourner/suncalc/blob/master/LICENSE
+Creative Commons0 1.0: https://creativecommons.org/publicdomain/zero/1.0/

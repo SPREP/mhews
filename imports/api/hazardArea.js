@@ -1,5 +1,3 @@
-var ClipperLib = require("clipper-lib");
-
 /* global geolib */
 
 const HazardAreaMap = {
@@ -135,32 +133,6 @@ const HazardAreaMap = {
     center: {lat:-13.823412,lng:-172.1512},
     radius: 1336
   },
-}
-
-export function simplifyAreas(areas){
-  const scaleFactor = 100;
-  const path = [];
-  const simplifiedAreas = [];
-  areas.forEach((area)=>{
-    if( area.shape == "polygon"){
-      area.vertices.forEach((vertex)=>{
-        path.push(new ClipperLib.IntPoint(vertex.lat * scaleFactor, vertex.lng * scaleFactor));
-      });
-    }
-    else{
-      simplifiedAreas.push(area);
-    }
-  });
-  const simplifiedPaths = ClipperLib.Clipper.SimplifyPolygon(path, ClipperLib.PolyFillType.pftPositive);
-  simplifiedPaths.forEach((path)=>{
-    const simplifiedVertices = [];
-    path.forEach((intPoint)=>{
-      simplifiedVertices.push({lat: intPoint.X / scaleFactor, lng: intPoint.Y / scaleFactor});
-    });
-    simplifiedAreas.push({shape: "polygon", vertices: simplifiedVertices});
-  })
-
-  return simplifiedAreas;
 }
 
 export function findAreas(areaName, direction){

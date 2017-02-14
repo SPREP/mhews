@@ -43,10 +43,12 @@ Please visit our <Link href='http://www.samet.gov.ws/mhews/privacy_policy.html'>
           Currently over 30 people are working day and night, to provide 24 hours / 7 days service to the people in Samoa.
         </p>
         <h3>Copyright</h3>
-        (c) Samoa Meteorology Division, 2016 - 2017
+        (c) Samoa Meteorology Division, 2017
         <p>
           THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         </p>
+        <h3>3rd party software</h3>
+        This software uses 3rd party software listed in <Link href="https://github.com/takeshi4126/mhews/blob/master/LICENSE-3RD-PARTY.txt">this document</Link>.
       </div>
     );
   }
