@@ -1,8 +1,7 @@
 import React from 'react';
+import Link from './Link.jsx';
 
 import './css/App.css';
-
-/* global cordova */
 
 export default class AboutAppPage extends React.Component {
 
@@ -18,8 +17,8 @@ export default class AboutAppPage extends React.Component {
 This smartphone application provides the weather forecast and
 hazard warning information from Samoa Meteorology Division (SMD)
 so that the users can take early actions to reduce the impact by potential disasters.
-Please visit <a href="#" onClick={()=>{cordova.InAppBrowser.open('http://www.samet.gov.ws/', '_system')}}>SMD's web site</a> as
-well as our <a href="#" onClick={()=>{cordova.InAppBrowser.open('https://www.facebook.com/SamoaMeteorologicalServices/', '_system')}}>Facebook page</a>,
+Please visit <Link href='http://www.samet.gov.ws/'>SMD's web site</Link> as
+well as our <Link href='https://www.facebook.com/SamoaMeteorologicalServices/'>Facebook page</Link>,
 where you can find more about the weather, climate, and geophysics in Samoa.
         </p>
         <h3>Bulletin types and levels</h3>
@@ -34,7 +33,7 @@ Samoa Meteorology Division issues the following hazard warning bulletins:
 "Warning" is severer than "Watch", and "Watch" is severer than "Advisory".
 
         <h3>Privacy Policy</h3>
-Please visit our <a href="#" onClick={()=>{cordova.InAppBrowser.open('http://www.samet.gov.ws/mhews/privacy_policy.html', '_system')}}>web site</a> for the latest privacy policy.
+Please visit our <Link href='http://www.samet.gov.ws/mhews/privacy_policy.html'>web site</Link> for the latest privacy policy.
         <p>
         </p>
         <h3>About Samoa Meteorology Division</h3>
