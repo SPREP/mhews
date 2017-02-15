@@ -12,7 +12,7 @@ import {PushClient} from '../../api/client/pushclient.js';
 /* This plugin captures the tap event in React. */
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
-import {initRouter} from '../../api/client/route.jsx';
+import {initRouter, initRouterWithAdminPage} from '../../api/client/route.jsx';
 
 import FileCache from '../../api/client/filecache.js';
 
@@ -29,7 +29,12 @@ Meteor.startup(()=>{
 
   // Call this function after the initTapEventPlugin().
   // Otherwise, some material-ui components won't work.
-  initRouter();
+  if( Meteor.settings.public.withAdminDashboard ){
+    initRouterWithAdminPage();
+  }
+  else{
+    initRouter();
+  }
 });
 
 // Initializations that can be deferred after the GUI is rendered.

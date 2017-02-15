@@ -7,12 +7,12 @@ class WeatherServer {
 
   constructor(collection){
     _.extend(this, collection);
+    // this reference to the collection is needed for calling the "allow" method.
+    this.collection = collection;
     this.publish = this.publish.bind(this);
   }
 
   start(){
-    // The 2nd argument must use "function", not the arrow notations.
-    // See this guide https://guide.meteor.com/data-loading.html
     Meteor.publish('weatherForecast', ()=>{
       // Publish the recent 3 forecasts regardless if it is in effect,
       // so that the admin dashboard can receive the forecasts that hasn't been in effect yet.
@@ -23,6 +23,17 @@ class WeatherServer {
       });
     });
 
+    // Allow the admin dashboard web client to insert and update into the collection directly.
+    // If this is allowed, appropriate protection for anonymous to update the weather forecasts
+    // must be implemented.
+    if( Meteor.settings.public.withAdminDashboard ){
+      // this.allow() does not work for some reason, so use this.collection.allow()
+      this.collection.allow({
+        update: (_userId, _doc)=>{
+          return true;
+        }
+      });
+    }
   }
 
   publish(forecast){
