@@ -7,6 +7,7 @@ class WeatherServer {
 
   constructor(collection){
     _.extend(this, collection);
+    this.publish = this.publish.bind(this);
   }
 
   start(){
