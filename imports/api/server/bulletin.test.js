@@ -1,5 +1,6 @@
-import {CycloneBulletins, removeOneIf} from './bulletin.js';
-import {Warnings} from './warnings.js';
+import {Meteor} from 'meteor/meteor';
+import CycloneBulletins, {removeOneIf} from './bulletin.js';
+import Warnings from './warnings.js';
 
 var assert = require('assert');
 
@@ -12,6 +13,7 @@ function getSampleBulletin(id){
     "issued_at": issuedAt,
     "type": "cyclone",
     "warnings": warnings,
+    "in_effect": true,
     "tc_info": {
       "name": "Tasi"
     }
@@ -46,21 +48,6 @@ describe('CycloneBulletins', function() {
       assert.equal("c", removeOneIf(array, (e)=>{ return e == "c"}));
       assert.equal(3, array.length);
       assert.equal(false, array.includes("c"));
-    });
-    it("should not remove a warning if the area is same but the direction is different.", function(){
-      const area1 = {
-        area: "Samoa",
-        direction: "North"
-      };
-
-      const array = [
-        {
-          area: "Samoa",
-          direction: "South"
-        }
-      ];
-      assert.equal(null, removeOneIf(array, (e)=>{ return Warnings.isForSameArea(e, area1)}));
-      assert.equal(1, array.length);
     });
   });
 

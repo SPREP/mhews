@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 import { check } from 'meteor/check';
-import {Warnings} from "./warnings.js";
+import Warnings from "./warnings.js";
 import {CycloneBulletins} from '../../api/bulletin.js';
 
 class BulletinsServer {
@@ -52,7 +52,7 @@ class BulletinsServer {
       console.log("warning = "+JSON.stringify(warning));
       warning.bulletinId = bulletinId;
       const currentWarning = removeOneIf(currentWarnings, (w)=>{
-        return Warnings.isForSameArea(w, warning);
+        return w.isForSameArea(warning);
       });
       if( currentWarning ){
         console.log("Updating warning = "+JSON.stringify(warning));
@@ -78,7 +78,7 @@ class BulletinsServer {
   }
 
   findPreviousBulletin(bulletin){
-    return Warnings.findOne(this.prevBulletinSelectorFunc(bulletin));
+    return this.findOne(this.prevBulletinSelectorFunc(bulletin));
   }
 
   cancelBulletin(bulletinId){

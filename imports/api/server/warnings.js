@@ -56,7 +56,7 @@ class WarningCollectionServer {
     }
 
     if( warning.in_effect ){
-      return this.insert(warning);
+      return this.upsert({bulletinId: warning.bulletinId, type: warning.type}, warning);
     }
     else {
       // FIXME: This cancellation does not work because IBL gives different bulletinNumber

@@ -24,14 +24,14 @@ describe('GeoUtils', function() {
     it('should zoom level 10 for 100km', function() {
       assert.equal(10, GeoUtils.getZoomLevel(100));
     });
-    it('should zoom level 11 for 50km', function() {
-      assert.equal(11, GeoUtils.getZoomLevel(50));
+    it('should zoom level 10 for 50km', function() {
+      assert.equal(10, GeoUtils.getZoomLevel(50));
     });
-    it('should zoom level 12 for 20km', function() {
-      assert.equal(12, GeoUtils.getZoomLevel(20));
+    it('should zoom level 10 for 20km', function() {
+      assert.equal(10, GeoUtils.getZoomLevel(20));
     });
-    it('should zoom level 12 for 10km', function() {
-      assert.equal(12, GeoUtils.getZoomLevel(10));
+    it('should zoom level 10 for 10km', function() {
+      assert.equal(10, GeoUtils.getZoomLevel(10));
     });
   });
 });
