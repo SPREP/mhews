@@ -15,7 +15,6 @@ import EarthquakePage from '../../ui/Earthquake.jsx';
 import CyclonePage from '../../ui/Cyclone.jsx';
 import App from '../../ui/App.jsx';
 import AppTemplate from '../../ui/AppTemplate.jsx';
-import InitPage from '../../ui/InitPage.jsx';
 import ClimatePage from '../../ui/ClimatePage.jsx';
 import AdminPage from '../../ui/admin/AdminPage.jsx';
 import AdminDashboard from '../../ui/admin/AdminDashboard.jsx';
@@ -27,7 +26,6 @@ export function initRouter(){
   render(
     <Router history={ browserHistory }>
       <Route path="/" component={AppTemplate}>
-      <Route path="init" component={InitPage} />
       <Route path="app" component={App} >
         <Route path="about" component={AboutAppPage} />
         <Route path="usage" component={UsagePage} />
@@ -52,7 +50,6 @@ export function initRouterWithAdminPage(){
   render(
     <Router history={ browserHistory }>
       <Route path="/" component={AppTemplate}>
-      <Route path="init" component={InitPage} />
       <Route path="app" component={App} >
         <Route path="about" component={AboutAppPage} />
         <Route path="usage" component={UsagePage} />

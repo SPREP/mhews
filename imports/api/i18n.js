@@ -16,6 +16,10 @@ const i18nConfig = {
         "cancellation": "cancellation",
         "category": "category",
         "exercise": "exercise",
+        lang: {
+          en: "English",
+          ws: "Samoan"
+        },
         level : {
           advisory: "advisory",
           watch: "watch",
@@ -146,6 +150,10 @@ const i18nConfig = {
         "category": "vaega",
         "cancellation": "faaleaogaina",
         "exercise": "faataitaiga",
+        lang: {
+          en: "English",
+          ws: "Samoan"
+        },        
         level : {
           advisory: "fautuaga",
           watch: "nofosauni",

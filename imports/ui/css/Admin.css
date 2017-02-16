@@ -11,3 +11,16 @@ table.adminWeatherTable {
   color: StaleGrey;
   font-weight: normal
 }
+
+.adminActiveIcon {
+  padding: 8px;
+  width: 32px;
+  height: 32px;
+  border: 2px solid blue
+}
+
+.adminInactiveIcon {
+  padding: 8px;
+  width: 32px;
+  height: 32px;
+}

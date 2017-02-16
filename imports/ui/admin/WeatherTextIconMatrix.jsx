@@ -10,13 +10,16 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 import { createContainer } from 'meteor/react-meteor-data';
 import browserHistory from 'react-router/lib/browserHistory';
-import {updateForecast, updateForecastSamoan} from '../../api/client/admin/weather.js';
+import {updateForecast} from '../../api/client/admin/weather.js';
 
 // FIXME Word-wrapping does not work as expected ...
 const forecastTextStyle = {
   width: "400pt",
   "wordWrap": "break-word"
 }
+
+// Language to be used to display the forecast text.
+const lang = "en";
 
 class DateDropDownMenu extends React.Component {
 
@@ -203,8 +206,7 @@ class WeatherTextIconMatrixPage extends React.Component {
       }
     });
 
-    updateForecast(bulletin);
-    updateForecastSamoan(bulletin);
+    updateForecast(bulletin, lang);
   }
 
   openDayIconMatrixPage(bulletin){
@@ -237,7 +239,7 @@ WeatherTextIconMatrixPage.propTypes = {
 function listLatestForecastDates(){
   return WeatherForecasts.find(
     {
-      lang: "en"
+      lang: lang
     },
     {
       fields: {issued_at: 1, name: 1},
@@ -249,7 +251,7 @@ function listLatestForecastDates(){
 function getForecast(date){
   return WeatherForecasts.findOne(
     {
-      lang: "en",
+      lang: lang,
       issued_at: date.issued_at,
       name: date.name
     }

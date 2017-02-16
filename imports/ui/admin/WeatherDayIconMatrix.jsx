@@ -11,9 +11,11 @@ import {WeatherIcon} from './WeatherIcon.jsx';
 
 import { createContainer } from 'meteor/react-meteor-data';
 import {WeatherForecasts} from '../../api/weathers.js';
-import {updateForecast, updateForecastSamoan} from '../../api/client/admin/weather.js';
+import {updateForecast} from '../../api/client/admin/weather.js';
 
 import '../css/Admin.css';
+
+const lang = "en";
 
 class DistrictDropDownMenu extends React.Component {
 
@@ -168,12 +170,6 @@ class WeatherDayIconMatrix extends React.Component {
   }
 }
 
-function getTimePeriod(index, interval){
-  const startTime = index * interval;
-  const endTime = (index+1) * interval;
-  return startTime + "-" + endTime;
-}
-
 WeatherDayIconMatrix.propTypes ={
   forecasts: React.PropTypes.array
 }
@@ -225,8 +221,7 @@ class WeatherDayIconMatrixPage extends React.Component {
 
 
   updateForecasts(){
-    updateForecast(this.props.bulletin);
-    updateForecastSamoan(this.props.bulletin);
+    updateForecast(this.props.bulletin, lang);
     this.setState({
       updateSaved: true
     })

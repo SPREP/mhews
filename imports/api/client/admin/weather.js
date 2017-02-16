@@ -2,23 +2,32 @@
 // because the latter is wrapped by the GroundDB and the admin dashboard needs the unwrapped one.
 import {WeatherForecasts} from '../../weathers.js';
 
-export function updateForecast(bulletin){
+export function updateForecast(bulletin, usedLanguage){
+
+  Meteor.settings.public.languages.forEach((lang)=>{
+    if( lang == usedLanguage ){
+      doUpdateForecast(bulletin);
+    }
+    else{
+      const bulletinForLang = findBulletinForLang(bulletin, lang);
+      if( bulletinForLang ){
+        copyWeatherSymbols(bulletin, bulletinForLang);
+        doUpdateForecast(bulletinForLang);
+      }
+      else{
+        console.warn("There is no Samoan bulletin for "+bulletin.issued_at+" "+bulletin.name);
+      }
+
+    }
+  })
+
+}
+
+export function doUpdateForecast(bulletin){
   WeatherForecasts.update(
     {_id: bulletin._id},
     {"$set": {forecasts: bulletin.forecasts, in_effect: true}}
   );
-}
-
-export function updateForecastSamoan(bulletin){
-  const bulletinSamoan = findBulletinSamoan(bulletin);
-  if( bulletinSamoan ){
-    copyWeatherSymbols(bulletin, bulletinSamoan);
-    updateForecast(bulletinSamoan);
-  }
-  else{
-    console.warn("There is no Samoan bulletin for "+bulletin.issued_at+" "+bulletin.name);
-  }
-
 }
 
 function copyWeatherSymbols(bulletin, bulletinSamoan){
@@ -47,13 +56,13 @@ function findInArray(array, condition){
   return null;
 }
 
-function findBulletinSamoan(bulletin){
+function findBulletinForLang(bulletin, lang){
 
   return WeatherForecasts.findOne(
     {
       name: bulletin.name,
       issued_at: bulletin.issued_at,
-      lang: "ws"
+      lang: lang
     }
   );
 }

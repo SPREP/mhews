@@ -10,20 +10,25 @@ import { createContainer } from 'meteor/react-meteor-data';
 import {Preferences} from '../api/client/preferences.js';
 import browserHistory from 'react-router/lib/browserHistory';
 
+import {toTitleCase} from '../api/strutils.js';
+
 /* i18n */
 import { translate } from 'react-i18next';
 
-const districts = [
-  "upolu-north-northwest",
-  "upolu-east-southwest",
-  "savaii-east-northeast",
-  "savaii-northwest",
-  "savaii-south"
-];
+const districts = Meteor.settings.public.districts;
 
 const divStyle = {padding: "8px"};
 
 class PreferencesPage extends React.Component {
+
+  formatHeader(keyword){
+    const words = [];
+    Meteor.settings.public.languages.forEach((lang)=>{
+      words.push(toTitleCase(this.props.t(keyword, {lng: lang})));
+    })
+
+    return words.join("/");
+  }
 
   render(){
     const t = this.props.t;
@@ -34,24 +39,30 @@ class PreferencesPage extends React.Component {
     this.exercise = this.props.exercise;
     console.log("PreferencesPage.render() lang = "+lang);
 
+    const languageHeader = this.formatHeader("language");
+    const districtHeader = this.formatHeader("district");
+    const exerciseHeader = this.formatHeader("exercise");
+
     return(
       <div>
         <div style={divStyle}>
-          <Subheader>Language / Gagana</Subheader>
+          <Subheader>{languageHeader}</Subheader>
           <RadioButtonGroup name="language" onChange={(e, v)=>{this.changeLanguage(v)}} defaultSelected={lang}>
-            <RadioButton
-              key="en"
-              label="English"
-              value="en"/>
-              <RadioButton
-                key="ws"
-                label="Samoan"
-                value="ws"/>
-              </RadioButtonGroup>
-            </div>
+            {
+              Meteor.settings.public.languages.map((lang)=>{
+                return (
+                  <RadioButton
+                    key={lang}
+                    label={t("lang."+lang)}
+                    value={lang}/>
+                )
+              })
+            }
+          </RadioButtonGroup>
+        </div>
         <Divider />
         <div style={divStyle}>
-          <Subheader>District / Vaega</Subheader>
+          <Subheader>{districtHeader}</Subheader>
           <RadioButtonGroup name="district" onChange={(e, v)=>{this.changeDistrict(v)}} defaultSelected={district}>
             {
               districts.map((district)=>(
@@ -65,7 +76,7 @@ class PreferencesPage extends React.Component {
           </div>
         <Divider />
         <div style={divStyle}>
-          <Subheader>Exercise / Faataitaiga</Subheader>
+          <Subheader>{exerciseHeader}</Subheader>
           <Toggle
             label={t("join_exercise")}
             labelPosition="right"

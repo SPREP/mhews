@@ -21,6 +21,7 @@ This software uses the following 3rd party software.
 - react-tap-event-plugin: MIT License, https://github.com/zilverline/react-tap-event-plugin/blob/master/LICENSE
 - request: Apache License version 2.0, https://github.com/request/request/blob/master/LICENSE
 - suncalc: a proprietary license, https://github.com/mourner/suncalc/blob/master/LICENSE
+- sprintfjs: BSD license, https://github.com/alexei/sprintf.js
 
 [3rd party images]
 
