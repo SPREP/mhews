@@ -1,5 +1,6 @@
 import i18n from 'i18next';
 import {toTitleCase} from '../strutils.js';
+import {sprintf} from 'sprintf-js';
 
 // Warning levels in the significance order.
 const levels = ["information", "advisory", "watch", "warning"];
@@ -29,12 +30,7 @@ export class Warning {
   }
 
   doGetHeaderTitle(t){
-    if( i18n.language == "ws"){
-      return t("level."+this.level) +" o "+t(this.type);
-    }
-    else{
-      return t(this.type)+" "+t("level."+this.level);
-    }
+    return sprintf(t("warning_description.header"), t(this.type), t("level."+this.level));
   }
 
   getSubTitle(){
@@ -42,12 +38,7 @@ export class Warning {
   }
 
   getDescription(){
-    if( i18n.language == "ws"){
-      return this.description_ws;
-    }
-    else{
-      return this.description_en;
-    }
+    return this["description_"+i18n.language];
   }
 
   // Method to identify if two warnings are about the same event.

@@ -13,11 +13,7 @@ export class Cyclone extends Warning {
   }
 
   doGetHeaderTitle(t){
-    return t("Cyclone")+" "+t("category") + " "+ this.category + " " + t("level."+this.level.toLowerCase());
-  }
-
-  getSubTitle(_t){
-    return moment(this.issued_at).format("YYYY-MM-DD HH:mm");
+    return sprintf(t("cyclone_description.header"), this.category, t("level."+this.level.toLowerCase()));
   }
 
   getDescription(t){

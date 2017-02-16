@@ -116,11 +116,16 @@ const i18nConfig = {
         low: "low",
         moon: "moon",
         or: "or",
+        warning_description: {
+          header: "%1$s %2$s"
+        },
         earthquake_description: {
+          header: "%1$s %2$s (Magnitude %3$d, %4$s)",
           location: "An earthquake with magnitude %f occurred in %s at the depth of %d km",
           town: "approximately %d km (%s miles) of %s"
         },
         cyclone_description: {
+          header: "$t(cyclone) $t(category) %s %s",
           location: "Tropical Cyclone %s was located at %f, %f",
           town: "about %d km (%d miles) %s of %s"
         }
@@ -241,11 +246,16 @@ const i18nConfig = {
         low: "pe",
         moon: "masina",
         or: "po'o",
+        warning_description: {
+          header: "%2$s mo %1$s"
+        },
         earthquake_description: {
+          header: "%2$s mo %1$s (Magnitude %3$d, %4$s)",
           location: "O le mafuie e tusa lona malosi ma le %f ile fua mafuie sa afua mai ile motu o %s ile loloto e %d kilomita",
           town: "ile mamao e %d kilomita (%s miles) o %s"
         },
         cyclone_description: {
+          header: "$t(cyclone) $t(category) %s %s",
           location: "Sa iai le Afa o %s i %f, %f",
           town: "le %d kilomita (%d miles) %s o %s"
         }

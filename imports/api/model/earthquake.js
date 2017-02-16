@@ -19,14 +19,8 @@ export class Earthquake extends Warning {
   }
 
   doGetHeaderTitle(t){
-    const quake = this;
 
-    if( i18n.language == "ws"){
-      return t("level."+quake.level)+" mo "+t(quake.type)+" (Magnitude "+quake.mw+","+quake.region+") ";
-    }
-    else{
-      return t(quake.type)+" "+t("level."+quake.level)+" (Magnitude "+quake.mw+","+quake.region+") ";
-    }
+    return sprintf(t("earthquake_description.header"), t(this.type), t("level."+this.level), this.mw, this.region);
   }
 
   getSubTitle(){
