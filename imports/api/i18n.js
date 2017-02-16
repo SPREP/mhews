@@ -114,7 +114,16 @@ const i18nConfig = {
         height: "height",
         high: "high",
         low: "low",
-        moon: "moon"
+        moon: "moon",
+        or: "or",
+        earthquake_description: {
+          location: "An earthquake with magnitude %f occurred in %s at the depth of %d km",
+          town: "approximately %d km (%s miles) of %s"
+        },
+        cyclone_description: {
+          location: "Tropical Cyclone %s was located at %f, %f",
+          town: "about %d km (%d miles) %s of %s"
+        }
       }
     },
     ws: {
@@ -230,7 +239,16 @@ const i18nConfig = {
         height: "maualuga",
         high: "sua",
         low: "pe",
-        moon: "masina"
+        moon: "masina",
+        or: "po'o",
+        earthquake_description: {
+          location: "O le mafuie e tusa lona malosi ma le %f ile fua mafuie sa afua mai ile motu o %s ile loloto e %d kilomita",
+          town: "ile mamao e %d kilomita (%s miles) o %s"
+        },
+        cyclone_description: {
+          location: "Sa iai le Afa o %s i %f, %f",
+          town: "le %d kilomita (%d miles) %s o %s"
+        }
       }
     }
   },

@@ -1,6 +1,7 @@
 import {CycloneBulletins} from '../bulletin.js';
 import {Warning} from './warning.js';
 import i18n from 'i18next';
+import {sprintf} from 'sprintf-js';
 
 export class Cyclone extends Warning {
   constructor(phenomena){
@@ -26,25 +27,17 @@ export class Cyclone extends Warning {
     }
     const tc_info = bulletin.tc_info;
 
-    let description;
+    let description = "";
     const lang = i18n.language;
 
-    if( lang == "ws"){
-      description = "Sa iai le Afa o "+tc_info.name+" i "+tc_info.center.lat+","+tc_info.center.lng;
-      tc_info.neighbour_towns.forEach((town)=>{
-        description += " po'o le "+town.distance_km+" kilomita ("+town.distance_miles+"miles) "
-        description += t("directions."+town.direction)+" o "+town.name;
-      });
-    }
-    else{
-      description = "Tropical Cyclone "+tc_info.name+" was located at "+tc_info.center.lat+","+tc_info.center.lng;
-      tc_info.neighbour_towns.forEach((town)=>{
-        description += " or about "+town.distance_km+"km ("+town.distance_miles+"miles) "
-        description += t("directions."+town.direction)+" of "+town.name;
-      });
-    }
+    // Predefined text to describe the TC's name, location and the distance from neighbour towns.
+    description += sprintf(t("cyclone_description.location"), tc_info.name, tc_info.center.lat, tc_info.center.lng);
+    tc_info.neighbour_towns.forEach((town)=>{
+      description += ", " + t("or") + " ";
+      description += sprintf(t("cyclone_description.town"), town.distance_km, town.distance_miles, town.direction, town.name);
+    });
 
-    description += ".";
+    description += ". ";
     if( tc_info["situation_"+lang] ){
       description += tc_info["situation_"+lang] + " ";
     }
