@@ -261,11 +261,13 @@ function warningToFcmMessage(warning, soundFile){
       "bulletinId": warning.bulletinId,
       "in_effect": warning.in_effect,
       "is_exercise": warning.is_exercise,
-      "issued_at": warning.issued_at,
-      "description_en": warning.description_en,
-      "description_ws": warning.description_ws
+      "issued_at": warning.issued_at
     }
   };
+
+  Meteor.settings.public.languages.forEach((lang)=>{
+    fcmMessage.data["description_"+lang] = warning["description_"+lang];
+  })
 
   if( !warning.in_effect ){
     fcmMessage.notification.title = "Cancel "+title;

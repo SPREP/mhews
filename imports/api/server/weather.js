@@ -42,7 +42,7 @@ class WeatherServer {
     check(this.connection, Match.Where(isClientIpAllowed));
     //  check(forecast.bulletinId, Number);
     check(forecast.issued_at, Date);
-    check(forecast.lang, Match.OneOf("en", "ws"));
+    check(forecast.lang, Match.OneOf(...Meteor.settings.public.languages));
     check(forecast.situation, String);
     check(forecast.forecasts, [{
       district: String,

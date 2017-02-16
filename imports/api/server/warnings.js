@@ -4,6 +4,7 @@ import { check } from 'meteor/check';
 import {isClientIpAllowed} from './serverutils.js';
 import Warnings from '../warnings.js';
 import WarningFactory from '../model/warningFactory.js';
+import i18n from 'i18next';
 
 class WarningCollectionServer {
 
@@ -51,8 +52,10 @@ class WarningCollectionServer {
     // Set it to the description.
     // This codes are to be removed after the new version of the app is well deployed.
     if( warning.is_exercise ){
-      warning.description_en = "EXERCISE "+ warning.description_en;
-      warning.description_ws = "FAATAITAIGA "+ warning.description_ws;
+
+      Meteor.settings.public.languages.forEach((lang)=>{
+        warning["description_"+lang] = i18n.t("exercise", {lng: lang}).toUpperCase()+" "+ warning["description_"+lang];
+      });
     }
 
     if( warning.in_effect ){

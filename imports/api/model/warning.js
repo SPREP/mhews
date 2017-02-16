@@ -1,3 +1,4 @@
+import {Meteor} from 'meteor/meteor';
 import i18n from 'i18next';
 import {toTitleCase} from '../strutils.js';
 import {sprintf} from 'sprintf-js';
@@ -16,9 +17,9 @@ export class Warning {
     check(this.level, Match.OneOf(...levels));
     check(this.in_effect, Match.OneOf(true, false));
     check(this.issued_at, Date);
-    check(this.description_en, String);
-    check(this.description_ws, String);
-
+    Meteor.settings.public.languages.forEach((lang)=>{
+      check(this["description_"+lang], String);
+    });
   }
 
   getHeaderTitle(t){

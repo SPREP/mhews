@@ -7,10 +7,17 @@ import TideTableServer from '../../api/server/tidetable.js';
 import PushServer from '../../api/server/pushserver.js';
 import ReceptionTrackerServer from '../../api/server/receptionTracker.js';
 
+/* i18n */
+import i18nConfig from '../../api/i18n.js';
+import i18n from 'i18next';
+
 Meteor.startup(() => {
 
-  // TODO Move this to the Admin app to prevent access from the Internet.
-  exposeRemoteMethods();
+  if( Meteor.settings.public.withAdminDashboard ){
+    exposeRemoteMethods();
+  }
+
+  i18n.init(i18nConfig);
 
   CycloneBulletinsServer.start();
   WarningServer.start();
