@@ -38,13 +38,15 @@ export class WarningCollection extends Mongo.Collection {
   }
 
   findSameWarningInEffect(warning){
-    // At most one previousWarning of the same type, area, and direction should be in effect.
-    return super.findOne({
-      in_effect: true,
-      type: warning.type,
-      area: warning.area,
-      direction: warning.direction
-    });
+    let foundWarning = undefined;
+
+    super.find({in_effect: true, type: warning.type}).forEach((another)=>{
+      if( another.isSameEvent(warning)){
+        foundWarning = another;
+      }
+    })
+
+    return foundWarning;
   }
 
   findByBulletinId(type, bulletinId){

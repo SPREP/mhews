@@ -1,6 +1,7 @@
 import i18n from 'i18next';
 import {Warning} from './warning.js';
 import {sprintf} from 'sprintf-js';
+import {getDistanceFromLatLonInKm} from '../geoutils.js';
 
 export class Earthquake extends Warning {
   constructor(phenomena){
@@ -42,9 +43,24 @@ export class Earthquake extends Warning {
     return description;
   }
 
+  // If the epicenter is enough close and the date_time difference is within 1 min,
+  // consider it as the same event.
+  // The epicenter and date_time may be corrected when a successive bulletin is issued,
+  // so we cannot do exact comparison.
   isSameEvent(another){
-    return this.date_time == another.date_time && this.region == another.region;
+    return isTimeClose(this.date_time, another.date_time) && isLocationClose(this.epicenter, another.epicenter);
   }
+}
+
+function isTimeClose(time1, time2){
+
+  return moment(time1).diff(moment(time2), 'seconds') < 60;
+}
+
+// Consider it close enough if the distance within 50km.
+function isLocationClose(location1, location2){
+
+  return getDistanceFromLatLonInKm(location1, location2) < 50;
 }
 
 function normalizeDateTime(dateTime){

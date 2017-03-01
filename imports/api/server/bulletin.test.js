@@ -1,8 +1,7 @@
 import {Meteor} from 'meteor/meteor';
 import CycloneBulletins, {removeOneIf} from './bulletin.js';
 import Warnings from './warnings.js';
-
-var assert = require('assert');
+import {chai} from 'meteor/practicalmeteor:chai';
 
 function getSampleBulletin(id){
   const issuedAt = new Date();
@@ -40,14 +39,14 @@ describe('CycloneBulletins', function() {
   describe('#removeOneIf()', function() {
     it("should return null if no match.", function(){
       const array = ["a", "b", "c", "d"];
-      assert.equal(null, removeOneIf(array, (e)=>{ return e == "x"}));
-      assert.equal(4, array.length);
+      chai.assert.equal(null, removeOneIf(array, (e)=>{ return e == "x"}));
+      chai.assert.equal(4, array.length);
     });
     it("should return matched element and the element is removed from the array", function(){
       const array = ["a", "b", "c", "d"];
-      assert.equal("c", removeOneIf(array, (e)=>{ return e == "c"}));
-      assert.equal(3, array.length);
-      assert.equal(false, array.includes("c"));
+      chai.assert.equal("c", removeOneIf(array, (e)=>{ return e == "c"}));
+      chai.assert.equal(3, array.length);
+      chai.assert.equal(false, array.includes("c"));
     });
   });
 
@@ -61,7 +60,7 @@ describe('CycloneBulletins', function() {
 
       it("should not accept a bulletin without id.", function(){
         const bulletin = getSampleBulletin(undefined);
-        assert.throws(function(){ CycloneBulletins.publishBulletin(bulletin);});
+        chai.assert.throws(function(){ CycloneBulletins.publishBulletin(bulletin);});
       });
       it("should invalidate the effective bulletin under the same bulletin id.", function(){
         const bulletin1 = getSampleBulletin(123);
@@ -70,7 +69,7 @@ describe('CycloneBulletins', function() {
         const bulletin2 = getSampleBulletin(123);
         CycloneBulletins.publishBulletin(bulletin2);
         CycloneBulletins.find({id: 123, in_effect: true}, {_id: 1}).forEach(function(doc){
-          assert.notEqual(bulletin1Doc._id, doc._id);
+          chai.assert.notEqual(bulletin1Doc._id, doc._id);
         })
       });
       it("should invalidate the effective bulletin under different bulletin id.", function(){
@@ -83,7 +82,7 @@ describe('CycloneBulletins', function() {
           {in_effect: true, tc_info: {name: bulletin2.name}},
           {_id: 1}
         ).forEach(function(doc){
-          assert.notEqual(bulletin1Doc._id, doc._id);
+          chai.assert.notEqual(bulletin1Doc._id, doc._id);
         });
 
       });

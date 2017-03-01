@@ -34,14 +34,19 @@ const weatherSignificance = {
     "windy":7
 }
 
-
+// From the given list of weather symbols for a day,
+// select the weather symbol that describes the weather of the day.
+// Because the weather during the night time is not so important,
+// this function chooses one of the weather symbols during the day time.
+// The given list of weather symbols must be sorted from 0:00 to the 24:00.
 export function selectPredominantWeatherSymbol(weatherSymbols){
   if( weatherSymbols.length == 1 ){
     return weatherSymbols[0];
   }
   else{
     const symbolMap = {};
-    weatherSymbols.forEach((symbol)=>{
+    const daytimeSymbols = extractDaytimeSymbols(weatherSymbols);
+    daytimeSymbols.forEach((symbol)=>{
       if( symbolMap[symbol] ){
         symbolMap[symbol] ++;
       }
@@ -62,6 +67,19 @@ export function selectPredominantWeatherSymbol(weatherSymbols){
 
     }
   }
+}
+
+function extractDaytimeSymbols(symbols){
+  const hoursPerSymbol = 24 / symbols.length;
+  const daytimeSymbols = [];
+  symbols.forEach((symbol, index)=>{
+    const startTime = index * hoursPerSymbol;
+    if( startTime >= 6 && startTime < 18 ){
+      daytimeSymbols.push(symbol);
+    }
+  })
+
+  return daytimeSymbols;
 }
 
 function selectWorstSymbol(list){
