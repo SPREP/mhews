@@ -8,7 +8,6 @@ import {toTitleCase} from '../api/strutils.js';
 
 import './css/ClimatePage.css';
 
-const cardTitleStyle = { fontSize: "12pt"};
 const imageStyle = { maxWidth: "100%" };
 const innerDivStyle = { paddingTop: "12px", paddingBottom: "12px"};
 
@@ -67,11 +66,14 @@ class ClimatePage extends React.Component {
     return (
       <div className="climate_page">
         <div>
-          <div style={cardTitleStyle}>
+          <div className="climate_page_title">
             Climate Early Warning System
           </div>
           <div style={innerDivStyle}>
-          Click <Link href="http://www.samet.gov.ws/climate/drought.html">here</Link> to access all the products from the Climate Early Warning System.
+          Click <Link href="http://www.samet.gov.ws/climate/drought.html">here</Link> to access all the products from the Climate Early Warning System powered by NIWA.
+          </div>
+          <div className="climate_page_subtitle">
+            Drought Risk
           </div>
           <div style={innerDivStyle}>
             <img src={"http://www.samet.gov.ws/climate/drought/DroughtMonitor90_"+ station + ".png"} style={imageStyle}/>
@@ -85,16 +87,14 @@ class ClimatePage extends React.Component {
               {t("climate_description.drought.map")}
             </div>
           </div>
+          <div className="climate_page_subtitle">
+            Fire Danger Class
+          </div>
           <div style={innerDivStyle}>
             <img src="http://docs.niwa.co.nz/eco/samoa/img/FWI_regional.png" style={imageStyle}/>
             <FireIndexDescriptionTable t={t} />
           </div>
         </div>
-        <hr />
-        <div>
-          The Climate Early Warning System of Samoa Meteorology Division is powered by the CliDEsc system provided by NIWA (National Institute of Water and Atmospheric Research) in New Zealand.
-        </div>
-
       </div>
     );
   }

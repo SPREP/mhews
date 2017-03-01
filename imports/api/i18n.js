@@ -311,8 +311,8 @@ const i18nConfig = {
         },
         climate_description: {
           drought: {
-            rainfall: "Operational tool to track rainfall anomalies in Samoa. Red-shaded regions can trigger drought alerts. Below 40% of normal rainfall triggers \“Drought Watch\” and below 10% triggers \“Drought Warning\”.",
-            map: "Drought Risk Visualisation prototype drought risk summary map for Samoa, generated from user selected options for seasonal rainfall for each individual monitoring site."
+            rainfall: "O le kalafi na te tulimataiina fesuiaiga o le timu maua I Samoa. O vaega o loo lanu mumu ole kalafi e faailoa ai taimi matutu ma faaitiitia ai le timu maua. A vaaia loa ua I lalo ole 40% ona iloa lea ua “Nofosauniuni mo Tu’iefu”, ae a pasia loa le laina 10% ua iai loa “Lapataiga mo Tu’iefu”",
+            map: "O le atafaafanua o Samoa o loo iai le aotelega o timu maua I vaega eseese o Samoa e mataituina ai taimi o vaitau matutu/tu’iefu."
           },
           fireindex: "(Dummy text) If the fire danger index is higher than \"High\", fire watch or ban will be issued by the DMO.",
           cease_fire_action: "taofi le soona susunuina o lapisi ma le faia o tafuna'i"

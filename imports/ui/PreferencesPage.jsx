@@ -77,6 +77,7 @@ class PreferencesPage extends React.Component {
         <Divider />
         <div style={divStyle}>
           <Subheader>{exerciseHeader}</Subheader>
+          <div style={{fontSize: "10pt"}}>Please turn on if you're ok to receive earthquake/tsunami exercise messages.</div>
           <Toggle
             label={t("join_exercise")}
             labelPosition="right"

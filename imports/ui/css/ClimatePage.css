@@ -4,11 +4,21 @@ div.climate_page {
   font-size: 10pt;
 }
 
+.climate_page_title {
+  font-size: 12pt;
+}
+
+.climate_page_subtitle {
+  font-size: 11pt;
+  text-decoration: underline;
+}
+
 table.fireindex_table {
   border-collapse: collapse;
 }
 
 table.fireindex_table th {
+  width: 30%;
   border: 1px solid #ccc;
 }
 
