@@ -239,7 +239,7 @@ function warningToFcmMessage(warning, soundFile){
     warning.area = "Samoa";
   }
   if( !warning.direction ){
-    warning.area = "Whole Area";
+    warning.direction = "Whole Area";
   }
 
   const body = warning.direction ? warning.area + " " + warning.direction : warning.area;
