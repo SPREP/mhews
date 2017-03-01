@@ -1,6 +1,6 @@
 export function toTitleCase(str)
 {
-  return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1);});
+  return str.replace(/^\w\S*/, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1);});
 }
 
 const Months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

@@ -5,6 +5,7 @@ const i18nConfig = {
     en: {
       common: {
         "weather": "weather",
+        "climate": "vaitau",
         "earthquake": "earthquake",
         "tsunami": "tsunami",
         "cyclone": "cyclone",
@@ -21,6 +22,7 @@ const i18nConfig = {
           ws: "Samoan"
         },
         level : {
+          normal: "normal",
           advisory: "advisory",
           watch: "watch",
           warning: "warning",
@@ -28,8 +30,8 @@ const i18nConfig = {
         },
         title : {
           app: "Samoa Weather",
-          climate: "Climate",
-          weather: "Weather",
+          climate: "Climate Services",
+          weather: "Weather Forecast",
           heavyrain: "Heavy Rain",
           earthquake: "Earthquake",
           tsunami: "Tsunami",
@@ -110,6 +112,21 @@ const i18nConfig = {
           "last_quarter": "last quarter",
           "waning_crescent": "waning crescent"
         },
+        color: "colour",
+        colors: {
+          green: "green",
+          yellow: "yellow",
+          orange: "orange",
+          red: "red"
+        },
+        risks: {
+          low: "low risk",
+          medium: "medium risk",
+          high: "high risk",
+          extreme: "extreme risk"
+        },
+        action: "action",
+        danger_class: "danger class",
         heavy_rain: "heavy rain",
         "waiting-for-network": "Waiting for Network",
         "software-update-available": "New software available.",
@@ -132,6 +149,14 @@ const i18nConfig = {
           header: "$t(cyclone) $t(category) %s %s",
           location: "Tropical Cyclone %s was located at %f, %f",
           town: "about %d km (%d miles) %s of %s"
+        },
+        climate_description: {
+          drought: {
+            rainfall: "Operational tool to track rainfall anomalies in Samoa. Red-shaded regions can trigger drought alerts. Below 40% of normal rainfall triggers \“Drought Watch\” and below 10% triggers \“Drought Warning\”.",
+            map: "Drought Risk Visualisation prototype drought risk summary map for Samoa, generated from user selected options for seasonal rainfall for each individual monitoring site."
+          },
+          fireindex: "(Dummy text) If the fire danger index is higher than \"High\", fire watch or ban will be issued by the DMO.",
+          cease_fire_action: "Ceased open burning of rubbish in grass or forest areas"
         }
       }
     },
@@ -153,8 +178,9 @@ const i18nConfig = {
         lang: {
           en: "English",
           ws: "Samoan"
-        },        
+        },
         level : {
+          normal: "tulaga masani",
           advisory: "fautuaga",
           watch: "nofosauni",
           warning: "lapataiga",
@@ -162,7 +188,8 @@ const i18nConfig = {
         },
         title : {
           app: "Tau o Samoa",
-          weather: "Tau",
+          weather: "Tala o le tau",
+          climate: "Auaunaga o Vaitau",
           heavyrain: "Timuga mamafa",
           earthquake: "Mafui'e",
           tsunami: "Sunami",
@@ -244,6 +271,21 @@ const i18nConfig = {
           "last_quarter": "kuata fa'aiu ole masina",
           "waning_crescent": "waning crescent"
         },
+        color: "lanu",
+        colors: {
+          green: "meamata",
+          yellow: "samasama",
+          orange: "moli",
+          red: "mumu"
+        },
+        risks: {
+          low: "laititi aafiaga",
+          medium: "feololo aafiaga",
+          high: "maualuga aafiaga",
+          extreme: "matautia aafiaga"
+        },
+        action: "gaioiga faatino",
+        danger_class: "faatulagaina o aafiaga",
         heavy_rain: "timuga mamafa",
         "waiting-for-network": "Fa'atali mo le network",
         "software-update-available": "New software available.",
@@ -266,6 +308,14 @@ const i18nConfig = {
           header: "$t(cyclone) $t(category) %s %s",
           location: "Sa iai le Afa o %s i %f, %f",
           town: "le %d kilomita (%d miles) %s o %s"
+        },
+        climate_description: {
+          drought: {
+            rainfall: "Operational tool to track rainfall anomalies in Samoa. Red-shaded regions can trigger drought alerts. Below 40% of normal rainfall triggers \“Drought Watch\” and below 10% triggers \“Drought Warning\”.",
+            map: "Drought Risk Visualisation prototype drought risk summary map for Samoa, generated from user selected options for seasonal rainfall for each individual monitoring site."
+          },
+          fireindex: "(Dummy text) If the fire danger index is higher than \"High\", fire watch or ban will be issued by the DMO.",
+          cease_fire_action: "taofi le soona susunuina o lapisi ma le faia o tafuna'i"
         }
       }
     }

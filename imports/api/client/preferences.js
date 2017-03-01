@@ -5,6 +5,12 @@ const keys = ["language", "district", "appInitialized", "exercise"];
 // The startup time of the LocalStorage was faster than the GroundDB,
 // so LocalStorage was chosen.
 
+const defaultPreferences = {
+  "language": "en",
+  "district": "upolu-north-northwest",
+  "exercise": "false"
+};
+
 // Class to save and load user preferences such as the language in a local storage,
 // so that the user does not have to specify those preferences every time when app is used.
 class PreferencesClass {
@@ -32,7 +38,8 @@ class PreferencesClass {
   }
 
   load(key){
-    return this.cache[key].get();
+    const value = this.cache[key].get();
+    return value ? value : defaultPreferences[key];
   }
 
   isLoaded(){

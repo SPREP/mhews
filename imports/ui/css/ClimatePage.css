@@ -1,5 +1,21 @@
 
 div.climate_page {
   padding: 12px;
-  font-size: 12pt;
+  font-size: 10pt;
+}
+
+table.fireindex_table {
+  border-collapse: collapse;
+}
+
+table.fireindex_table th {
+  border: 1px solid #ccc;
+}
+
+table.fireindex_table tr {
+  border: 1px solid #ccc;
+}
+
+table.fireindex_table td {
+  border: 1px solid #ccc;
 }

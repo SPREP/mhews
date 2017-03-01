@@ -307,16 +307,6 @@ const WeatherPageContainer = createContainer(()=>{
   let language = Preferences.load("language");
   let district = Preferences.load("district");
   let loaded = Preferences.isLoaded();
-  if( loaded ){
-    // First time to use the app after the installation.
-    // Set the default values.
-    if( !language ){
-      language = "en";
-    }
-    if( !district ){
-      district = "upolu-north-northwest";
-    }
-  }
 
   return {
     loaded,
