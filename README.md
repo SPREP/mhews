@@ -5,14 +5,13 @@ This README file is still under drafting and thus does not provide enough inform
 ## Introduction
 This repository contains the smartphone app to deliver weather information and hazard early warnings. It was developed for the [Samoa Meteorology Division](http://www.samet.gov.ws/) to deliver the information and alerts to the people in Samoa. We decided to make it open-source, because the app or a part of it may be useful for weather offices in other countries.
 
-The app was developed by using [Meteor](https://www.meteor.com/) (with [Apache Cordova](https://cordova.apache.org/) plugins) and [Reactjs](https://facebook.github.io/react/
-) as the main platforms.
+The app was developed by using [Meteor](https://www.meteor.com/) (with [Apache Cordova](https://cordova.apache.org/) plugins) and [Reactjs](https://facebook.github.io/react/) as the main platforms.
 Meteor is a full-stack framework for building Javascript application, both the server and clients.
 By using the Cordova plugin the client side of the app can run on smartphones.
 Reactjs is a declarative UI library.
 
 ## Screenshots of the app
-Please find it on the [Google Play](https://play.google.com/store/apps/details?id=ws.gov.samet.mhews)
+Please find them on the [Google Play](https://play.google.com/store/apps/details?id=ws.gov.samet.mhews)
 
 ## System overview
 The weather information and warnings are delivered by using the Meteor's Collection and Publish Subscribe mechanism while the app is running in front. Please read the Meteor's documents and guides to understand these mechanisms.
@@ -27,6 +26,8 @@ In addition, [Google Firebase Clound Messaging (FCM)](https://firebase.google.co
 - Google Maps API key https://developers.google.com/maps/
 
 ## How to run the app
+The first step is to run the app in your PC.
+
 1. git clone https://github.com/takeshi4126/mhews.git
 2. cd mhews
 3. meteor npm install
@@ -35,6 +36,22 @@ In addition, [Google Firebase Clound Messaging (FCM)](https://firebase.google.co
 6. meteor run android-device --settings=settings.json
 
 The server runs on your PC and the Android phone needs to access it. So, your PC and phone must be connected to the same LAN (e.g. connected to the same WiFi AP)
+
+Also, you can access http://localhost:3000 to see the app in your PC's browser.
+
+## How to deploy the app
+
+The brief instruction for deploying the app is described below for server and client. For simplicity, shell scripts are prepared under private/deploy_scripts directory.
+
+Please read the Meteor's [Mobile guide](https://guide.meteor.com/mobile.html) for further details.
+
+### Server
+
+The server part of the app is deployed by using the [Meteor Up (mup)](https://github.com/zodern/meteor-up) tool. mup creates a docker container for running the server part of the app, and deploy the docker container to the server machine, according to the configuration file mup.js. Read the document of the mup project for further details. You must prepare the mup.js by yourself as it depends on your environment.
+
+### Client
+
+meteor build command creates the apk file. The apk file should be signed by using the keytool. And then, the signed apk file can be installed into your phone by using adb command. The signed apk file can also be uploaded to the Google Play so that your users can downloaded it.
 
 ## File structure
 This project tries to follow the Meteor's recommended file structure. https://guide.meteor.com/structure.html
@@ -64,8 +81,15 @@ i18n.js file under the api directory is the dictionary.
 Please change the "ws" part of the file to your language.
 setting.json contains the attribute called "languages" and your language must be added there, too.
 
+### Test
+Test cases are written by using [mocha](https://mochajs.org/), [chai](http://chaijs.com/), and [sinon](http://sinonjs.org/). Test cases are named like "xxx.test.js" where "xxx" part is the name of the file to be tested. Existing test cases can be run by the command below:
+```
+npm test
+```
+and then opening "localhost:3000" in a browser will show the result.
+
 ### Contribution
-The author of this app is currently working at the Samoa Meteorology Division as a volunteer from [JICA](https://www.jica.go.jp/english/index.html) (Japan International Cooperation Agency).
+The author of this app is currently working at the [Samoa Meteorology Division](http://www.samet.gov.ws/) as a volunteer from [JICA](https://www.jica.go.jp/english/index.html) (Japan International Cooperation Agency).
 Due to other tasks as a volunteer I cannot spend much time on further development of this app.
 If you're interested in helping me add more features into this app, please contact me.
 
