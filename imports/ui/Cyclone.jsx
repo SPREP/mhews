@@ -1,11 +1,11 @@
 import React from 'react';
 import HazardView from './HazardView.jsx';
-import {Warnings} from '../api/client/warnings.js';
 
 import {createWarningContainer} from './WarningPage.jsx';
 
 /* i18n */
 import { translate } from 'react-i18next';
+import Config from '../config.js';
 
 /**
  * If the Cyclone forecast is updated, users should get the notification and be routed to the latest Cyclone forecast.
@@ -37,7 +37,7 @@ class CyclonePage extends React.Component {
 
     return(
       <HazardView
-        avatar={Meteor.settings.public.notificationConfig.cyclone.icon}
+        avatar={Config.notificationConfig.cyclone.icon}
         headerTitle={title}
         headerSubTitle={subTitle}
         overlayTitle={name}

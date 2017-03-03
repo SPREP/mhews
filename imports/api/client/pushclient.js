@@ -1,5 +1,5 @@
-import { Meteor } from 'meteor/meteor';
 import ReceptionTracker from '../receptionTracker.js';
+import Config from '/imports/config.js';
 
 /*
 
@@ -7,7 +7,7 @@ Push Client receives push message from the server.
 Currently it relies on the Google Firebase Messaging and uses the cordova-plugin-firebase.
 
 */
-const topicPrefix = Meteor.settings.public.topicPrefix;
+const topicPrefix = Config.topicPrefix;
 
 export class PushClient {
 

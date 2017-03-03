@@ -4,6 +4,8 @@ import browserHistory from 'react-router/lib/browserHistory';
 
 import Paper from 'material-ui/Paper';
 
+import Config from '../config.js';
+
 import './css/WarningCard.css';
 
 const noWarningKey = "no_warning_in_effect";
@@ -68,7 +70,7 @@ function getWarningTypeIcon(warning){
   if( !warning ){
     return "images/no_warning.png";
   }
-  const config = Meteor.settings.public.notificationConfig[warning.type];
+  const config = Config.notificationConfig[warning.type];
   if(config){
     return config.icon;
   }

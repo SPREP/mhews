@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import {WeatherForecasts} from '../weathers.js';
+import Config from '/imports/config.js';
 
 class WeatherServer {
 
@@ -29,7 +30,7 @@ class WeatherServer {
 
     //  check(forecast.bulletinId, Number);
     check(forecast.issued_at, Date);
-    check(forecast.lang, Match.OneOf(...Meteor.settings.public.languages));
+    check(forecast.lang, Match.OneOf(...Config.languages));
     check(forecast.situation, String);
     check(forecast.forecasts, [{
       district: String,
@@ -44,7 +45,7 @@ class WeatherServer {
   }
 
   updateForecast(bulletin, usedLanguage){
-    Meteor.settings.public.languages.forEach((lang)=>{
+    Config.languages.forEach((lang)=>{
       if( lang == usedLanguage ){
         this.doUpdateForecast(bulletin);
       }

@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
 import WarningFactory from './model/warningFactory.js';
+import Config from '/imports/config.js';
 
 export class WarningCollection extends Mongo.Collection {
 
@@ -60,7 +61,7 @@ export class WarningCollection extends Mongo.Collection {
   getHazardTypes(){
     let hazardTypes = [];
 
-    const config = Meteor.settings.public.notificationConfig;
+    const config = Config.notificationConfig;
     for(let key in config){
       hazardTypes.push(key);
     }

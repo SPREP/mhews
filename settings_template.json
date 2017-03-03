@@ -1,0 +1,8 @@
+{
+  "fcmApiKey": "",
+  "allowedClientIPList": [],
+  "public": {
+    "googleMapsApiKey": "",
+    "topicPrefix" : ""
+  }
+}

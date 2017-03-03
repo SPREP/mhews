@@ -4,7 +4,7 @@
   "scripts": {
     "start": "meteor run --settings=settings.json",
     "start_android": "meteor run android-device --settings=settings.json",
-    "unittest": "meteor test --settings=settings.json --driver-package=practicalmeteor:mocha",
+    "test": "meteor test --settings=settings.json --driver-package=practicalmeteor:mocha",
     "stage_server": "(cd private/deploy_scripts; ./stage_server.sh)",
     "release_server": "(cd private/deploy_scripts; ./release_server.sh)",
     "stage_mobile": "(cd private/deploy_scripts; ./stage_mobile.sh)",

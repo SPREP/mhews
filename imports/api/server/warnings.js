@@ -5,6 +5,7 @@ import ServerUtils from './serverutils.js';
 import Warnings from '../warnings.js';
 import WarningFactory from '../model/warningFactory.js';
 import i18n from 'i18next';
+import Config from '/imports/config.js';
 
 class WarningCollectionServer {
 
@@ -53,7 +54,7 @@ class WarningCollectionServer {
     // This codes are to be removed after the new version of the app is well deployed.
     if( warning.is_exercise ){
 
-      Meteor.settings.public.languages.forEach((lang)=>{
+      Config.languages.forEach((lang)=>{
         warning["description_"+lang] = i18n.t("exercise", {lng: lang}).toUpperCase()+" "+ warning["description_"+lang];
       });
     }

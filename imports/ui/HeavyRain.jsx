@@ -9,6 +9,8 @@ import {createWarningContainer} from './WarningPage.jsx';
 /* i18n */
 import { translate } from 'react-i18next';
 
+import Config from '../config.js';
+
 const Samoa = {
   center: {
     lat: -13.814706,
@@ -77,7 +79,7 @@ class HeavyRainPage extends React.Component {
 
         return(
           <HazardView
-            avatar={Meteor.settings.public.notificationConfig.heavyRain.icon}
+            avatar={Config.notificationConfig.heavyRain.icon}
             headerTitle={t("HeavyRain")+" "+t("level." + heavyRain.level.toLowerCase())}
             headerSubTitle={moment(heavyRain.issued_at).format("YYYY-MM-DD HH:mm")}
             description={heavyRain.description_en}

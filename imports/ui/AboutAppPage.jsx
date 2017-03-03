@@ -1,12 +1,13 @@
 import React from 'react';
 import Link from './Link.jsx';
+import Config from '../config.js';
 
 import './css/App.css';
 
 export default class AboutAppPage extends React.Component {
 
   renderIcon(type){
-    return (<img src={Meteor.settings.public.notificationConfig[type].icon} width="32px" height="32px"/>);
+    return (<img src={Config.notificationConfig[type].icon} width="32px" height="32px"/>);
   }
 
   render(){

@@ -1,7 +1,7 @@
-import {Meteor} from 'meteor/meteor';
 import i18n from 'i18next';
 import {toTitleCase} from '../strutils.js';
 import {sprintf} from 'sprintf-js';
+import Config from '/imports/config.js';
 
 // Warning levels in the significance order.
 const levels = ["information", "advisory", "watch", "warning"];
@@ -16,7 +16,7 @@ export class Warning {
     check(this.level, Match.OneOf(...levels));
     check(this.in_effect, Match.OneOf(true, false));
     check(this.issued_at, Date);
-    Meteor.settings.public.languages.forEach((lang)=>{
+    Config.languages.forEach((lang)=>{
       check(this["description_"+lang], String);
     });
   }
@@ -121,7 +121,7 @@ export class Warning {
       }
     };
 
-    Meteor.settings.public.languages.forEach((lang)=>{
+    Config.languages.forEach((lang)=>{
       fcmMessage.data["description_"+lang] = this["description_"+lang];
     })
 
@@ -137,7 +137,7 @@ export class Warning {
 function soundEffectFile(warning, needsAttention){
   let soundFile;
   if( needsAttention ){
-    soundFile = Meteor.settings.public.notificationConfig[warning.type].sound;
+    soundFile = Config.notificationConfig[warning.type].sound;
   }
 
   return soundFile ? soundFile : "default";

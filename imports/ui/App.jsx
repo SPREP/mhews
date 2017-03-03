@@ -21,22 +21,24 @@ import DrawerMenu from './DrawerMenu.jsx';
 import {quitApp} from '../api/client/appcontrol.js';
 import {toTitleCase} from '../api/strutils.js';
 
+import Config from '../config.js';
+
 import './css/App.css';
 
 /* global navigator */
 
-const topPageName = Meteor.settings.public.topPage;
+const topPageName = Config.topPage;
 
-const surfaceChartUrl = Meteor.settings.public.cacheFiles.surfaceChart;
+const surfaceChartUrl = Config.cacheFiles.surfaceChart;
 
-const satelliteImageUrl = Meteor.settings.public.cacheFiles.satelliteImage;
+const satelliteImageUrl = Config.cacheFiles.satelliteImage;
 
 class AppClass extends React.Component {
 
   constructor(props){
     super(props);
     this.state = {
-      page: Meteor.settings.public.topPage,
+      page: Config.topPage,
       drawerOpen: false,
       dialogOpen: false
     }
@@ -91,7 +93,7 @@ class AppClass extends React.Component {
 
   render(){
     const page = this.state.page;
-    const pageConfig = Meteor.settings.public.pages[page];
+    const pageConfig = Config.pages[page];
     const t = this.props.t;
 
     return (

@@ -6,6 +6,7 @@ import {createWarningContainer} from './WarningPage.jsx';
 
 /* i18n */
 import { translate } from 'react-i18next';
+import Config from '../config.js';
 
 class EarthquakePage extends React.Component {
 
@@ -51,7 +52,7 @@ class EarthquakePage extends React.Component {
 
         return(
           <HazardView
-            avatar={Meteor.settings.public.notificationConfig.earthquake.icon}
+            avatar={Config.notificationConfig.earthquake.icon}
             headerTitle={headerTitle}
             headerSubTitle={subTitle}
             description={description}

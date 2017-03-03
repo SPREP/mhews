@@ -12,9 +12,10 @@ import {PushClient} from '../../api/client/pushclient.js';
 /* This plugin captures the tap event in React. */
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
-import {initRouter, initRouterWithAdminPage} from '../../api/client/route.jsx';
+import {initRouterWithAdminPage} from '../../api/client/route.jsx';
 
 import FileCache from '../../api/client/filecache.js';
+import Config from '/imports/config.js';
 
 let pushClient = null;
 
@@ -97,7 +98,7 @@ function subscribeForCollections(){
 }
 
 function cacheFiles(){
-  const cacheFiles = Meteor.settings.public.cacheFiles;
+  const cacheFiles = Config.cacheFiles;
   for(let key in cacheFiles ){
     const url = cacheFiles[key];
     FileCache.add(url);
@@ -157,7 +158,7 @@ function playSoundEffect(warning, oldWarning){
     return;
   }
 
-  const config = Meteor.settings.public.notificationConfig[warning.type];
+  const config = Config.notificationConfig[warning.type];
   if( !config ){
     console.error("Unknown hazard type "+warning.type);
     return;

@@ -18,6 +18,8 @@ import { translate } from 'react-i18next';
 
 import {getDayOfDate} from '../api/strutils.js';
 
+import Config from '../config.js';
+
 class WeatherSituationImage extends React.Component {
 
   constructor(props){
@@ -61,8 +63,8 @@ class WeatherSituation extends React.Component {
   constructor(props){
     super(props);
     this.imageUrls = [
-      Meteor.settings.public.cacheFiles.surfaceChart,
-      Meteor.settings.public.cacheFiles.satelliteImage
+      Config.cacheFiles.surfaceChart,
+      Config.cacheFiles.satelliteImage
     ]
   }
 

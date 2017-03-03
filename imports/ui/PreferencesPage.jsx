@@ -15,7 +15,9 @@ import {toTitleCase} from '../api/strutils.js';
 /* i18n */
 import { translate } from 'react-i18next';
 
-const districts = Meteor.settings.public.districts;
+import Config from '../config.js';
+
+const districts = Config.districts;
 
 const divStyle = {padding: "8px"};
 
@@ -23,7 +25,7 @@ class PreferencesPage extends React.Component {
 
   formatHeader(keyword){
     const words = [];
-    Meteor.settings.public.languages.forEach((lang)=>{
+    Config.languages.forEach((lang)=>{
       words.push(toTitleCase(this.props.t(keyword, {lng: lang})));
     })
 
@@ -49,7 +51,7 @@ class PreferencesPage extends React.Component {
           <Subheader>{languageHeader}</Subheader>
           <RadioButtonGroup name="language" onChange={(e, v)=>{this.changeLanguage(v)}} defaultSelected={lang}>
             {
-              Meteor.settings.public.languages.map((lang)=>{
+              Config.languages.map((lang)=>{
                 return (
                   <RadioButton
                     key={lang}

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Meteor } from 'meteor/meteor';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -18,6 +17,8 @@ import CopyrightIcon from 'material-ui/svg-icons/action/copyright';
 import InfoOutlineIcon from 'material-ui/svg-icons/action/info-outline';
 import LinkIcon from 'material-ui/svg-icons/content/link';
 
+import Config from '../config.js';
+
 class DrawerMenu extends React.Component {
   constructor(props){
     super(props);
@@ -26,7 +27,7 @@ class DrawerMenu extends React.Component {
   render(){
     console.log("DrawerMenu.render()");
 
-    const menu = Meteor.settings.public.menu;
+    const menu = Config.menu;
     const pages = {
       "topPage" : {
         "component": "TopPage",

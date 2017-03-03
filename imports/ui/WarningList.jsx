@@ -14,6 +14,8 @@ import {WarningCard} from './WarningCard.jsx';
 import ReceptionTracker from '../api/receptionTracker.js';
 import {Preferences} from '../api/client/preferences.js';
 
+import Config from '../config.js';
+
 const noWarningKey = "no_warning_in_effect";
 
 export class WarningList extends React.Component {
@@ -81,7 +83,7 @@ export class WarningList extends React.Component {
 }
 
 function getWarningTypeIcon(type){
-  const config = Meteor.settings.public.notificationConfig[type];
+  const config = Config.notificationConfig[type];
   if(config){
     return config.icon;
   }
