@@ -3,6 +3,6 @@
   "allowedClientIPList": [],
   "public": {
     "googleMapsApiKey": "",
-    "topicPrefix" : ""
+    "topicPrefix" : "my_mhews_app"
   }
 }

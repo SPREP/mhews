@@ -30,11 +30,11 @@ In addition, [Google Firebase Clound Messaging (FCM)](https://firebase.google.co
 1. git clone https://github.com/takeshi4126/mhews.git
 2. cd mhews
 3. meteor npm install
-4. Edit the settings.json to set the FCM and Google Maps API keys
+4. Copy settings_template.json to settings.json, and set the FCM and Google Maps API keys
 5. Connect your Android phone to your PC (The phone must be in the debug mode.)
 6. meteor run android-device --settings=settings.json
 
-The server runs on your PC and the Android phone needs to connect to it. So, your PC and phone must be connected to the same LAN (e.g. connected to the same WiFi AP)
+The server runs on your PC and the Android phone needs to access it. So, your PC and phone must be connected to the same LAN (e.g. connected to the same WiFi AP)
 
 ## File structure
 This project follows the Meteor's recommended file structure. https://guide.meteor.com/structure.html
