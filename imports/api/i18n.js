@@ -5,7 +5,7 @@ const i18nConfig = {
     en: {
       common: {
         "weather": "weather",
-        "climate": "vaitau",
+        "climate": "climate",
         "earthquake": "earthquake",
         "tsunami": "tsunami",
         "cyclone": "cyclone",
@@ -163,7 +163,7 @@ const i18nConfig = {
     ws: {
       common: {
         "weather": "tau",
-        "climate": "climate",
+        "climate": "vaitau",
         "earthquake": "mafui'e",
         "tsunami": "sunami",
         "cyclone": "afa",
