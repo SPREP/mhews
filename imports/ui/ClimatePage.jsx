@@ -1,5 +1,5 @@
 import React from 'react';
-import Link from './Link.jsx';
+import Link from './components/Link.jsx';
 import { createContainer } from 'meteor/react-meteor-data';
 /* i18n */
 import { translate } from 'react-i18next';

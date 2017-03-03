@@ -1,11 +1,11 @@
 import React from 'react';
 import {CardText} from 'material-ui/Card';
-import {Moon} from '../api/moonutils.js';
+import {Moon} from '../../api/moonutils.js';
 import DailyTideTableContainer from './TideTable.jsx';
 import {SmallCard} from './SmallCard.jsx';
 
-import {getWeatherIcon} from '../api/weatherIcons.js';
-import {dateToString} from '../api/strutils.js';
+import {getWeatherIcon} from '../../api/weatherIcons.js';
+import {dateToString} from '../../api/strutils.js';
 
 import './css/Nowcast.css';
 

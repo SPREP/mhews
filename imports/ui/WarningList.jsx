@@ -1,6 +1,5 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import Avatar from 'material-ui/Avatar';
 import Paper from 'material-ui/Paper';
 
 import { createContainer } from 'meteor/react-meteor-data';
@@ -9,14 +8,10 @@ import { createContainer } from 'meteor/react-meteor-data';
 import { translate } from 'react-i18next';
 
 import Warnings from '../api/client/warnings.js';
-import {WarningCard} from './WarningCard.jsx';
+import {WarningCard} from './components/WarningCard.jsx';
 
 import ReceptionTracker from '../api/receptionTracker.js';
 import {Preferences} from '../api/client/preferences.js';
-
-import Config from '../config.js';
-
-const noWarningKey = "no_warning_in_effect";
 
 export class WarningList extends React.Component {
 
@@ -79,34 +74,6 @@ export class WarningList extends React.Component {
 
   getExpanded(warningId){
     return this.state.expandedWarningId == warningId;
-  }
-}
-
-function getWarningTypeIcon(type){
-  const config = Config.notificationConfig[type];
-  if(config){
-    return config.icon;
-  }
-  else if( type == noWarningKey ){
-    return "images/no_warning.png";
-  }
-  else{
-    return "images/warning.png";
-  }
-}
-
-function getCapitalLetter(string){
-  return string.slice(0,0);
-}
-
-function renderAvatar(warning){
-  const avatarImage = getWarningTypeIcon(warning ? warning.type : noWarningKey );
-
-  if( avatarImage ){
-    return (<Avatar src={avatarImage}></Avatar>);
-  }
-  else {
-    return (<Avatar>{getCapitalLetter(warning.type)}</Avatar>)
   }
 }
 

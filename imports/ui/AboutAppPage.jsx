@@ -1,5 +1,5 @@
 import React from 'react';
-import Link from './Link.jsx';
+import Link from './components/Link.jsx';
 import Config from '../config.js';
 
 import './css/App.css';

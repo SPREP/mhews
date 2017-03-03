@@ -1,7 +1,7 @@
 import React from 'react';
-import HazardView from './HazardView.jsx';
+import HazardView from './components/HazardView.jsx';
 
-import {createWarningContainer} from './WarningPage.jsx';
+import {createWarningContainer} from './components/warningContainer.js';
 
 /* i18n */
 import { translate } from 'react-i18next';

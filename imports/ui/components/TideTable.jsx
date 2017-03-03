@@ -3,7 +3,7 @@ import { createContainer } from 'meteor/react-meteor-data';
 /* i18n */
 import { translate } from 'react-i18next';
 
-import {TideTableCollection} from '../api/tidetable.js';
+import {TideTableCollection} from '../../api/tidetable.js';
 
 import './css/TideTable.css';
 

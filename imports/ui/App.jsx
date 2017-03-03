@@ -16,8 +16,8 @@ import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import WeatherForecasts from '../api/client/weather.js';
 import FileCache from '../api/client/filecache.js';
 
-import ConnectionStatusIndicatorContainer from './ConnectionStatusIndicator.jsx';
-import DrawerMenu from './DrawerMenu.jsx';
+import ConnectionStatusIndicatorContainer from './components/ConnectionStatusIndicator.jsx';
+import DrawerMenu from './components/DrawerMenu.jsx';
 import {quitApp} from '../api/client/appcontrol.js';
 import {toTitleCase} from '../api/strutils.js';
 

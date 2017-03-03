@@ -1,7 +1,6 @@
 import React from 'react';
 import WarningListContainer from './WarningList.jsx';
-//import {WeatherPage, WeatherMenuTile} from './Weather.jsx';
-import WeatherPageContainer from './Weather.jsx';
+import WeatherPageContainer from './WeatherPage.jsx';
 
 const TopPage = (props)=> {
   return (

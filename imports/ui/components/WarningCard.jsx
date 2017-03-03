@@ -4,7 +4,7 @@ import browserHistory from 'react-router/lib/browserHistory';
 
 import Paper from 'material-ui/Paper';
 
-import Config from '../config.js';
+import Config from '/imports/config.js';
 
 import './css/WarningCard.css';
 

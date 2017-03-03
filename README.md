@@ -37,7 +37,7 @@ In addition, [Google Firebase Clound Messaging (FCM)](https://firebase.google.co
 The server runs on your PC and the Android phone needs to access it. So, your PC and phone must be connected to the same LAN (e.g. connected to the same WiFi AP)
 
 ## File structure
-This project follows the Meteor's recommended file structure. https://guide.meteor.com/structure.html
+This project tries to follow the Meteor's recommended file structure. https://guide.meteor.com/structure.html
 
 - client: Contains the main.js as the client application's entry point.
 - server: Contains the main.js as the server application's entry point.
@@ -47,11 +47,14 @@ This project follows the Meteor's recommended file structure. https://guide.mete
     - server: Server-only code
     - model: Contains some entity classes like weather, warning, etc.
   - startup: Startup code for client and server.
-  - ui: Contains the Reactjs UI code
+  - ui: Contains the pages referred to by the React router.
+    - components: Contains the UI components used by the pages.
 - public: Image files and sound files to be rendered by the clients.
 - private: Files in this directory are not exposed to the clients.
 
 ## Development
+Please feel free to fork the repository and create your own app.
+
 If you use Meteor and Reactjs for the first time, it is highly recommended to go through the tutorials.
 - Reactjs tutorial: https://facebook.github.io/react/tutorial/tutorial.html
 - Meteor tutorial (React version): https://www.meteor.com/tutorials/react/creating-an-app

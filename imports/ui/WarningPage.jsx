@@ -1,11 +1,10 @@
 import React from 'react';
-import HazardMap from './HazardMap.jsx';
+import HazardMap from './components/HazardMap.jsx';
 import * as GeoUtils from '../api/geoutils.js';
 import * as HazardArea from '../api/hazardArea.js';
-import HazardView from './HazardView.jsx';
-import Warnings from '../api/client/warnings.js';
+import HazardView from './components/HazardView.jsx';
 
-import {createContainer} from 'meteor/react-meteor-data';
+import {createWarningContainer} from './components/warningContainer.js';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -123,17 +122,6 @@ WarningPage.propTypes = {
   onExpandChange: React.PropTypes.func,
   expanded: React.PropTypes.bool
 
-}
-
-export function createWarningContainer(warningPage){
-  return createContainer(({params})=>{
-    const id = params.id;
-
-    return {
-      phenomena: Warnings.findOne({"_id": id}),
-      expanded: true
-    }
-  }, warningPage);
 }
 
 const WarningPageContainer = createWarningContainer(WarningPage);

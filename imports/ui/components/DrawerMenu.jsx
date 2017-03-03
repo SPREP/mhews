@@ -17,7 +17,7 @@ import CopyrightIcon from 'material-ui/svg-icons/action/copyright';
 import InfoOutlineIcon from 'material-ui/svg-icons/action/info-outline';
 import LinkIcon from 'material-ui/svg-icons/content/link';
 
-import Config from '../config.js';
+import Config from '/imports/config.js';
 
 class DrawerMenu extends React.Component {
   constructor(props){

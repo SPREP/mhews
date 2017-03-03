@@ -1,10 +1,10 @@
 import React from 'react';
-import HazardMap from './HazardMap.jsx';
+import HazardMap from './components/HazardMap.jsx';
 import * as GeoUtils from '../api/geoutils.js';
 import * as HazardArea from '../api/hazardArea.js';
-import HazardView from './HazardView.jsx';
+import HazardView from './components/HazardView.jsx';
 
-import {createWarningContainer} from './WarningPage.jsx';
+import {createWarningContainer} from './components/warningContainer.js';
 
 /* i18n */
 import { translate } from 'react-i18next';

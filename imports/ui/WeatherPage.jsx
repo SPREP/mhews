@@ -10,8 +10,8 @@ import {Town} from '../api/towninfo.js';
 
 import {getWeatherIcon, selectPredominantWeatherSymbol} from '../api/weatherIcons.js';
 import SunCalc from 'suncalc';
-import {SmallCard} from './SmallCard.jsx';
-import {Nowcast} from './Nowcast.jsx';
+import {SmallCard} from './components/SmallCard.jsx';
+import {Nowcast} from './components/Nowcast.jsx';
 
 /* i18n */
 import { translate } from 'react-i18next';
