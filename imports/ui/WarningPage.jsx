@@ -24,18 +24,6 @@ const Samoa = {
 
 class WarningPage extends React.Component {
 
-  validatePhenomena(phenomena){
-    if( !phenomena.area ){
-      console.error("area is not defined");
-      return false;
-    }
-    if( !phenomena.level ){
-      console.error("level is not defined");
-      return false;
-    }
-    return true;
-  }
-
   render(){
     const t = this.props.t;
 
@@ -49,59 +37,49 @@ class WarningPage extends React.Component {
 
       let warning = this.props.phenomena;
 
-      if( this.validatePhenomena(warning)){
-        const longestDiagonal = GeoUtils.getLongestDiagonal(Samoa.area);
-        this.zoom = GeoUtils.getZoomLevel(longestDiagonal);
+      const longestDiagonal = GeoUtils.getLongestDiagonal(Samoa.area);
+      this.zoom = GeoUtils.getZoomLevel(longestDiagonal);
 
-        const onCancelCallback = this.props.isAdmin ? ()=>{this.props.cancelWarning(warning.type, warning.bulletinId)} : undefined;
-        const hazardAreas = HazardArea.findAreas(warning.area, warning.direction);
-        const circles = [];
-        const polygons = [];
-        const color = this.getWarningColor();
+      const onCancelCallback = this.props.isAdmin ? ()=>{this.props.cancelWarning(warning.type, warning.bulletinId)} : undefined;
+      const hazardAreas = HazardArea.findAreas(warning.area, warning.direction);
+      const circles = [];
+      const polygons = [];
+      const color = this.getWarningColor();
 
-        hazardAreas.forEach((hazardArea) =>{
-          if( hazardArea.shape == HazardArea.Shape.polygon ){
-            polygons.push({
-              path: hazardArea.vertices,
-              color: color
-            });
-          }
-          else if( hazardArea.shape == HazardArea.Shape.circle ){
-            circles.push({
-              center: hazardArea.center,
-              radius: hazardArea.radius,
-              color: color
-            });
-          }
-        });
+      hazardAreas.forEach((hazardArea) =>{
+        if( hazardArea.shape == HazardArea.Shape.polygon ){
+          polygons.push({
+            path: hazardArea.vertices,
+            color: color
+          });
+        }
+        else if( hazardArea.shape == HazardArea.Shape.circle ){
+          circles.push({
+            center: hazardArea.center,
+            radius: hazardArea.radius,
+            color: color
+          });
+        }
+      });
 
-        return(
-          <HazardView
-            headerTitle={warning.getHeaderTitle(t)}
-            headerSubTitle={warning.getSubTitle(t)}
-            description={warning.getDescription()}
-            onCancel={onCancelCallback}
-            level={warning.level}
-            onExpandChange={this.props.onExpandChange}
-            expanded={this.props.expanded}
-            warning={warning}>
-            <HazardMap
-              mapCenter={Samoa.center}
-              zoom={this.zoom}
-              circles={circles}
-              polygons={polygons}>
-            </HazardMap>
-          </HazardView>
-        );
-      }
-      else{
-        console.error("Unexpected warning object "+JSON.stringify(warning));
-        // FIXME This case should return as much warning information as possible.
-        return(
-          <p>{t("no_data_to_display")}</p>
-        );
-
-      }
+      return(
+        <HazardView
+          headerTitle={warning.getHeaderTitle(t)}
+          headerSubTitle={warning.getSubTitle(t)}
+          description={warning.getDescription()}
+          onCancel={onCancelCallback}
+          level={warning.level}
+          onExpandChange={this.props.onExpandChange}
+          expanded={this.props.expanded}
+          warning={warning}>
+          <HazardMap
+            mapCenter={Samoa.center}
+            zoom={this.zoom}
+            circles={circles}
+            polygons={polygons}>
+          </HazardMap>
+        </HazardView>
+      );
     }
   }
 

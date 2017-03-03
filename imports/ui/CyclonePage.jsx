@@ -16,10 +16,6 @@ import Config from '../config.js';
 
 class CyclonePage extends React.Component {
 
-  validatePhenomena(){
-    return true;
-  }
-
   render(){
     if( !this.props.phenomena ){
       return <p>{"No cyclone information"}</p>
