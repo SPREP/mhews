@@ -13,7 +13,6 @@ export class Warning {
 
   check(){
     check(this.bulletinId, Number);
-//    check(warning.type, Match.Where(checkWarningType));
     check(this.level, Match.OneOf(...levels));
     check(this.in_effect, Match.OneOf(true, false));
     check(this.issued_at, Date);
@@ -83,4 +82,63 @@ export class Warning {
     return needsAttention;
   }
 
+  toPushMessage(needsAttention){
+    const fcmMessage = this.toFcmMessage();
+    fcmMessage.notification.sound = soundEffectFile(this, needsAttention);
+    return fcmMessage;
+  }
+
+  // Subclass can override this method to customize the fcm message properties.
+  // In case of overriding, the subclass must call the superclass's toFcmMessage() method,
+  // update and return the fcmMessage returned by the superclass's method.
+  toFcmMessage(){
+    let title = this.type + " " + this.level;
+    if( this.is_exercise == undefined ){
+      this.is_exercise = false;
+    }
+    if( this.is_exercise ){
+      title = "exercise".toUpperCase() + " " + title;
+    }
+
+    // Destination topics are set by the send function. Don't set "to" here.
+    // "click_action" is needed for cordova-plugin-fcm. However, setting it will prevent
+    // the app launch from tapping the notification if cordova-plugin-firebase is used.
+    //
+    // notification.body must be set by a subclass.
+    const fcmMessage = {
+      "priority": "high",
+      "notification" : {
+        "title" : title,
+        "icon" : "myicon"
+      },
+      "data" : {
+        "type": this.type,
+        "level": this.level,
+        "bulletinId": this.bulletinId,
+        "in_effect": this.in_effect,
+        "is_exercise": this.is_exercise,
+        "issued_at": this.issued_at
+      }
+    };
+
+    Meteor.settings.public.languages.forEach((lang)=>{
+      fcmMessage.data["description_"+lang] = this["description_"+lang];
+    })
+
+    if( !this.in_effect ){
+      fcmMessage.notification.title = "Cancel "+title;
+    }
+
+    return fcmMessage;
+
+  }
+}
+
+function soundEffectFile(warning, needsAttention){
+  let soundFile;
+  if( needsAttention ){
+    soundFile = Meteor.settings.public.notificationConfig[warning.type].sound;
+  }
+
+  return soundFile ? soundFile : "default";
 }

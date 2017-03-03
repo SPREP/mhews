@@ -21,30 +21,6 @@ import AdminDashboard from '../../ui/admin/AdminDashboard.jsx';
 import WeatherDayIconMatrix from '../../ui/admin/WeatherDayIconMatrix.jsx';
 
 // Initialize the React Router that takes care of the display transition.
-export function initRouter(){
-
-  render(
-    <Router history={ browserHistory }>
-      <Route path="/" component={AppTemplate}>
-      <Route path="app" component={App} >
-        <Route path="about" component={AboutAppPage} />
-        <Route path="usage" component={UsagePage} />
-        <Route path="settings" component={PreferencesPage} />
-        <Route path="earthquake/:id" component={EarthquakePage} />
-        <Route path="tsunami/:id" component={EarthquakePage} />
-        <Route path="heavyRain/:id" component={WarningPage} />
-        <Route path="cyclone/:id" component={CyclonePage} />
-        <Route path="*/:id" component={WarningPage} />
-        <Route path="climate" component={ClimatePage} />
-        <IndexRoute component={TopPage} />
-      </Route>
-      <IndexRedirect to="/app" />
-    </Route>
-  </Router>
-  , document.getElementById('render-target'));
-}
-
-// Initialize the React Router that takes care of the display transition.
 export function initRouterWithAdminPage(){
 
   render(

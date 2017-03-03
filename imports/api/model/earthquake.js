@@ -50,11 +50,29 @@ export class Earthquake extends Warning {
   isSameEvent(another){
     return isTimeClose(this.date_time, another.date_time) && isLocationClose(this.epicenter, another.epicenter);
   }
+
+  toFcmMessage(){
+    const fcmMessage = super.toFcmMessage();
+    const mw = this.mw;
+    fcmMessage.notification.body = this.region + " (Magnitude "+mw+")";
+    fcmMessage.data.epicenter_lat = this.epicenter.lat;
+    fcmMessage.data.epicenter_lng = this.epicenter.lng;
+    fcmMessage.data.mw = mw;
+    fcmMessage.data.depth = this.epicenter.depth;
+
+    // warning.area and warning.direction are not defined for Tsunami warning.
+    if( !this.area ){
+      fcmMessage.area = "Samoa";
+    }
+    if( !this.direction ){
+      fcmMessage.direction = "Whole Area";
+    }
+    return fcmMessage;
+  }
 }
 
 function isTimeClose(time1, time2){
-
-  return moment(time1).diff(moment(time2), 'seconds') < 60;
+  return Math.abs(moment(time1).diff(moment(time2), 'seconds')) < 60;
 }
 
 // Consider it close enough if the distance within 50km.

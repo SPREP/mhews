@@ -74,7 +74,7 @@ function extractDaytimeSymbols(symbols){
   const daytimeSymbols = [];
   symbols.forEach((symbol, index)=>{
     const startTime = index * hoursPerSymbol;
-    if( startTime >= 6 && startTime < 18 ){
+    if( startTime >= 6 && startTime < 21 ){
       daytimeSymbols.push(symbol);
     }
   })

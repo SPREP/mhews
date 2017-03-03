@@ -29,12 +29,7 @@ Meteor.startup(()=>{
 
   // Call this function after the initTapEventPlugin().
   // Otherwise, some material-ui components won't work.
-  if( Meteor.settings.public.withAdminDashboard ){
-    initRouterWithAdminPage();
-  }
-  else{
-    initRouter();
-  }
+  initRouterWithAdminPage();
 });
 
 // Initializations that can be deferred after the GUI is rendered.

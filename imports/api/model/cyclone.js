@@ -55,4 +55,12 @@ export class Cyclone extends Warning {
   isSameEvent(another){
     return this.area == another.area && this.direction == another.direction;
   }
+
+  toFcmMessage(){
+    const fcmMessage = super.toFcmMessage();
+    fcmMessage.notification.body = this.area + (this.direction ? " " + this.direction : "");
+    fcmMessage.data.name = this.name; // Name of the TC
+    fcmMessage.data.category = this.category;
+    return fcmMessage;
+  }
 }

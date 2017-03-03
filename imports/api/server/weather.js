@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
-import {isClientIpAllowed} from './serverutils.js';
 import {WeatherForecasts} from '../weathers.js';
 
 class WeatherServer {
@@ -10,6 +9,7 @@ class WeatherServer {
     // this reference to the collection is needed for calling the "allow" method.
     this.collection = collection;
     this.publish = this.publish.bind(this);
+    this.updateForecast = this.updateForecast.bind(this);
   }
 
   start(){
@@ -22,24 +22,11 @@ class WeatherServer {
         limit: 3
       });
     });
-
-    // Allow the admin dashboard web client to insert and update into the collection directly.
-    // If this is allowed, appropriate protection for anonymous to update the weather forecasts
-    // must be implemented.
-    if( Meteor.settings.public.withAdminDashboard ){
-      // this.allow() does not work for some reason, so use this.collection.allow()
-      this.collection.allow({
-        update: (_userId, _doc)=>{
-          return true;
-        }
-      });
-    }
   }
 
   publish(forecast){
     console.log("Enter publishWeatherForecast.");
 
-    check(this.connection, Match.Where(isClientIpAllowed));
     //  check(forecast.bulletinId, Number);
     check(forecast.issued_at, Date);
     check(forecast.lang, Match.OneOf(...Meteor.settings.public.languages));
@@ -56,6 +43,69 @@ class WeatherServer {
     return this.insert(forecast);
   }
 
+  updateForecast(bulletin, usedLanguage){
+    Meteor.settings.public.languages.forEach((lang)=>{
+      if( lang == usedLanguage ){
+        this.doUpdateForecast(bulletin);
+      }
+      else{
+        const bulletinForLang = findBulletinForLang(bulletin, lang);
+        if( bulletinForLang ){
+          copyWeatherSymbols(bulletin, bulletinForLang);
+          this.doUpdateForecast(bulletinForLang);
+        }
+        else{
+          console.warn("There is no Samoan bulletin for "+bulletin.issued_at+" "+bulletin.name);
+        }
+
+      }
+    })
+  }
+
+  doUpdateForecast(bulletin){
+    this.update(
+      {_id: bulletin._id},
+      {"$set": {forecasts: bulletin.forecasts, in_effect: true}}
+    );
+  }
 }
+
+function copyWeatherSymbols(bulletin, bulletinSamoan){
+  const forecastsSamoan = bulletinSamoan.forecasts;
+  bulletin.forecasts.forEach((forecast)=>{
+    const forecastSamoan = findInArray(forecastsSamoan, (element)=>{
+      return (element.district == forecast.district) &&
+      (moment(element.date).isSame(forecast.date));
+    });
+    if( forecastSamoan ){
+      forecastSamoan.weatherSymbols = forecast.weatherSymbols;
+    }
+    else{
+      console.warn("There is no forecast for "+forecast.district+" "+forecast.date);
+    }
+  });
+
+}
+
+function findInArray(array, condition){
+  for(let i= 0; i< array.length; i++){
+    const element = array[i];
+    if( condition(element) ) return element;
+  }
+
+  return null;
+}
+
+function findBulletinForLang(bulletin, lang){
+
+  return WeatherForecasts.findOne(
+    {
+      name: bulletin.name,
+      issued_at: bulletin.issued_at,
+      lang: lang
+    }
+  );
+}
+
 
 export default new WeatherServer(WeatherForecasts);

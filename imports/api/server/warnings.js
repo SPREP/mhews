@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 import { check } from 'meteor/check';
-import {isClientIpAllowed} from './serverutils.js';
+import ServerUtils from './serverutils.js';
 import Warnings from '../warnings.js';
 import WarningFactory from '../model/warningFactory.js';
 import i18n from 'i18next';
@@ -43,7 +43,7 @@ class WarningCollectionServer {
   publishWarning(warning){
     console.log("Enter publishWarning");
 
-    check(this.connection, Match.Where(isClientIpAllowed));
+    check(this.connection, Match.Where(ServerUtils.isClientIpAllowed));
 
     warning = WarningFactory.create(warning);
     warning.check();

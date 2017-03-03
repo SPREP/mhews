@@ -178,7 +178,7 @@ class WeatherDayIconMatrixPage extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = {updateSaved: false};
+    this.state = {updateSaved: false, updateFailed: false};
     this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
 
   }
@@ -203,8 +203,8 @@ class WeatherDayIconMatrixPage extends React.Component {
           }}
         />
         <Snackbar
-          open={this.state.updateSaved}
-          message="Updated the weather icons"
+          open={this.state.updateSaved || this.state.updateFailed}
+          message={this.state.updateFailed ? "Failed to update the weather icons": "Updated the weather icons"}
           autoHideDuration={4000}
           onRequestClose={this.handleSnackbarClose}
         />
@@ -215,16 +215,25 @@ class WeatherDayIconMatrixPage extends React.Component {
 
   handleSnackbarClose(){
     this.setState({
-      updateSaved: false
+      updateSaved: false,
+      updateFailed: false
     })
   }
 
 
   updateForecasts(){
-    updateForecast(this.props.bulletin, lang);
-    this.setState({
-      updateSaved: true
-    })
+    updateForecast(this.props.bulletin, lang, (err)=>{
+      if( err ){
+        this.setState({
+          updateFailed: true
+        })
+      }
+      else{
+        this.setState({
+          updateSaved: true
+        })
+      }
+    });
   }
 }
 

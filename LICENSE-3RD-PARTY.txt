@@ -22,6 +22,8 @@ This software uses the following 3rd party software.
 - request: Apache License version 2.0, https://github.com/request/request/blob/master/LICENSE
 - suncalc: a proprietary license, https://github.com/mourner/suncalc/blob/master/LICENSE
 - sprintfjs: BSD license, https://github.com/alexei/sprintf.js
+- node-ip: MIT License, https://github.com/indutny/node-ip
+- lodash: MIT License, https://raw.githubusercontent.com/lodash/lodash/4.17.4/LICENSE
 
 [3rd party images]
 

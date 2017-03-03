@@ -6,6 +6,7 @@ import WeatherServer from '../../api/server/weather.js';
 import TideTableServer from '../../api/server/tidetable.js';
 import PushServer from '../../api/server/pushserver.js';
 import ReceptionTrackerServer from '../../api/server/receptionTracker.js';
+import ServerUtils from '../../api/server/serverutils.js';
 
 /* i18n */
 import i18nConfig from '../../api/i18n.js';
@@ -13,9 +14,7 @@ import i18n from 'i18next';
 
 Meteor.startup(() => {
 
-  if( Meteor.settings.public.withAdminDashboard ){
-    exposeRemoteMethods();
-  }
+  exposeRemoteMethods();
 
   i18n.init(i18nConfig);
 
@@ -30,10 +29,22 @@ Meteor.startup(() => {
 function exposeRemoteMethods(){
 
   Meteor.methods({
-    publishWeatherForecast: WeatherServer.publish,
-    publishWarning: WarningServer.publishWarning,
-    cancelWarning: WarningServer.cancelWarning,
-    publishBulletin: CycloneBulletinsServer.publishBulletin,
-    cancelBulletin: CycloneBulletinsServer.cancelBulletin
+    publishWeatherForecast: adminAccess(WeatherServer.publish),
+    updateWeatherForecast: adminAccess(WeatherServer.updateForecast),
+    publishWarning: adminAccess(WarningServer.publishWarning),
+    cancelWarning: adminAccess(WarningServer.cancelWarning),
+    publishBulletin: adminAccess(CycloneBulletinsServer.publishBulletin),
+    cancelBulletin: adminAccess(CycloneBulletinsServer.cancelBulletin)
   });
+}
+
+function adminAccess(func){
+  // Don't use the arrow syntax here. Reference to the this.connection will be lost.
+  return function(...args){
+    if( !ServerUtils.isClientIpAllowed(this.connection)){
+      console.error("Access by "+this.connection.clientAddress+" was rejected.");
+      throw Error("Request refused. See the server log.");
+    }
+    func(...args)
+  };
 }

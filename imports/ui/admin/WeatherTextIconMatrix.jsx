@@ -7,6 +7,7 @@ import {WeatherForecasts} from '../../api/weathers.js';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
+import Snackbar from 'material-ui/Snackbar';
 
 import { createContainer } from 'meteor/react-meteor-data';
 import browserHistory from 'react-router/lib/browserHistory';
@@ -138,7 +139,8 @@ class WeatherTextIconMatrixPage extends React.Component {
     this.weatherSymbols = {};
     this.state = {
       selectedDate: null,
-      onClickCount: 0
+      onClickCount: 0,
+      updateFailed: false
     }
 
   }
@@ -185,9 +187,16 @@ class WeatherTextIconMatrixPage extends React.Component {
           style={{margin: 12}}
           onTouchTap={()=>{
             this.updateForecasts();
-            this.openDayIconMatrixPage(this.forecastBulletin);
+            if( !this.state.updateFailed ){
+              this.openDayIconMatrixPage(this.forecastBulletin);
+            }
           }}
         />
+        <Snackbar
+          open={this.state.updateFailed}
+          message="Failed to update the weather icons"
+        />
+
       </div>
     );
   }
@@ -206,7 +215,11 @@ class WeatherTextIconMatrixPage extends React.Component {
       }
     });
 
-    updateForecast(bulletin, lang);
+    updateForecast(bulletin, lang, (err)=>{
+      if( err ){
+        this.setState({updateFailed: true});
+      }
+    });
   }
 
   openDayIconMatrixPage(bulletin){
