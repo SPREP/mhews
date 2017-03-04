@@ -9,14 +9,14 @@ import ReceptionTrackerServer from '../../api/server/receptionTracker.js';
 import ServerUtils from '../../api/server/serverutils.js';
 
 /* i18n */
-import i18nConfig from '../../api/i18n.js';
-import i18n from 'i18next';
+
+import i18n from '../../api/i18n.js';
 
 Meteor.startup(() => {
 
   exposeRemoteMethods();
 
-  i18n.init(i18nConfig);
+  i18n.init();
 
   CycloneBulletinsServer.start();
   WarningServer.start();

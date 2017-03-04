@@ -68,6 +68,7 @@ This project tries to follow the Meteor's recommended file structure. https://gu
     - components: Contains the UI components used by the pages.
 - public: Image files and sound files to be rendered by the clients.
 - private: Files in this directory are not exposed to the clients.
+- locales: Dictionary files. One for each language to be supported.
 
 ## Development
 Please feel free to fork the repository and create your own app.
@@ -77,9 +78,8 @@ If you use Meteor and Reactjs for the first time, it is highly recommended to go
 - Meteor tutorial (React version): https://www.meteor.com/tutorials/react/creating-an-app
 
 ### Change the language
-i18n.js file under the api directory is the dictionary.
-Please change the "ws" part of the file to your language.
-setting.json contains the attribute called "languages" and your language must be added there, too.
+1. Under the locale directory, copy the en.common.js file for your language (e.g. ja.common.js for Japanese) and edit the contents. The first part of the file name represents the language code. It doesn't have to be two digits as far as it is unique.
+2. Add the language code to the "language" property of config.js
 
 ### Test
 Test cases are written by using [mocha](https://mochajs.org/), [chai](http://chaijs.com/), and [sinon](http://sinonjs.org/). Test cases are named like "xxx.test.js" where "xxx" part is the name of the file to be tested. Existing test cases can be run by the command below:

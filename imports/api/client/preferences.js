@@ -45,6 +45,15 @@ class PreferencesClass {
   isLoaded(){
     return this.loaded.get();
   }
+
+  onChange(key, callback){
+    // Tracker to change the i18n setting when the language preference is changed.
+    Tracker.autorun(()=>{
+      callback(Preferences.load(key));
+    });
+
+  }
+
 }
 
 export const Preferences = new PreferencesClass();

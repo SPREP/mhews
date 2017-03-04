@@ -4,8 +4,7 @@ import {playSound} from '../../api/client/mediautils.js';
 import ReceptionTracker from '../../api/receptionTracker.js';
 
 /* i18n */
-import i18nConfig from '../../api/i18n.js';
-import i18n from 'i18next';
+import i18n from '../../api/i18n.js';
 
 import {PushClient} from '../../api/client/pushclient.js';
 
@@ -24,8 +23,9 @@ let pushClient = null;
 Meteor.startup(()=>{
 
   // These initializations are needed before rendering GUI.
-  i18n.init(i18nConfig);
-  starti18nTracker();
+  i18n.init();
+  Preferences.onChange("language", i18n.changeLanguage);
+
   initTapEventPlugin();
 
   // Call this function after the initTapEventPlugin().
@@ -134,19 +134,6 @@ function startWarningObserver(){
     });
 
   })
-}
-
-function starti18nTracker(){
-
-  // Tracker to change the i18n setting when the language preference is changed.
-  Tracker.autorun(()=>{
-    i18n.changeLanguage(Preferences.load("language"), (error, _t) => {
-      if( error ){
-        console.error(error);
-      }
-    })
-  });
-
 }
 
 // Enqueue the sound effect to avoid multiple sound files are played
