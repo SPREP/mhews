@@ -13,13 +13,14 @@ cache:
     - node_modules
 before_script:
   - meteor npm install
-  - npm install -g spacejam
+  - meteor add dispatch:mocha
 script:
   - date
-  - spacejam test --coverage 'out_lcovonly out_coverage out_html' --driver-package practicalmeteor:mocha-console-runner
+  - meteor test --once --driver-package dispatch:mocha
 addons:
     code_climate:
         repo_token: 67cabf430516e7b78e7be6a5c4f642bb76c8f54387fd1de9e30bf3472b178092
 after_success:
   - npm install -g codeclimate-test-reporter
-  - codeclimate-test-reporter < .coverage/lcov.info
+  - codeclimate-test-reporter < lcov.info
+  
