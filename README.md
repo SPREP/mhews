@@ -1,21 +1,23 @@
 # MHEWS (Multi Hazard Early Warning System)
-
-This README file is still under drafting and thus does not provide enough information to use the code in this repository. Work in progress.
+[![Build Status](https://travis-ci.org/takeshi4126/mhews.svg?branch=master)](https://travis-ci.org/takeshi4126/mhews)
+[![Code Climate](https://codeclimate.com/github/takeshi4126/mhews/badges/gpa.svg)](https://codeclimate.com/github/takeshi4126/mhews)
+[![Test Coverage](https://codeclimate.com/github/takeshi4126/mhews/badges/coverage.svg)](https://codeclimate.com/github/takeshi4126/mhews/coverage)
+[![Dependency Status](https://gemnasium.com/badges/github.com/takeshi4126/mhews.svg)](https://gemnasium.com/github.com/takeshi4126/mhews)
 
 ## Introduction
-This repository contains the smartphone app to deliver weather information and hazard early warnings. It was developed for the [Samoa Meteorology Division](http://www.samet.gov.ws/) to deliver the information and alerts to the people in Samoa. We decided to make it open-source, because the app or a part of it may be useful for weather offices in other countries.
+This repository contains the code of the smartphone app to deliver weather information and hazard early warnings. It was developed for the [Samoa Meteorology Division](http://www.samet.gov.ws/) to deliver the information and alerts to the people in Samoa. We decided to make it open-source, because the app or a part of it may be useful for weather offices in other countries.
 
 The app was developed by using [Meteor](https://www.meteor.com/) (with [Apache Cordova](https://cordova.apache.org/) plugins) and [Reactjs](https://facebook.github.io/react/) as the main platforms.
 Meteor is a full-stack framework for building Javascript application, both the server and clients.
 By using the Cordova plugin the client side of the app can run on smartphones.
-Reactjs is a declarative UI library.
+Reactjs is a declarative UI library to make the UI development easy and keep the code clean.
 
 ## Screenshots of the app
 Please find them on the [Google Play](https://play.google.com/store/apps/details?id=ws.gov.samet.mhews)
 
 ## System overview
-The weather information and warnings are delivered by using the Meteor's Collection and Publish Subscribe mechanism while the app is running in front. Please read the Meteor's documents and guides to understand these mechanisms.
-In addition, [Google Firebase Clound Messaging (FCM)](https://firebase.google.com/docs/cloud-messaging/) is used for delivering hazard early warnings while the app is running in the background or is closed.
+The weather information and warnings are pushed to the smartphones by using the Meteor's Collection and Publish Subscribe mechanism while the app is running in front. Please read the Meteor's documents and guides to understand these mechanisms.
+In addition, [Google Firebase Clound Messaging (FCM)](https://firebase.google.com/docs/cloud-messaging/) is used for disseminating hazard early warnings while the app is running in the background or is closed.
 
 ![System overview](https://github.com/takeshi4126/mhews/wiki/images/MHEWS_system_overview.png)
 
@@ -26,7 +28,7 @@ In addition, [Google Firebase Clound Messaging (FCM)](https://firebase.google.co
 - Google Maps API key https://developers.google.com/maps/
 
 ## How to run the app
-The first step is to run the app in your PC.
+The first step is to run the app in your development PC.
 
 1. git clone https://github.com/takeshi4126/mhews.git
 2. cd mhews
@@ -35,23 +37,23 @@ The first step is to run the app in your PC.
 5. Connect your Android phone to your PC (The phone must be in the debug mode.)
 6. meteor run android-device --settings=settings.json
 
-The server runs on your PC and the Android phone needs to access it. So, your PC and phone must be connected to the same LAN (e.g. connected to the same WiFi AP)
+The server runs on your PC and the Android phone needs to access it. So, your PC and phone must be connected to the same LAN (e.g. connect both to the same WiFi router).
 
 Also, you can access http://localhost:3000 to see the app in your PC's browser.
 
 ## How to deploy the app
 
-The brief instruction for deploying the app is described below for server and client. For simplicity, shell scripts are prepared under private/deploy_scripts directory.
+The brief instruction for deploying the app to a server and client is described below. For simplicity, shell scripts are prepared under private/deploy_scripts directory.
 
 Please read the Meteor's [Mobile guide](https://guide.meteor.com/mobile.html) for further details.
 
 ### Server
 
-The server part of the app is deployed by using the [Meteor Up (mup)](https://github.com/zodern/meteor-up) tool. mup creates a docker container for running the server part of the app, and deploy the docker container to the server machine, according to the configuration file mup.js. Read the document of the mup project for further details. You must prepare the mup.js by yourself as it depends on your environment.
+The server part of the app is deployed by using the [Meteor Up (mup)](https://github.com/zodern/meteor-up) tool. mup creates a docker container for running the server part of the app, and deploy the docker container to the server machine, according to the configuration file mup.js. Read the document of the mup project for further details. You must prepare the mup.js file by yourself as the content depends on your environment.
 
 ### Client
 
-meteor build command creates the apk file. The apk file should be signed by using the keytool. And then, the signed apk file can be installed into your phone by using adb command. The signed apk file can also be uploaded to the Google Play so that your users can downloaded it.
+meteor build command creates the apk file. The apk file should be signed by using the keytool and jarsigner. And then, the signed apk file can be installed into your phone by using adb command. The signed apk file can also be uploaded to the Google Play so that your users can downloaded it.
 
 ## File structure
 This project tries to follow the Meteor's recommended file structure. https://guide.meteor.com/structure.html
