@@ -12,10 +12,10 @@ cache:
 before_script:
   - meteor npm install
   - meteor add dispatch:mocha
-  - npm i --save-dev selenium-webdriver@3.0.0-beta-2 chromedriver
+  - npm i --save-dev nightmare
 script:
   - date
-  - TEST_BROWSER_DRIVER=chrome meteor test --once --driver-package dispatch:mocha
+  - TEST_BROWSER_DRIVER=nightmare meteor test --once --driver-package dispatch:mocha
 addons:
     code_climate:
         repo_token: 67cabf430516e7b78e7be6a5c4f642bb76c8f54387fd1de9e30bf3472b178092
