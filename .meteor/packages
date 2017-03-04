@@ -28,3 +28,5 @@ ddp
 hot-code-push
 practicalmeteor:chai
 practicalmeteor:sinon
+lmieulet:meteor-coverage
+practicalmeteor:mocha-console-runner

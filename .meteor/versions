@@ -31,8 +31,10 @@ http@1.1.8
 id-map@1.0.9
 jquery@1.11.10
 launch-screen@1.1.0
+lmieulet:meteor-coverage@1.1.4
 logging@1.1.16
 meteor@1.6.0
+meteorhacks:picker@1.0.3
 minifier-css@1.2.15
 minifier-js@1.2.15
 minimongo@1.0.19
@@ -48,6 +50,7 @@ outatime:geolib@2.0.15
 practicalmeteor:chai@2.1.0_1
 practicalmeteor:loglevel@1.2.0_2
 practicalmeteor:mocha@2.4.5_6
+practicalmeteor:mocha-console-runner@0.2.1
 practicalmeteor:mocha-core@1.0.1
 practicalmeteor:sinon@1.14.1_2
 promise@0.8.8
