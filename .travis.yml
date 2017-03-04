@@ -7,4 +7,6 @@ services:
   - mongodb
 env:
   - LAIKA_OPTIONS="-t 5000"
-  
+addons:
+    code_climate:
+        repo_token: 67cabf430516e7b78e7be6a5c4f642bb76c8f54387fd1de9e30bf3472b178092
