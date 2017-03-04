@@ -1,5 +1,8 @@
 sudo: false
 language: node_js
+node_js:
+  - "node"
+  - "5"
 before_install:
   - export TZ=Pacific/Apia
   - curl https://install.meteor.com | /bin/sh
@@ -12,10 +15,10 @@ cache:
 before_script:
   - meteor npm install
   - meteor add dispatch:mocha
-  - npm i --save-dev nightmare
+  - npm i --save-dev selenium-webdriver@3.0.0-beta-2 chromedriver
 script:
   - date
-  - TEST_BROWSER_DRIVER=nightmare meteor test --once --driver-package dispatch:mocha
+  - TEST_BROWSER_DRIVER=chrome meteor test --once --driver-package dispatch:mocha
 addons:
     code_climate:
         repo_token: 67cabf430516e7b78e7be6a5c4f642bb76c8f54387fd1de9e30bf3472b178092
