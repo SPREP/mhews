@@ -1,12 +1,17 @@
+sudo: false
 language: node_js
-node_js:
-  - "0.12"
 before_install:
-  - "curl -L https://raw.githubusercontent.com/arunoda/travis-ci-laika/master/configure.sh | /bin/sh"
-services:
-  - mongodb
-env:
-  - LAIKA_OPTIONS="-t 5000"
+  - curl https://install.meteor.com | /bin/sh
+  - export PATH="$HOME/.meteor:$PATH"
+script:
+  - meteor build $HOME/build.tgz
+cache:
+  directories:
+    - node_modules
+before_script:
+  - meteor npm install
+script:
+  - meteor test --once --driver-package practicalmeteor:mocha
 addons:
     code_climate:
         repo_token: 67cabf430516e7b78e7be6a5c4f642bb76c8f54387fd1de9e30bf3472b178092
