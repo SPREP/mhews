@@ -1,6 +1,7 @@
 sudo: false
 language: node_js
 before_install:
+  - export TZ=Pacific/Apia
   - curl https://install.meteor.com | /bin/sh
   - export PATH="$HOME/.meteor:$PATH"
 script:
@@ -13,6 +14,7 @@ before_script:
   - meteor add dispatch:mocha
   - npm i --save-dev selenium-webdriver@3.0.0-beta-2 chromedriver
 script:
+  - date
   - TEST_BROWSER_DRIVER=chrome meteor test --once --driver-package dispatch:mocha
 addons:
     code_climate:
