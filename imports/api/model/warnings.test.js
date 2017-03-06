@@ -86,7 +86,7 @@ describe('warning', function() {
   describe('#toPushMessage', function() {
     it('should contain the mandatory fields.', sinon.test(function() {
       const watch = new Warning(_.create(phenomena, {level: "watch"}));
-      const message = watch.toPushMessage();
+      const message = watch.toPushMessage().body;
       chai.assert.equal(message.priority, "high");
       chai.assert.isTrue(message.notification.title.indexOf(watch.type) >= 0);
       chai.assert.isTrue(message.notification.title.indexOf(watch.level) >= 0);
@@ -102,21 +102,21 @@ describe('warning', function() {
 
     it('should contain "Cancel" in the title if in_effect is false.', sinon.test(function() {
       const warning = new Warning(_.create(phenomena, {level: "warning", in_effect: false}));
-      const message = warning.toPushMessage();
+      const message = warning.toPushMessage().body;
       chai.assert.isTrue(message.notification.title.indexOf("Cancel") >= 0);
       chai.assert.isFalse(message.data.in_effect);
     }))
 
     it('should contain "EXERCISE" in the title if is_exercise is true.', sinon.test(function() {
       const warning = new Warning(_.create(phenomena, {level: "warning", is_exercise: true}));
-      const message = warning.toPushMessage();
+      const message = warning.toPushMessage().body;
       chai.assert.isTrue(message.notification.title.indexOf("EXERCISE") >= 0);
       chai.assert.isTrue(message.data.is_exercise);
     }))
 
     it('should contain "EXERCISE" and "Cancel" in the title if in_effect is false and is_exercise is true.', sinon.test(function() {
       const warning = new Warning(_.create(phenomena, {level: "warning", in_effect: false, is_exercise: true}));
-      const message = warning.toPushMessage();
+      const message = warning.toPushMessage().body;
       chai.assert.isTrue(message.notification.title.indexOf("Cancel") >= 0);
       chai.assert.isTrue(message.notification.title.indexOf("EXERCISE") >= 0);
       chai.assert.isFalse(message.data.in_effect);

@@ -12,9 +12,9 @@ var request = require('request');
 
 export class PushMessage {
 
-  constructor(warning, needsAttention){
+  constructor(warning, body){
     this.warning = warning;
-    this.body = warning.toFcmMessage(needsAttention);
+    this.body = body;
     this.serverError = {
       retryCount : 0,
       maxRetry : 6,
@@ -128,9 +128,8 @@ export class PushMessage {
             console.log('error response: '+ response.statusCode+ " "+response.statusMessage);
           }
 
-          if( this.serverError.retryCount++ < this.serverError.maxRetry ){
-            console.log("Retry sending FCM message after "+this.getInterval()+" seconds");
-            Meteor.setTimeout(this.send, this.getInterval()*1000);
+          if( isServerError(response.statusCode) && this.serverError.retryCount++ < this.serverError.maxRetry ){
+            this.scheduleRetryOnError();
           }
           else{
             console.error("FCM message couldn't be sent for warning "+this.warning.bulletinId);
@@ -144,8 +143,18 @@ export class PushMessage {
 
   }
 
+  scheduleRetryOnError(){
+    console.log("Retry sending FCM message after "+this.getInterval()+" seconds");
+    Meteor.setTimeout(this.send, this.getInterval()*1000);
+
+  }
+
   // Firebase requests that the App server must implement exponential backoff.
   getInterval(){
     return Math.pow(this.serverError.intervalBase, this.serverError.retryCount);
   }
+}
+
+function isServerError(statusCode){
+  return statusCode >= 500;
 }

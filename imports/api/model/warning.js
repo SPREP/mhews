@@ -2,6 +2,7 @@ import i18n from 'i18next';
 import {toTitleCase} from '../strutils.js';
 import {sprintf} from 'sprintf-js';
 import Config from '/imports/config.js';
+import {PushMessage} from '../pushmessage.js';
 
 // Warning levels in the significance order.
 const levels = ["information", "advisory", "watch", "warning"];
@@ -85,7 +86,7 @@ export class Warning {
   toPushMessage(needsAttention){
     const fcmMessage = this.toFcmMessage();
     fcmMessage.notification.sound = soundEffectFile(this, needsAttention);
-    return fcmMessage;
+    return new PushMessage(this, fcmMessage);
   }
 
   // Subclass can override this method to customize the fcm message properties.

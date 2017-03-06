@@ -27,15 +27,20 @@ In addition, [Google Firebase Clound Messaging (FCM)](https://firebase.google.co
 - Firebase Cloud Messaging (FCM) API key https://firebase.google.com/docs/cloud-messaging/
 - Google Maps API key https://developers.google.com/maps/
 
+## Install
+
+```
+git clone https://github.com/takeshi4126/mhews.git
+cd mhews
+meteor npm install
+```
+
 ## How to run the app
 The first step is to run the app in your development PC.
 
-1. git clone https://github.com/takeshi4126/mhews.git
-2. cd mhews
-3. meteor npm install
-4. Copy settings_template.json to settings.json, and set the FCM and Google Maps API keys
-5. Connect your Android phone to your PC (The phone must be in the debug mode.)
-6. meteor run android-device --settings=settings.json
+1. Copy settings_template.json to settings.json, and set the FCM and Google Maps API keys
+2. Connect your Android phone to your PC (The phone must be in the debug mode.)
+3. meteor run android-device --settings=settings.json
 
 The server runs on your PC and the Android phone needs to access it. So, your PC and phone must be connected to the same LAN (e.g. connect both to the same WiFi router).
 
@@ -80,7 +85,7 @@ If you use Meteor and Reactjs for the first time, it is highly recommended to go
 - Meteor tutorial (React version): https://www.meteor.com/tutorials/react/creating-an-app
 
 ### Change the language
-1. Under the locale directory, copy the en.common.js file for your language (e.g. ja.common.js for Japanese) and edit the contents. The first part of the file name represents the language code. It doesn't have to be two digits as far as it is unique.
+1. In the locale directory, copy the en.common.js file for your language (e.g. ja.common.js for Japanese) and edit the contents. The first part of the file name represents the language code. It doesn't have to be two digits as far as it is unique.
 2. Add the language code to the "language" property of config.js
 
 ### Test

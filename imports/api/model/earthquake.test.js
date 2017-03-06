@@ -58,7 +58,7 @@ describe('earthquake', function() {
   describe('#toPushMessage', function() {
     it('should return the push message including earthquake phenomena.', sinon.test(function() {
       const quake = new Earthquake(phenomena);
-      const message = quake.toPushMessage();
+      const message = quake.toPushMessage().body;
       chai.assert.equal(message.data.epicenter_lat, quake.epicenter.lat);
       chai.assert.equal(message.data.epicenter_lng, quake.epicenter.lng);
       chai.assert.isTrue(message.notification.body.indexOf(quake.region) >= 0);

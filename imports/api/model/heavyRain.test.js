@@ -43,7 +43,7 @@ describe('heavyRain', function() {
   describe('#toPushMessage', function() {
     it('should return the push message including heavy rain phenomena.', sinon.test(function() {
       const warning = new HeavyRain(phenomena);
-      const message = warning.toPushMessage();
+      const message = warning.toPushMessage().body;
       chai.assert.isTrue(message.notification.body.indexOf(warning.area) >= 0);
       chai.assert.isTrue(message.notification.body.indexOf(warning.direction) >= 0);
       chai.assert.equal(message.data.area, warning.area);
