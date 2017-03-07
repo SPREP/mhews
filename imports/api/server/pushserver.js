@@ -67,12 +67,7 @@ function pushWarning(warning, needsAttention){
     // Don't send notification for expiry of Information.
     return;
   }
-  const message = new PushMessage(warning, needsAttention);
-  if( warning.type == "tsunami" && warning.isMoreSignificant("information") && warning.in_effect ){
-    message.repeat(5).interval(3*60).collapse(warning.type).cancelIf(()=>{
-      return Warnings.isCancelled(warning._id) || Warnings.hasSevererWarning(warning._id);
-    });
-  }
+  const message = warning.toPushMessage(needsAttention);
   message.send((warning)=>{
     // This will prevent the server from sending the push message twice or more.
     Warnings.update({_id: warning._id}, {"$set": {is_user_notified: true}});

@@ -2,6 +2,7 @@ import i18n from 'i18next';
 import {Warning} from './warning.js';
 import {sprintf} from 'sprintf-js';
 import {getDistanceFromLatLonInKm} from '../geoutils.js';
+import Warnings from '../warnings.js';
 
 export class Earthquake extends Warning {
   constructor(phenomena){
@@ -49,6 +50,16 @@ export class Earthquake extends Warning {
   // so we cannot do exact comparison.
   isSameEvent(another){
     return isTimeClose(this.date_time, another.date_time) && isLocationClose(this.epicenter, another.epicenter);
+  }
+
+  toPushMessage(){
+    const message = super.toPushMessage();
+    if( this.type == "tsunami" && this.isMoreSignificant("information") && this.in_effect ){
+      message.repeat(5).interval(3*60).collapse(this.type).cancelIf(()=>{
+        return Warnings.isCancelled(this._id) || Warnings.hasSevererWarning(this._id);
+      });
+    }
+    return message;
   }
 
   toFcmMessage(){

@@ -45,6 +45,6 @@ function adminAccess(func){
       console.error("Access by "+this.connection.clientAddress+" was rejected.");
       throw Error("Request refused. See the server log.");
     }
-    func(...args)
+    return func(...args)
   };
 }
