@@ -36,8 +36,8 @@ export default {
 
     eqtsunami: "Mafui'e ma Sunami",
     cyclone: "Afa",
-    about: "Faatautau ile SMD",
-    aboutapp: "Faatautau ile Apps",
+    aboutsmd: "Faatautau ile SMD",
+    about: "Faatautau ile Apps",
     quit: "Faiatu",
     usage: "Faaaogaina"
   },

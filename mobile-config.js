@@ -10,10 +10,17 @@ App.info({
 App.icons({
   'android_mdpi': 'icons/Samet_mdpi.png',
   'android_hdpi': 'icons/Samet_hdpi.png',
+  'android_xhdpi': 'icons/Samet_xhdpi.png',
+  'android_xxhdpi': 'icons/Samet_xxhdpi.png',
+  'android_xxxhdpi': 'icons/Samet_xxhdpi.png',
 });
 
 App.launchScreens({
-  'android_hdpi_portrait': 'icons/Samet_hdpi_portrait.png'
+  'android_mdpi_portrait': 'icons/Samet_mdpi_portrait.png',
+  'android_hdpi_portrait': 'icons/Samet_hdpi_portrait.png',
+  'android_xhdpi_portrait': 'icons/Samet_hdpi_portrait.png',
+  'android_xxhdpi_portrait': 'icons/Samet_hdpi_portrait.png',
+  'android_xxxhdpi_portrait': 'icons/Samet_hdpi_portrait.png',
 });
 
 App.configurePlugin('cordova-plugin-googlemaps', {

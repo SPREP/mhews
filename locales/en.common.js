@@ -35,8 +35,8 @@ export default {
     settings: "Settings",
     eqtsunami: "Earthquake And Tsunami",
     cyclone: "Cyclone",
-    about: "About SMD",
-    aboutapp: "About this App",
+    aboutsmd: "About SMD",
+    about: "About this App",
     quit: "Quit",
     usage: "Usage"
   },

@@ -46,7 +46,7 @@ class DrawerMenu extends React.Component {
       },
       "about":{
         "component": "AboutAppPage",
-        "title": "title.aboutApp",
+        "title": "title.about",
         "icon": CopyrightIcon
       },
       "settings": {
