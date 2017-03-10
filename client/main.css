@@ -13,13 +13,13 @@
 
 .app-root {
   display: flex;
-  flexWrap: wrap;
-  justifyContent: space-around;
+  flex-wrap: wrap;
+  justify-content: space-around;
 }
 
 .app-gridList {
   width: 300;
-  overflowY: auto;
+  overflow-y: auto;
 }
 
 .grid-image {

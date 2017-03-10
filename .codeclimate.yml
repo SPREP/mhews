@@ -26,4 +26,5 @@ ratings:
   - "**.rb"
 exclude_paths:
 - "locales/"
+- "test_data/"
 - "**.test.js"

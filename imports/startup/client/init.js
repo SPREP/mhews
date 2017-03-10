@@ -18,8 +18,6 @@ import Config from '/imports/config.js';
 
 let pushClient = null;
 
-/* global Reloader */
-
 Meteor.startup(()=>{
 
   // These initializations are needed before rendering GUI.
