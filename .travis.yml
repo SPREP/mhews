@@ -14,13 +14,13 @@ cache:
 before_script:
   - meteor npm install
   - meteor add dispatch:mocha
+  - meteor npm i --save-dev https://github.com/serut/spacejam/tarball/windows-suppport-rc4
 script:
   - date
-  - meteor test --once --driver-package dispatch:mocha
+  - ./node_modules/spacejam/bin/spacejam --driver-package=practicalmeteor:mocha-console-runner test --coverage 'out_lcovonly out_coverage out_html'
 addons:
     code_climate:
         repo_token: 67cabf430516e7b78e7be6a5c4f642bb76c8f54387fd1de9e30bf3472b178092
 after_success:
   - npm install -g codeclimate-test-reporter
-  - codeclimate-test-reporter < lcov.info
-  
+  - codeclimate-test-reporter < .coverage/lcov.info
