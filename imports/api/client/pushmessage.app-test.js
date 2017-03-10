@@ -122,17 +122,6 @@ function testCancel(done, phenomena){
   }, 1000);
 }
 
-function testPublishAndCancel(done, phenomena){
-  const callback = sinon.spy();
-  Meteor.call("publishWarning", phenomena, callback);
-  setTimeout(function(){
-    sinon.assert.calledOnce(callback);
-    checkWarningList([phenomena]);
-
-    testCancel(done, phenomena);
-  }, 1000);
-}
-
 function checkEmptyWarningList(){
   chai.assert.equal(0, Warnings.find().count());
 }

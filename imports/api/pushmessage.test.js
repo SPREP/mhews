@@ -1,5 +1,3 @@
-import {chai} from 'meteor/practicalmeteor:chai';
-import {PushMessage} from './pushmessage.js';
 import {Earthquake} from './model/earthquake.js';
 import {sinon} from 'meteor/practicalmeteor:sinon';
 import {Meteor} from 'meteor/meteor';

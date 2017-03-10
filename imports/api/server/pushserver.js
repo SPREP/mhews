@@ -1,6 +1,5 @@
 import Warnings from '../warnings.js';
 import WarningFactory from '../model/warningFactory.js';
-import {PushMessage} from '../pushmessage.js';
 
 // PushServer checks incoming warning messages in the Warning Collection,
 // and send push notification to the mobile clients.

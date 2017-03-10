@@ -6,20 +6,20 @@
 }
 
 .refresh-indicator {
-  display: 'inline-block';
-  position: 'relative';
+  display: inline-block;
+  position: relative;
   margin: 0 auto;
 }
 
 .app-root {
-  display: 'flex';
-  flexWrap: 'wrap';
-  justifyContent: 'space-around';
+  display: flex;
+  flexWrap: wrap;
+  justifyContent: space-around;
 }
 
 .app-gridList {
   width: 300;
-  overflowY: 'auto';
+  overflowY: auto;
 }
 
 .grid-image {

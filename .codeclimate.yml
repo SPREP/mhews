@@ -24,4 +24,6 @@ ratings:
   - "**.php"
   - "**.py"
   - "**.rb"
-exclude_paths: [locales]
+exclude_paths:
+- locales
+- **.test.js

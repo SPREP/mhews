@@ -19,10 +19,12 @@ export class Moon {
 
 // According to wikipedia, 12:00 at the local standard time should be used for the moon phase calculation.
 // In Samoa, +1500 during the summer time, +1400 otherwise
-// TODO: Adjust depending on the summer time or not.
 function adjustDate(date){
-  const dateStr = moment(date).format("YYYY-MM-DD");
-  return moment(dateStr+" 12:00 +1500", "YYYY-MM-DD HH:mm Z").toDate();
+  const m = moment(date).hour(12).minute(0);
+  if( m.isDST() ){
+    m.subtract(1, "hours");
+  }
+  return m.toDate();
 }
 
 function getMoonIcon(adjustedMoonPhase){

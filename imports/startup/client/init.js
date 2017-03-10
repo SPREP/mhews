@@ -78,14 +78,6 @@ function initPushClient(){
   }
 }
 
-function configReloader(){
-  Reloader.configure({
-    check: false, // Check for new code every time the app starts
-    refresh: 'start', // Refresh to already downloaded code on start (not on resume)
-    idleCutoff: 1000 * 60 * 10  // Wait 10 minutes before treating a resume as a start
-  });
-}
-
 function subscribeForCollections(){
   // To receive the data from the warnings collection
   Meteor.subscribe('warnings');

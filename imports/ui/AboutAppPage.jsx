@@ -13,7 +13,7 @@ export default class AboutAppPage extends React.Component {
   render(){
     return(
       <div className="app">
-        <h3>Multi Hazard Early Warning System (MHEWS) version 1.1.0</h3>
+        <h3>Multi Hazard Early Warning System (MHEWS) version 1.1.1</h3>
         <p>
 This smartphone application provides the weather forecast and
 hazard warning information from Samoa Meteorology Division (SMD)

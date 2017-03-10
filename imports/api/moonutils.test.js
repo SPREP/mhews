@@ -39,6 +39,18 @@ describe('Moon', function() {
     it('should be Waxing Crescent on Jan-29 2017', function() {
       assert.equal("waxing_crescent", new Moon(getDate("2017-01-29")).getName());
     });
+    it('should be First Quarter on May-3 2017', function() {
+      assert.equal("first_quarter", new Moon(getDate("2017-05-03")).getName());
+    });
+    it('should be Full Moon on May-11 2017', function() {
+      assert.equal("full_moon", new Moon(getDate("2017-05-11")).getName());
+    });
+    it('should be Third Quarter on May-19 2017', function() {
+      assert.equal("last_quarter", new Moon(getDate("2017-05-19")).getName());
+    });
+    it('should be New Moon on May-26 2017', function() {
+      assert.equal("new_moon", new Moon(getDate("2017-05-26")).getName());
+    });
   });
 })
 
