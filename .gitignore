@@ -1,5 +1,6 @@
 node_modules/
 .DS_Store
+.coverage
 cordova-build-override/platforms/android/google-services.json
 cordova-build-override/google-services.json
 settings.json
@@ -8,4 +9,3 @@ mup.js
 private/deploy_scripts/mup*.js
 private/parallel-access-mhews.js
 icons/Samet*
-

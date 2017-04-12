@@ -73,6 +73,7 @@ export class Warning {
   // 2) The same warning remains in effect but the level has raised.
   // (e.g. Raised from Watch to Warning.)
   changeNeedsAttention(oldWarning){
+
     if( !this.in_effect ){
       return false;
     }
@@ -80,10 +81,13 @@ export class Warning {
     if( oldWarning ){
       needsAttention = needsAttention && this.isMoreSignificant(oldWarning);
     }
+    console.log("changeNeedsAttention for "+this.type+" is "+needsAttention);
+
     return needsAttention;
   }
 
   toPushMessage(needsAttention){
+    console.log("warning.toPushMessage needsAttention = "+needsAttention);
     const fcmMessage = this.toFcmMessage();
     fcmMessage.notification.sound = soundEffectFile(this, needsAttention);
     return new PushMessage(this, fcmMessage);
@@ -136,6 +140,8 @@ export class Warning {
 }
 
 function soundEffectFile(warning, needsAttention){
+  console.log("soundEffectFile for "+warning.type+" needsAttention = "+needsAttention);
+  console.log("Config = "+JSON.stringify(Config));
   let soundFile;
   if( needsAttention ){
     soundFile = Config.notificationConfig[warning.type].sound;

@@ -1,5 +1,10 @@
+import {Meteor} from 'meteor/meteor';
+
 import Warnings from '../warnings.js';
 import WarningFactory from '../model/warningFactory.js';
+
+
+const topicPrefix = Meteor.settings.public.topicPrefix;
 
 // PushServer checks incoming warning messages in the Warning Collection,
 // and send push notification to the mobile clients.
@@ -66,11 +71,29 @@ function pushWarning(warning, needsAttention){
     // Don't send notification for expiry of Information.
     return;
   }
-  const message = warning.toPushMessage(needsAttention);
-  message.send((warning)=>{
-    // This will prevent the server from sending the push message twice or more.
-    Warnings.update({_id: warning._id}, {"$set": {is_user_notified: true}});
-  });
+
+  const topics = [];
+
+  // Special handling for PACWAVE17 exercise to avoid sounding the tsunami alarm
+  // by the old version of the app which cannot display exercise message properly.
+  // To be removed after new versions have been deployed.
+  if( warning.is_exercise ){
+    topics.push(topicPrefix + "_exercise");
+  }
+  else{
+    topics.push(topicPrefix);
+  }
+
+  topics.forEach((topic)=>{
+    console.log("Sending push message to topic "+topic+" needsAttention = "+needsAttention);
+    const message = warning.toPushMessage(needsAttention);
+    message.sendToTopic(topic, (warning)=>{
+      console.log("Sending push message to topic "+topic+" succeeded.");
+      // This will prevent the server from sending the push message twice or more.
+      Warnings.update({_id: warning._id}, {"$set": {is_user_notified: true}});
+    });
+
+  })
 }
 
 export default new PushServer();

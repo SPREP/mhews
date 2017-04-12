@@ -52,8 +52,8 @@ export class Earthquake extends Warning {
     return isTimeClose(this.date_time, another.date_time) && isLocationClose(this.epicenter, another.epicenter);
   }
 
-  toPushMessage(){
-    const message = super.toPushMessage();
+  toPushMessage(needsAttention){
+    const message = super.toPushMessage(needsAttention);
     if( this.type == "tsunami" && this.isMoreSignificant("information") && this.in_effect ){
       message.repeat(5).interval(3*60).collapse(this.type).cancelIf(()=>{
         return Warnings.isCancelled(this._id) || Warnings.hasSevererWarning(this._id);
