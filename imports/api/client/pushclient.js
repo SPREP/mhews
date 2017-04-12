@@ -7,7 +7,7 @@ Push Client receives push message from the server.
 Currently it relies on the Google Firebase Messaging and uses the cordova-plugin-firebase.
 
 */
-const topicPrefix = Config.topicPrefix;
+const topicPrefix = Meteor.settings.public.topicPrefix;
 
 export class PushClient {
 
