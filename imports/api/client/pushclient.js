@@ -22,7 +22,7 @@ export class PushClient {
       ReceptionTracker.setTrackerId(token);
     });
 
-    window.FirebasePlugin.subscribe(topicPrefix);
+    this.subscribe(topicPrefix);
 
     window.FirebasePlugin.onNotificationOpen(
       (notification)=>{
@@ -45,12 +45,22 @@ export class PushClient {
   receiveExerciseMessages(joinExercise){
     const topic = topicPrefix + "_exercise";
     if( joinExercise ){
-      window.FirebasePlugin.subscribe(topic);
+      this.subscribe(topic);
     }
     else{
-      window.FirebasePlugin.unsubscribe(topic);
+      this.unsubscribe(topic);
     }
 
+  }
+
+  subscribe(topic){
+    console.log("Subscribing to topic "+topic);
+    window.FirebasePlugin.subscribe(topic);
+  }
+
+  unsubscribe(topic){
+    console.log("Unsubscribing from topic "+topic);
+    window.FirebasePlugin.unsubscribe(topic);
   }
 
   // TODO This method is not currently used.

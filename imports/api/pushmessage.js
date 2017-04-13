@@ -117,6 +117,7 @@ export class PushMessage {
         if (!error && response.statusCode == 200) {
           console.log("FCM message was successfully sent on topic "+topic+" for warning "+this.warning.bulletinId);
           if( onSuccess ){
+            console.log("FCM server response: "+JSON.stringify(response));
             onSuccess(this.warning);
           }
         }
