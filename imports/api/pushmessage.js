@@ -81,16 +81,6 @@ export class PushMessage {
   doSend(onSuccess, onError){
     const topics = [];
 
-    // Special handling for PACWAVE17 exercise to avoid sounding the tsunami alarm
-    // by the old version of the app which cannot display exercise message properly.
-    // To be removed after new versions have been deployed.
-    if( this.body.data.is_exercise ){
-      topics.push(topicPrefix + "_exercise");
-    }
-    else{
-      topics.push(topicPrefix);
-    }
-
     topics.forEach((topic)=>{
 
       this.body.to = "/topics/"+ topic;

@@ -19,6 +19,8 @@ import LinkIcon from 'material-ui/svg-icons/content/link';
 
 import Config from '/imports/config.js';
 
+/* global device */
+
 class DrawerMenu extends React.Component {
   constructor(props){
     super(props);
@@ -76,7 +78,7 @@ class DrawerMenu extends React.Component {
           />);
     });
 
-    if( this.props.onQuit ){
+    if( this.props.onQuit && device.platform == "Android" ){
       children.push(
         <MenuItem
           key="quit"

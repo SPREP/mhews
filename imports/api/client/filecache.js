@@ -111,7 +111,7 @@ class FileCacheHandle {
 
     this.downloading = true;
     window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, (fileSystem)=>{
-      var fileTransfer = new FileTransfer();
+
       // FIXME:
       // fileSystem.root returns two different paths:
       // 1) /local-filesystem/data/data/...
@@ -128,6 +128,7 @@ class FileCacheHandle {
         downloadDate.subtract(1, 'hours');
       }
 
+      var fileTransfer = new FileTransfer();
       fileTransfer.download(
         this.url,
         path,

@@ -30,7 +30,7 @@ function adjustDate(date){
 function getMoonIcon(adjustedMoonPhase){
 
   const fileIndex = adjustedMoonPhase;
-  return "images/moon/moon-phase-"+fileIndex+".svg";
+  return "/images/moon/moon-phase-"+fileIndex+".svg";
 }
 
 const moonNames = [

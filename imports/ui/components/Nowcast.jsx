@@ -105,8 +105,8 @@ class AdditionalInfo extends React.Component {
 
     return (
       <div>
-        <SmallCard icon="images/weather/dawn.png" text={sunrise} />
-        <SmallCard icon="images/weather/sunset.png" text={sunset} />
+        <SmallCard icon="/images/weather/dawn.png" text={sunrise} />
+        <SmallCard icon="/images/weather/sunset.png" text={sunset} />
         <SmallCard icon={moon.getIcon()} text={t("moon_phase."+moon.getName())} />
         <DailyTideTableContainer date={forecast.date}/>
       </div>

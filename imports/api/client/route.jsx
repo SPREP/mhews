@@ -16,6 +16,7 @@ import CyclonePage from '../../ui/CyclonePage.jsx';
 import App from '../../ui/App.jsx';
 import AppTemplate from '../../ui/AppTemplate.jsx';
 import ClimatePage from '../../ui/ClimatePage.jsx';
+import WeatherPage from '../../ui/WeatherPage.jsx';
 import AdminPage from '../../ui/admin/AdminPage.jsx';
 import AdminDashboard from '../../ui/admin/AdminDashboard.jsx';
 import WeatherDayIconMatrix from '../../ui/admin/WeatherDayIconMatrix.jsx';
@@ -35,6 +36,7 @@ export function initRouterWithAdminPage(){
         <Route path="heavyRain/:id" component={WarningPage} />
         <Route path="cyclone/:id" component={CyclonePage} />
         <Route path="*/:id" component={WarningPage} />
+        <Route path="weather" component={WeatherPage} />
         <Route path="climate" component={ClimatePage} />
         <IndexRoute component={TopPage} />
       </Route>

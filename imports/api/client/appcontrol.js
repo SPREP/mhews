@@ -1,4 +1,6 @@
 
+/* global device */
+
 let quitAppVar;
 
 Meteor.startup(()=>{
