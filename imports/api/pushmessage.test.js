@@ -39,7 +39,7 @@ describe('pushmessage', function() {
         const onSuccess = this.spy();
         const onError = this.spy();
         const scheduleRetryOnError = this.spy(message, "scheduleRetryOnError");
-        message.doSend(onSuccess, onError);
+        message.sendOnce(onSuccess, onError);
 
         sinon.assert.calledOnce(request.post);
         sinon.assert.calledWith(request.post, sinon.match({json: message.body}));
@@ -57,7 +57,7 @@ describe('pushmessage', function() {
         const onSuccess = this.spy();
         const onError = this.spy();
         const scheduleRetryOnError = this.spy(message, "scheduleRetryOnError");
-        message.doSend(onSuccess, onError);
+        message.sendOnce(onSuccess, onError);
 
         sinon.assert.calledOnce(request.post);
         sinon.assert.notCalled(onSuccess);
@@ -74,7 +74,7 @@ describe('pushmessage', function() {
         const onSuccess = this.spy();
         const onError = this.spy();
         const scheduleRetryOnError = this.spy(message, "scheduleRetryOnError");
-        message.doSend(onSuccess, onError);
+        message.sendOnce(onSuccess, onError);
 
         sinon.assert.calledOnce(request.post);
         sinon.assert.notCalled(onSuccess);

@@ -1,3 +1,4 @@
+import {Meteor} from 'meteor/meteor';
 import ReceptionTracker from '../receptionTracker.js';
 import Config from '/imports/config.js';
 
@@ -17,10 +18,31 @@ export class PushClient {
   // The given callback function is called after a message is received.
   start(callback){
 
-    this.initOneSignal(callback);
+    if( Meteor.isCordova ){
+      this.initOneSignalPlugin(callback);
+    }
+
+//    this.initFirebasePlugin(callback);
   }
 
-  initFirebase(callback){
+  initOneSignalPlugin(callback){
+    const appId = Meteor.settings.public.oneSignalAppId;
+
+    OneSignal
+    .startInit(appId)
+    .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.None)
+    .handleNotificationReceived(callback)
+    .handleNotificationOpened(callback)
+    .endInit();
+
+    OneSignal.getIds(function(ids) {
+      console.log('getIds: ' + JSON.stringify(ids));
+    });
+
+    this.subscribe(topicPrefix);
+  }
+
+  initFirebasePlugin(callback){
 
     // Get the token as the temporary id to identify the mobile terminal.
     // onTokenRefresh is called even for the initial token setting.
@@ -45,38 +67,18 @@ export class PushClient {
     window.FirebasePlugin.getInfo((info)=>{
       console.log("FCM info = "+JSON.stringify(info));
     });
-
-  }
-
-  initOneSignal(callback){
-    // Enable to debug issues.
-    // window.plugins.OneSignal.setLogLevel({logLevel: 4, visualLevel: 4});
-
-    const notificationOpenedCallback = (jsonData)=>{
-      console.log('notificationOpenedCallback: ' + JSON.stringify(jsonData));
-      callback(jsonData);
-    };
-
-    const appId = Meteor.settings.public.oneSignalRestApiKey;
-
-    OneSignal
-      .startInit(appId)
-      .handleNotificationOpened(notificationOpenedCallback)
-      .endInit();
-
-    this.subscribe(topicPrefix);
   }
 
   // Call this method to receive exercise messages in addition to normal messages.
   receiveExerciseMessages(joinExercise){
     const topic = topicPrefix + "_exercise";
+
     if( joinExercise ){
       this.subscribe(topic);
     }
     else{
       this.unsubscribe(topic);
     }
-
   }
 
   subscribe(topic){
