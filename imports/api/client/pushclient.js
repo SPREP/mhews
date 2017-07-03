@@ -9,11 +9,18 @@ Currently it relies on the Google Firebase Messaging and uses the cordova-plugin
 */
 const topicPrefix = Meteor.settings.public.topicPrefix;
 
+const OneSignal = window.plugins.OneSignal;
+
 export class PushClient {
 
   // PushClient starts receiving the messages.
   // The given callback function is called after a message is received.
   start(callback){
+
+    this.initOneSignal(callback);
+  }
+
+  initFirebase(callback){
 
     // Get the token as the temporary id to identify the mobile terminal.
     // onTokenRefresh is called even for the initial token setting.
@@ -41,6 +48,25 @@ export class PushClient {
 
   }
 
+  initOneSignal(callback){
+    // Enable to debug issues.
+    // window.plugins.OneSignal.setLogLevel({logLevel: 4, visualLevel: 4});
+
+    const notificationOpenedCallback = (jsonData)=>{
+      console.log('notificationOpenedCallback: ' + JSON.stringify(jsonData));
+      callback(jsonData);
+    };
+
+    const appId = Meteor.settings.public.oneSignalRestApiKey;
+
+    OneSignal
+      .startInit(appId)
+      .handleNotificationOpened(notificationOpenedCallback)
+      .endInit();
+
+    this.subscribe(topicPrefix);
+  }
+
   // Call this method to receive exercise messages in addition to normal messages.
   receiveExerciseMessages(joinExercise){
     const topic = topicPrefix + "_exercise";
@@ -55,12 +81,16 @@ export class PushClient {
 
   subscribe(topic){
     console.log("Subscribing to topic "+topic);
-    window.FirebasePlugin.subscribe(topic);
+
+    OneSignal.sendTag(topic, "1");
+//    window.FirebasePlugin.subscribe(topic);
   }
 
   unsubscribe(topic){
     console.log("Unsubscribing from topic "+topic);
-    window.FirebasePlugin.unsubscribe(topic);
+
+    OneSignal.deleteTag(topic);
+//    window.FirebasePlugin.unsubscribe(topic);
   }
 
   // TODO This method is not currently used.
