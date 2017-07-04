@@ -10,8 +10,6 @@ Currently it relies on the Google Firebase Messaging and uses the cordova-plugin
 */
 const topicPrefix = Meteor.settings.public.topicPrefix;
 
-const OneSignal = window.plugins.OneSignal;
-
 export class PushClient {
 
   // PushClient starts receiving the messages.
@@ -20,22 +18,22 @@ export class PushClient {
 
     if( Meteor.isCordova ){
       this.initOneSignalPlugin(callback);
+//    this.initFirebasePlugin(callback);
     }
 
-//    this.initFirebasePlugin(callback);
   }
 
   initOneSignalPlugin(callback){
     const appId = Meteor.settings.public.oneSignalAppId;
 
-    OneSignal
+    window.plugins.OneSignal
     .startInit(appId)
-    .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.None)
+    .inFocusDisplaying(window.plugins.OneSignal.OSInFocusDisplayOption.None)
     .handleNotificationReceived(callback)
     .handleNotificationOpened(callback)
     .endInit();
 
-    OneSignal.getIds(function(ids) {
+    window.plugins.OneSignal.getIds(function(ids) {
       console.log('getIds: ' + JSON.stringify(ids));
     });
 
@@ -82,16 +80,12 @@ export class PushClient {
   }
 
   subscribe(topic){
-    console.log("Subscribing to topic "+topic);
-
-    OneSignal.sendTag(topic, "1");
+    window.plugins.OneSignal.sendTag(topic, "true");
 //    window.FirebasePlugin.subscribe(topic);
   }
 
   unsubscribe(topic){
-    console.log("Unsubscribing from topic "+topic);
-
-    OneSignal.deleteTag(topic);
+    window.plugins.OneSignal.deleteTag(topic);
 //    window.FirebasePlugin.unsubscribe(topic);
   }
 
