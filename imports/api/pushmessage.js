@@ -1,12 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 
-const fcmApiKey = Meteor.settings.fcmApiKey;
-
-const headers = {
-  "Content-Type": "application/json",
-  "Authorization": "key="+fcmApiKey
-};
-
 var request = require('request');
 
 const _ = require('lodash');
@@ -107,15 +100,11 @@ export class PushMessage {
 
     console.log(JSON.stringify(this.body));
 
-    const options = {
-//      url: "https://fcm.googleapis.com/fcm/send",
-      url: "https://onesignal.com/api/v1/notifications",
-      method: "POST",
-      headers: headers
-    }
-
+    /*
+      Send the message to both OneSignal and Fcm, until all the FCM client will be replaced by OneSignal client.
+    */
     this.postOneSignalMessage(onSuccess, onError);
-//    this.postFcmMessage(options, onSuccess, onError);
+    this.postFcmMessage(onSuccess, onError);
   }
 
   postOneSignalMessage(onSuccess, onError){
@@ -179,7 +168,19 @@ export class PushMessage {
     req.end();
   }
 
-  postFcmMessage(options, onSuccess, onError){
+  postFcmMessage(onSuccess, onError){
+    const fcmApiKey = Meteor.settings.fcmApiKey;
+
+    const fcmHeaders = {
+      "Content-Type": "application/json",
+      "Authorization": "key="+fcmApiKey
+    };
+
+    const options = {
+      url: "https://fcm.googleapis.com/fcm/send",
+      method: "POST",
+      headers: fcmHeaders
+    }
 
     const httpRequest = _.merge(options, {json: this.body});
 
