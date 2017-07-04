@@ -1,3 +1,4 @@
+import {Meteor} from 'meteor/meteor';
 import ReceptionTracker from '../receptionTracker.js';
 import Config from '/imports/config.js';
 
@@ -14,6 +15,32 @@ export class PushClient {
   // PushClient starts receiving the messages.
   // The given callback function is called after a message is received.
   start(callback){
+
+    if( Meteor.isCordova ){
+      this.initOneSignalPlugin(callback);
+//    this.initFirebasePlugin(callback);
+    }
+
+  }
+
+  initOneSignalPlugin(callback){
+    const appId = Meteor.settings.public.oneSignalAppId;
+
+    window.plugins.OneSignal
+    .startInit(appId)
+    .inFocusDisplaying(window.plugins.OneSignal.OSInFocusDisplayOption.None)
+    .handleNotificationReceived(callback)
+    .handleNotificationOpened(callback)
+    .endInit();
+
+    window.plugins.OneSignal.getIds(function(ids) {
+      console.log('getIds: ' + JSON.stringify(ids));
+    });
+
+    window.plugins.OneSignal.sendTag(topicPrefix, "true");
+  }
+
+  initFirebasePlugin(callback){
 
     // Get the token as the temporary id to identify the mobile terminal.
     // onTokenRefresh is called even for the initial token setting.
@@ -38,29 +65,28 @@ export class PushClient {
     window.FirebasePlugin.getInfo((info)=>{
       console.log("FCM info = "+JSON.stringify(info));
     });
-
   }
 
   // Call this method to receive exercise messages in addition to normal messages.
   receiveExerciseMessages(joinExercise){
     const topic = topicPrefix + "_exercise";
+
     if( joinExercise ){
       this.subscribe(topic);
     }
     else{
       this.unsubscribe(topic);
     }
-
   }
 
   subscribe(topic){
-    console.log("Subscribing to topic "+topic);
-    window.FirebasePlugin.subscribe(topic);
+    window.plugins.OneSignal.sendTag(topic, "true");
+//    window.FirebasePlugin.subscribe(topic);
   }
 
   unsubscribe(topic){
-    console.log("Unsubscribing from topic "+topic);
-    window.FirebasePlugin.unsubscribe(topic);
+    window.plugins.OneSignal.deleteTag(topic);
+//    window.FirebasePlugin.unsubscribe(topic);
   }
 
   // TODO This method is not currently used.

@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 
-const topicPrefix = Meteor.settings.public.topicPrefix;
 const fcmApiKey = Meteor.settings.fcmApiKey;
 
 const headers = {
@@ -9,6 +8,8 @@ const headers = {
 };
 
 var request = require('request');
+
+const _ = require('lodash');
 
 export class PushMessage {
 
@@ -29,7 +30,8 @@ export class PushMessage {
     // Set the default TTL (4 hours)
     this.body.time_to_live = 4 * 3600;
 
-    this.send = this.send.bind(this);
+    this.sendToTopic = this.sendToTopic.bind(this);
+    this.sendToToken = this.sendToToken.bind(this);
   }
 
   // Set the number of times to resend. 0 means that a message is sent once without resend.
@@ -59,17 +61,31 @@ export class PushMessage {
 
   // onSuccess: Callback when the FCM message was accepted by the Firebase server.
   // onError: Callback when the FCM message was not accepted after retry by the Firebase server.
-  send(onSuccess, onError){
+  sendToTopic(topic, onSuccess, onError){
+    this.topic = topic;
+    this.body.to = "/topics/"+ topic;
+
+//    this.sendWithRepetition(onSuccess, onError);
+    this.sendOnce(Meteor.bindEnvironment(onSuccess), onError);
+  }
+
+  sendToToken(token, onSuccess, onError){
+    this.body.to = token;
+
+    this.sendWithRepetition(onSuccess, onError);
+  }
+
+  sendWithRepetition(onSuccess, onError){
 
     Meteor.defer(()=>{
-      this.doSend(onSuccess, onError);
+      this.sendOnce(onSuccess, onError);
     });
 
     this.resend.timerId = Meteor.setInterval(()=>{
       if( this.resend.repeated++ < this.resend.count &&
         ( this.resend.isCancelled && !this.resend.isCancelled()) ){
         // Don't call the callback functions for the repetitions.
-        this.doSend();
+        this.sendOnce();
       }
       else{
         Meteor.clearInterval(this.resend.timerId);
@@ -78,60 +94,122 @@ export class PushMessage {
     }, this.resend.interval * 1000);
   }
 
-  doSend(onSuccess, onError){
-    const topics = [];
+  sendOnce(onSuccess, onError){
 
-    topics.forEach((topic)=>{
+    if( this.resend.collapseKey ){
+      this.body.collapse_key = this.resend.collapseKey;
+    }
+    if( this.resend.count > 0 ){
+      // The TTL must be equal or shorter than the interval
+      const interval = this.resend.interval;
+      this.body.time_to_live = this.body.time_to_live > interval ? interval : this.body.time_to_live;
+    }
 
-      this.body.to = "/topics/"+ topic;
+    console.log(JSON.stringify(this.body));
 
+    const options = {
+//      url: "https://fcm.googleapis.com/fcm/send",
+      url: "https://onesignal.com/api/v1/notifications",
+      method: "POST",
+      headers: headers
+    }
 
-      if( this.resend.collapseKey ){
-        this.body.collapse_key = this.resend.collapseKey;
+    this.postOneSignalMessage(onSuccess, onError);
+//    this.postFcmMessage(options, onSuccess, onError);
+  }
+
+  postOneSignalMessage(onSuccess, onError){
+
+    const restApiKey = Meteor.settings.oneSignalRestApiKey;
+    const appId = Meteor.settings.public.oneSignalAppId;
+
+    const oneSignalHeaders = {
+      "Content-Type": "application/json; charset=utf-8",
+      "Authorization": "Basic "+restApiKey
+    };
+
+    const oneSignalOptions = {
+      host: "onesignal.com",
+      port: 443,
+      path: "/api/v1/notifications",
+      method: "POST",
+      headers: oneSignalHeaders
+    }
+
+    const filters = [
+      {"field": "tag", "key": this.topic, "relation": "=", "value": "true"}
+    ]
+
+    // https://documentation.onesignal.com/reference
+    // OneSignal requires that the sound file excludes the file extension.
+    const message = {
+      app_id: appId,
+      contents: {"en": this.body.notification.title},
+      headings: {"en": this.body.notification.title},
+      data: this.body.data,
+      android_sound: removeFileExtension(this.body.notification.sound),
+      ttl: this.body.time_to_live,
+      priority: 10,
+      filters: filters
+    }
+
+    console.log("Sending message to OneSignal "+JSON.stringify(message));
+
+    const https = require('https');
+
+    const req = https.request(oneSignalOptions,  (res)=> {
+      res.on('data', function(data) {
+        console.log("Response:");
+        console.log(JSON.parse(data));
+        if( onSuccess ){
+          onSuccess(data);
+        }
+      });
+    });
+
+    req.on('error', function(e) {
+      console.log("ERROR:");
+      console.log(e);
+      if( onError ){
+        onError(e);
       }
-      if( this.resend.count > 0 ){
-        // The TTL must be equal or shorter than the interval
-        const interval = this.resend.interval;
-        this.body.time_to_live = this.body.time_to_live > interval ? interval : this.body.time_to_live;
-      }
+    });
 
-      console.log(JSON.stringify(this.body));
+    req.write(JSON.stringify(message));
+    req.end();
+  }
 
-      const options = {
-        url: "https://fcm.googleapis.com/fcm/send",
-        method: "POST",
-        headers: headers,
-        json: this.body
+  postFcmMessage(options, onSuccess, onError){
+
+    const httpRequest = _.merge(options, {json: this.body});
+
+    request.post(httpRequest, Meteor.bindEnvironment((error, response, body)=>{
+      if (!error && response.statusCode == 200) {
+        console.log("FCM message was successfully sent for warning "+this.warning.bulletinId);
+        console.log("Response body = "+ JSON.stringify(body));
+        if( onSuccess ){
+          onSuccess(this.warning);
+        }
       }
-      request.post(options, Meteor.bindEnvironment((error, response)=>{
-        if (!error && response.statusCode == 200) {
-          console.log("FCM message was successfully sent on topic "+topic+" for warning "+this.warning.bulletinId);
-          if( onSuccess ){
-            console.log("FCM server response: "+JSON.stringify(response));
-            onSuccess(this.warning);
+      else {
+        if( error ){
+          console.log("error: "+error);
+        }
+        if( response ){
+          console.log('error response: '+ response.statusCode+ " "+response.statusMessage);
+        }
+
+        if( isServerError(response.statusCode) && this.serverError.retryCount++ < this.serverError.maxRetry ){
+          this.scheduleRetryOnError();
+        }
+        else{
+          console.error("FCM message couldn't be sent for warning "+this.warning.bulletinId);
+          if( onError ){
+            onError(this.warning, response);
           }
         }
-        else {
-          if( error ){
-            console.log("error: "+error);
-          }
-          if( response ){
-            console.log('error response: '+ response.statusCode+ " "+response.statusMessage);
-          }
-
-          if( isServerError(response.statusCode) && this.serverError.retryCount++ < this.serverError.maxRetry ){
-            this.scheduleRetryOnError();
-          }
-          else{
-            console.error("FCM message couldn't be sent for warning "+this.warning.bulletinId);
-            if( onError ){
-              onError(this.warning, response);
-            }
-          }
-        }
-      }));
-    })
-
+      }
+    }));
   }
 
   scheduleRetryOnError(){
@@ -148,4 +226,11 @@ export class PushMessage {
 
 function isServerError(statusCode){
   return statusCode >= 500;
+}
+
+function removeFileExtension(soundFile){
+  soundFile = soundFile.replace(new RegExp("\.wav$"), "");
+  soundFile = soundFile.replace(new RegExp("\.mp3$"), "");
+
+  return soundFile;
 }
