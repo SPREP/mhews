@@ -18,32 +18,40 @@ import { translate } from 'react-i18next';
 import Config from '../config.js';
 
 const districts = Config.districts;
+const quakeDistances = Config.quakeDistances;
 
 const divStyle = {padding: "8px"};
 
 class PreferencesPage extends React.Component {
 
-  formatHeader(keyword){
-    const words = [];
+  formatHeader(keywords){
+    const sentences = [];
     Config.languages.forEach((lang)=>{
-      words.push(toTitleCase(this.props.t(keyword, {lng: lang})));
+      const translated = [];
+      keywords.forEach((keyword)=>{
+        translated.push(this.props.t(keyword, {lng: lang}));
+      })
+      sentences.push(toTitleCase(translated.join(" ")));
     })
 
-    return words.join("/");
+    return sentences.join("/");
   }
 
   render(){
     const t = this.props.t;
     const lang = this.props.language;
     const district = this.props.district;
+    const quakeDistance = Number(this.props.quakeDistance);
+
     this.selectedLanguage = lang;
     this.selectedDistrict = district;
     this.exercise = this.props.exercise;
-    console.log("PreferencesPage.render() lang = "+lang);
+    this.quakeDistance = quakeDistance;
 
-    const languageHeader = this.formatHeader("language");
-    const districtHeader = this.formatHeader("district");
-    const exerciseHeader = this.formatHeader("exercise");
+    const languageHeader = this.formatHeader(["language"]);
+    const districtHeader = this.formatHeader(["district"]);
+    const exerciseHeader = this.formatHeader(["exercise"]);
+    const quakeInfoHeader = this.formatHeader(["earthquake","level.information"]);
 
     return(
       <div>
@@ -76,6 +84,20 @@ class PreferencesPage extends React.Component {
               }
             </RadioButtonGroup>
           </div>
+        <Divider />
+        <div style={divStyle}>
+          <Subheader>{quakeInfoHeader}</Subheader>
+          <RadioButtonGroup name="quakeDistance" onChange={(e, v)=>{this.changeQuakeDistance(v)}} defaultSelected={quakeDistance}>
+            {
+              quakeDistances.map((distance)=>(
+                <RadioButton
+                  key={distance}
+                  label={this.getQuakeLabel(distance)}
+                  value={distance} />
+                ))
+              }
+            </RadioButtonGroup>
+        </div>
         <Divider />
         <div style={divStyle}>
           <Subheader>{exerciseHeader}</Subheader>
@@ -116,10 +138,25 @@ class PreferencesPage extends React.Component {
     this.exercise = isChecked;
   }
 
+  changeQuakeDistance(distance){
+    this.quakeDistance = distance;
+  }
+
+  getQuakeLabel(distance){
+    if( distance == 0 ){
+      return "Don't receive any earthquake information.";
+    }
+    if( distance == quakeDistances[quakeDistances.length -1]){
+      return "Not limited by distance";
+    }
+    return distance+" km or near";
+  }
+
   savePreferences(){
     this.savePreference("language", this.selectedLanguage);
     this.savePreference("district", this.selectedDistrict);
     this.savePreference("exercise", this.exercise ? "true" : "false");
+    this.savePreference("quakeDistance", this.quakeDistance);
     browserHistory.goBack();
   }
 
@@ -138,6 +175,7 @@ PreferencesPage.propTypes = {
   language: React.PropTypes.string,
   district: React.PropTypes.string,
   exercise: React.PropTypes.bool,
+  quakeDistance: React.PropTypes.number,
   t: React.PropTypes.func,
   onPageSelection: React.PropTypes.func
 }
@@ -147,6 +185,7 @@ const PreferencesPageContainer = createContainer(({onPageSelection}) => {
     language: Preferences.load("language"),
     district: Preferences.load("district"),
     exercise: stringToBoolean(Preferences.load("exercise")),
+    quakeDistance: Preferences.load("quakeDistance"),
     onPageSelection
   }
 

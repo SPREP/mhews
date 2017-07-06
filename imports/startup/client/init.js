@@ -73,6 +73,11 @@ function initPushClient(){
     Tracker.autorun(()=>{
       pushClient.receiveExerciseMessages(Preferences.load("exercise") == "true");
     });
+
+    // Maximum distance to receive earthquake information.
+    Tracker.autorun(()=>{
+      pushClient.subscribe("distance", Preferences.load("quakeDistance"));
+    })
   }
 }
 

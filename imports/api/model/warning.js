@@ -86,6 +86,14 @@ export class Warning {
     return needsAttention;
   }
 
+  getOneSignalFilters(topic){
+    const filters = [
+      {"field": "tag", "key": topic, "relation": "=", "value": "true"}
+    ]
+
+    return filters;
+  }
+
   toPushMessage(needsAttention){
     console.log("warning.toPushMessage needsAttention = "+needsAttention);
     const fcmMessage = this.toFcmMessage();

@@ -72,5 +72,19 @@ export default {
     "savaii-east-northeast",
     "savaii-northwest",
     "savaii-south"
-  ]
+  ],
+  "quakeDistances": [
+    0,
+    5000,
+    8000,
+    10000,
+    50000
+  ],
+  "defaultPreferences": {
+    "language": "en",
+    "district": "upolu-north-northwest",
+    "exercise": "false",
+    "quakeDistance": 50000
+  }
+
 }

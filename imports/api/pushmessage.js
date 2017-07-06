@@ -125,9 +125,7 @@ export class PushMessage {
       headers: oneSignalHeaders
     }
 
-    const filters = [
-      {"field": "tag", "key": this.topic, "relation": "=", "value": "1"}
-    ]
+    const filters = this.warning.getOneSignalFilters(this.topic);
 
     // https://documentation.onesignal.com/reference
     // OneSignal requires that the sound file excludes the file extension.

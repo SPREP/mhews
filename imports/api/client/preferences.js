@@ -1,15 +1,13 @@
-const keys = ["language", "district", "appInitialized", "exercise"];
+import Config from '../../config.js';
+
+const keys = ["language", "district", "appInitialized", "exercise", "quakeDistance"];
 
 // Developer's note:
 // Tried two implementations: LocalStorage and GroundDB.
 // The startup time of the LocalStorage was faster than the GroundDB,
 // so LocalStorage was chosen.
 
-const defaultPreferences = {
-  "language": "en",
-  "district": "upolu-north-northwest",
-  "exercise": "false"
-};
+const defaultPreferences = Config.defaultPreferences;
 
 // Class to save and load user preferences such as the language in a local storage,
 // so that the user does not have to specify those preferences every time when app is used.
@@ -39,7 +37,7 @@ class PreferencesClass {
 
   load(key){
     const value = this.cache[key].get();
-    return value ? value : defaultPreferences[key];
+    return value != undefined ? value : defaultPreferences[key];
   }
 
   isLoaded(){

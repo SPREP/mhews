@@ -79,8 +79,9 @@ export class PushClient {
     }
   }
 
-  subscribe(topic){
-    window.plugins.OneSignal.sendTag(topic, "true");
+  subscribe(topic, value){
+    value = value != undefined ? value : "true";
+    window.plugins.OneSignal.sendTag(topic, value);
 //    window.FirebasePlugin.subscribe(topic);
   }
 

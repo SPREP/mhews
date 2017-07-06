@@ -52,6 +52,20 @@ export class Earthquake extends Warning {
     return isTimeClose(this.date_time, another.date_time) && isLocationClose(this.epicenter, another.epicenter);
   }
 
+  getOneSignalFilters(topic){
+    const filters = super.getOneSignalFilters(topic);
+
+    if( this.level == "information"){
+      const distanceKm = Math.round(this.distance_km);
+
+      filters.push(
+        {"field": "tag", "key": "distance", "relation": ">", "value": distanceKm.toString()}
+      );
+    }
+
+    return filters;
+  }
+
   toPushMessage(needsAttention){
     const message = super.toPushMessage(needsAttention);
     if( this.type == "tsunami" && this.isMoreSignificant("information") && this.in_effect ){
