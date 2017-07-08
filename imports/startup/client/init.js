@@ -2,11 +2,10 @@ import Warnings from '../../api/client/warnings.js';
 import {Preferences} from '../../api/client/preferences.js';
 import {playSound} from '../../api/client/mediautils.js';
 import ReceptionTracker from '../../api/receptionTracker.js';
+import PushClientFactory from '../../api/client/pushclientFactory.js';
 
 /* i18n */
 import i18n from '../../api/i18n.js';
-
-import {PushClient} from '../../api/client/pushclient.js';
 
 /* This plugin captures the tap event in React. */
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -66,19 +65,17 @@ function initTapEventPlugin(){
 
 function initPushClient(){
 
-  if( Meteor.isCordova ){
-    pushClient = new PushClient();
-    pushClient.start(onPushReceive);
+  pushClient = PushClientFactory.getInstance();
+  pushClient.start(onPushReceive);
 
-    Tracker.autorun(()=>{
-      pushClient.receiveExerciseMessages(Preferences.load("exercise") == "true");
-    });
+  Tracker.autorun(()=>{
+    pushClient.receiveExerciseMessages(Preferences.load("exercise") == "true");
+  });
 
-    // Maximum distance to receive earthquake information.
-    Tracker.autorun(()=>{
-      pushClient.subscribe("distance", Preferences.load("quakeDistance"));
-    })
-  }
+  // Maximum distance to receive earthquake information.
+  Tracker.autorun(()=>{
+    pushClient.subscribe("distance", Preferences.load("quakeDistance"));
+  })
 }
 
 function subscribeForCollections(){
