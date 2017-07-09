@@ -12,12 +12,14 @@ export default class PushClientOneSignalPlugin extends PushClient {
 
   init(callback){
     const appId = Meteor.settings.public.oneSignalAppId;
+    this.callback = callback;
+    this.handleNotification = this.handleNotification.bind(this);
 
     window.plugins.OneSignal
     .startInit(appId)
     .inFocusDisplaying(window.plugins.OneSignal.OSInFocusDisplayOption.None)
-    .handleNotificationReceived(callback)
-    .handleNotificationOpened(callback)
+//    .handleNotificationReceived(this.handleNotification)
+    .handleNotificationOpened(this.handleNotification)
     .endInit();
 
     window.plugins.OneSignal.getIds(function(ids) {
@@ -34,4 +36,13 @@ export default class PushClientOneSignalPlugin extends PushClient {
     window.plugins.OneSignal.deleteTag(topic);
   }
 
+  handleNotification(notificationResult){
+    const notification = notificationResult.notification;
+    const payload = notification.payload;
+    const data = payload.additionalData;
+
+    console.log("received Notification additional data = "+JSON.stringify(data));
+
+    this.callback(data);
+  }
 }

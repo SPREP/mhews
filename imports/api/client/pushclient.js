@@ -6,7 +6,7 @@ import Config from '/imports/config.js';
 
 Push Client receives push message from the server.
 A subclass is defined for each push mechanism.
-Subclasses must implement init(), subscribe(), and unsubscribe() methods.
+Subclasses must implement init(), subscribe(), unsubscribe(), and handleNotification() methods.
 
 */
 const topicPrefix = Meteor.settings.public.topicPrefix;

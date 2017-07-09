@@ -10,7 +10,7 @@ Currently it relies on the Google Firebase Messaging and uses the cordova-plugin
 */
 export default class PushClientOneSignalWebPush extends PushClient {
 
-  init(_callback){
+  init(callback){
 
     var OneSignal = window.OneSignal || [];
     OneSignal.push(["init", {
@@ -26,6 +26,8 @@ export default class PushClientOneSignalWebPush extends PushClient {
         enable: true /* Set to false to hide */
       }
     }]);
+
+    this.callback = callback;
   }
 
   subscribe(topic, value){
@@ -39,5 +41,15 @@ export default class PushClientOneSignalWebPush extends PushClient {
     OneSignal.push(function() {
       OneSignal.deleteTag(topic);
     });
+  }
+
+  handleNotification(notificationResult){
+    const notification = notificationResult.notification;
+    const payload = notification.payload;
+    const data = payload.additionalData;
+
+    console.log("received Notification additional data = "+JSON.stringify(data));
+
+    this.callback(data);
   }
 }

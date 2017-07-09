@@ -125,6 +125,9 @@ export class Warning {
         "icon" : "myicon"
       },
       "data" : {
+        // Added _id to avoid duplicate of same warning, one from push message and the other from
+        // the collection.
+        "_id": this._id,
         "type": this.type,
         "level": this.level,
         "bulletinId": this.bulletinId,

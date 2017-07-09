@@ -24,7 +24,7 @@ export class WarningCollection extends Mongo.Collection {
       selector.is_exercise = {"$ne": true};
     }
     // Return the Cursor instead of the result.
-    return super.find(selector, {sort: [["issued_at", "desc"]]});
+    return this.find(selector, {sort: [["issued_at", "desc"]]});
   }
 
   findLatestWarningInEffect(type){
@@ -34,13 +34,13 @@ export class WarningCollection extends Mongo.Collection {
     if(type){
       selector.type = type;
     }
-    return super.findOne(selector, {sort: [["issued_at", "desc"]]});
+    return this.findOne(selector, {sort: [["issued_at", "desc"]]});
   }
 
   findSameWarningInEffect(warning){
     let foundWarning = undefined;
 
-    super.find({in_effect: true, type: warning.type}).forEach((another)=>{
+    this.find({in_effect: true, type: warning.type}).forEach((another)=>{
       if( another.isSameEvent(warning)){
         foundWarning = another;
       }
@@ -54,7 +54,7 @@ export class WarningCollection extends Mongo.Collection {
     check(bulletinId, Number);
 
     let selector = {type: type, bulletinId: bulletinId};
-    return super.findOne(selector);
+    return this.findOne(selector);
   }
 
   getHazardTypes(){
@@ -69,18 +69,18 @@ export class WarningCollection extends Mongo.Collection {
   }
 
   isCancelled(id){
-    const warning = super.findOne({_id: id});
+    const warning = this.findOne({_id: id});
     return !(warning && warning.in_effect);
   }
 
   // True if there is a severer warning of the same kind as the one specified by id.
   hasSevererWarning(id){
-    const warning = super.findOne({_id: id, in_effect: true});
+    const warning = this.findOne({_id: id, in_effect: true});
     if( !warning ){
       return false;
     }
     let result = false;
-    super.find({in_effect: true, type: warning.type}).forEach((anotherWarning)=>{
+    this.find({in_effect: true, type: warning.type}).forEach((anotherWarning)=>{
       if( anotherWarning.isMoreSignificant(warning)){
         result = true;
       }
@@ -98,4 +98,6 @@ function transform(warning){
   return WarningFactory.create(warning);
 }
 
-export default new WarningCollection("warnings", {transform: transform});
+const Collection = new WarningCollection("warnings", {transform: transform});
+
+export default Collection;
