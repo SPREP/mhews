@@ -79,4 +79,5 @@ class WarningCollectionServer {
 
 }
 
-export default new WarningCollectionServer(Warnings);
+const Server = new WarningCollectionServer(Warnings);
+export default Server;

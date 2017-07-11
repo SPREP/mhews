@@ -5,6 +5,7 @@ cordova-build-override/platforms/android/google-services.json
 cordova-build-override/google-services.json
 settings.json
 settings_release.json
+settings_staging.json
 mup.js
 private/deploy_scripts/mup*.js
 private/parallel-access-mhews.js

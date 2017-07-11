@@ -12,6 +12,8 @@ export default class PushClientOneSignalWebPush extends PushClient {
 
   init(_callback){
 
+    console.log("oneSignalAppId = "+Meteor.settings.public.oneSignalAppId);
+
     var OneSignal = window.OneSignal || [];
     OneSignal.push(["init", {
       appId: Meteor.settings.public.oneSignalAppId,
@@ -20,7 +22,12 @@ export default class PushClientOneSignalWebPush extends PushClient {
         modalTitle: 'Thanks for subscribing',
         modalMessage: "You're now subscribed for notifications from Samoa MET. You can unsubscribe at any time.",
         modalButtonText: 'Close',
-        enable: true
+        enable: true,
+      },
+      promptOptions: {
+        siteName: 'Samoa Meteorology Division',
+        exampleNotificationTitle: 'Notification from Samoa MET',
+        exampleNotificationMessage: 'Hazard information and warnings',
       },
       notifyButton: {
         enable: true /* Set to false to hide */
