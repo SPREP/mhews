@@ -2,7 +2,8 @@ import Warnings from '../../api/client/warnings.js';
 import {Preferences} from '../../api/client/preferences.js';
 import {playSound} from '../../api/client/mediautils.js';
 import ReceptionTracker from '../../api/receptionTracker.js';
-import PushClientFactory from '../../api/client/pushclientFactory.js';
+//import PushClientFactory from '../../api/client/pushclientFactory.js';
+import {FlowRouter} from 'meteor/kadira:flow-router';
 
 /* i18n */
 import i18n from '../../api/i18n.js';
@@ -11,11 +12,14 @@ import i18n from '../../api/i18n.js';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import {initRouterWithAdminPage} from '../../api/client/route.jsx';
+import {initFlowRouter} from '../../api/client/flowroute.jsx';
 
 import FileCache from '../../api/client/filecache.js';
 import Config from '/imports/config.js';
 
 let pushClient = null;
+
+FlowRouter.wait();
 
 Meteor.startup(()=>{
 
@@ -27,7 +31,9 @@ Meteor.startup(()=>{
 
   // Call this function after the initTapEventPlugin().
   // Otherwise, some material-ui components won't work.
-  initRouterWithAdminPage();
+//  initRouterWithAdminPage();
+  initFlowRouter();
+  FlowRouter.initialize();
 });
 
 // Initializations that can be deferred after the GUI is rendered.
@@ -65,16 +71,23 @@ function initTapEventPlugin(){
 
 function initPushClient(){
 
-  pushClient = PushClientFactory.getInstance();
-  pushClient.start(onPushReceive);
+  if( pushClient ){
+    return;
+  }
+  
+  import('../../api/client/pushclientFactory.js').then(({default: PushClientFactory})=>{
+    pushClient = PushClientFactory.getInstance();
+    pushClient.start(onPushReceive);
 
-  Tracker.autorun(()=>{
-    pushClient.receiveExerciseMessages(Preferences.load("exercise") == "true");
-  });
+    Tracker.autorun(()=>{
+      pushClient.receiveExerciseMessages(Preferences.load("exercise") == "true");
+    });
 
-  // Maximum distance to receive earthquake information.
-  Tracker.autorun(()=>{
-    pushClient.subscribe("distance", Preferences.load("quakeDistance"));
+    // Maximum distance to receive earthquake information.
+    Tracker.autorun(()=>{
+      pushClient.subscribe("distance", Preferences.load("quakeDistance"));
+    })
+
   })
 }
 

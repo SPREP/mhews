@@ -25,6 +25,8 @@ import Config from '../config.js';
 
 import './css/App.css';
 
+import {FlowRouter} from 'meteor/kadira:flow-router';
+
 /* global navigator */
 
 const topPageName = Config.topPage;
@@ -47,13 +49,13 @@ class AppClass extends React.Component {
   }
 
   handlePageSelection(page){
-    if( page == topPageName ){
-      browserHistory.push("/");
+    const path = page == topPageName ? "/" : "/app/"+page;
+    if( FlowRouter ){
+      FlowRouter.go(path);
     }
     else{
-      browserHistory.push("/app/"+page);
+      browserHistory.push(path);
     }
-//    this.setState({page: page});
   }
 
   onBackKeyDown(){
@@ -100,7 +102,7 @@ class AppClass extends React.Component {
       <div className="app">
         <AppBar
 //          title={t(pageConfig.title)}
-          title={getTitle(getPageName(this.props.location.pathname), t)}
+          title={getTitle(this.getPathName(), t)}
           style={{"backgroundColor": "#F40000"}}
           titleStyle={{"fontSize": "18px"}}
           onLeftIconButtonTouchTap={()=>{this.toggleDrawerOpen()}}
@@ -120,7 +122,20 @@ class AppClass extends React.Component {
       </div>
     );
   }
+  getPathName(){
+    if( this.props.location ){
+      // Still using the React Router
+      return getPageName(this.props.location.pathname);
+    }
+    else{
+      // Using the Flow Router
+      const routeName = FlowRouter.current().route.name;
+      console.log("routeName = "+routeName);
+      return routeName;
+    }
+  }
 }
+
 
 // Weather charts such as the surface streamline analysis should have been updated
 // before the weather forecast is updated. This function trigger refresh the charts in the cache.

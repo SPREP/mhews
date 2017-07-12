@@ -23,7 +23,7 @@ class WeatherForecastsCollection extends Ground.Collection {
     console.log("WeatherForecastsCollection.start");
 
     // To receive the data from the weatherForecast collection
-    Meteor.subscribe("weatherForecast", ()=>{
+    this.subscriptionHandler = Meteor.subscribe("weatherForecast", ()=>{
       console.log("Meteor.subscribe weather callback.");
 
       // Make GroundDB observe the Mongo db and copy the data to the local storage.
@@ -43,7 +43,7 @@ class WeatherForecastsCollection extends Ground.Collection {
       this.forecastUpdateHandler = null;
     }
 
-    Meteor.unsubscribe(this.collection);
+    this.subscriptionHandler.stop();
     // TODO What's the right unsubscribe operation for the GroundDB??
   }
 

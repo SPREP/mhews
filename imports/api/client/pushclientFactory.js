@@ -5,7 +5,7 @@ import PushClientOneSignalWebPush from './pushclientOneSignalWebPush';
  Factory class to return a suitable pushclient for the message dissemination method.
  */
 
-export class PushClientFactory {
+class PushClientFactory {
 
   getInstance(){
     if( Meteor.isCordova ){
@@ -17,4 +17,5 @@ export class PushClientFactory {
   }
 }
 
-export default new PushClientFactory();
+const factory = new PushClientFactory();
+export default factory;
