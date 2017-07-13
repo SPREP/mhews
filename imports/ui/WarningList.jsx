@@ -50,7 +50,7 @@ export class WarningList extends React.Component {
     }
     else{
       itemlist.push(
-        <WarningCard t={t} />
+        <WarningCard key={1} t={t} />
       )
     }
 

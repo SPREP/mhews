@@ -7,13 +7,12 @@ import PushClientOneSignalWebPush from './pushclientOneSignalWebPush';
 
 class PushClientFactory {
 
+  constructor(){
+    this.instance = Meteor.isCordova ? new PushClientOneSignalPlugin() : new PushClientOneSignalWebPush();
+  }
+
   getInstance(){
-    if( Meteor.isCordova ){
-      return new PushClientOneSignalPlugin();
-    }
-    else{
-      return new PushClientOneSignalWebPush();
-    }
+    return this.instance;
   }
 }
 

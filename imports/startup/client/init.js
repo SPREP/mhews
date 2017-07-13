@@ -11,7 +11,7 @@ import i18n from '../../api/i18n.js';
 /* This plugin captures the tap event in React. */
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
-import {initRouterWithAdminPage} from '../../api/client/route.jsx';
+//import {initRouterWithAdminPage} from '../../api/client/route.jsx';
 import {initFlowRouter} from '../../api/client/flowroute.jsx';
 
 import FileCache from '../../api/client/filecache.js';
@@ -74,8 +74,9 @@ function initPushClient(){
   if( pushClient ){
     return;
   }
-  
+
   import('../../api/client/pushclientFactory.js').then(({default: PushClientFactory})=>{
+
     pushClient = PushClientFactory.getInstance();
     pushClient.start(onPushReceive);
 
@@ -87,8 +88,7 @@ function initPushClient(){
     Tracker.autorun(()=>{
       pushClient.subscribe("distance", Preferences.load("quakeDistance"));
     })
-
-  })
+  });
 }
 
 function subscribeForCollections(){

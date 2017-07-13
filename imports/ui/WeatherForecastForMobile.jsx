@@ -88,7 +88,7 @@ export class WeatherForecastForMobile extends React.Component {
 WeatherForecastForMobile.propTypes = {
   t: React.PropTypes.func,
   dates: React.PropTypes.array,
-  issuedAt: React.PropTypes.string,
+  issuedAt: React.PropTypes.object,
   situation: React.PropTypes.string,
   forecasts: React.PropTypes.array,
 

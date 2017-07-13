@@ -2,43 +2,75 @@ import {FlowRouter} from 'meteor/kadira:flow-router';
 import React from 'react';
 import {mount} from 'react-mounter';
 
-import TopPage from '../../ui/TopPage.jsx';
-import AboutAppPage from '../../ui/AboutAppPage.jsx';
-import UsagePage from '../../ui/UsagePage.jsx';
-import PreferencesPage from '../../ui/PreferencesPage.jsx';
-import WarningPage from '../../ui/WarningPage.jsx';
-import EarthquakePage from '../../ui/EarthquakePage.jsx';
-import CyclonePage from '../../ui/CyclonePage.jsx';
+//import TopPage from '../../ui/TopPage.jsx';
 import App from '../../ui/App.jsx';
 import AppTemplate from '../../ui/AppTemplate.jsx';
-import ClimatePage from '../../ui/ClimatePage.jsx';
-import WeatherPage from '../../ui/WeatherPage.jsx';
-import AdminPage from '../../ui/admin/AdminPage.jsx';
-import AdminDashboard from '../../ui/admin/AdminDashboard.jsx';
-import WeatherDayIconMatrix from '../../ui/admin/WeatherDayIconMatrix.jsx';
 
-function adminMount(component){
-  const Layout = ({content})=>(
-    <div>{content}</div>
+const AdminLayout = ({content})=>{
+  const AdminPage = modules['AdminPage'];
+  return (
+    <AppTemplate><AdminPage>{content}</AdminPage></AppTemplate>
   )
-  mount(Layout, {
-    content: (<div>admin</div>)
-  });
 }
 
-function appMount(component){
-  const Layout = ({content})=>(
-    <AppTemplate><App>{content}</App></AppTemplate>
-  )
-  mount(Layout, {
-    content: (component)
-  })
-}
+const AppLayout = ({content})=>(
+  <AppTemplate><App>{content}</App></AppTemplate>
+)
 
 function getParams(){
   return {id: FlowRouter.getParam("id")};
 }
 
+const modules = {};
+
+function dynloadAndAppMount(moduleName, importFunction, params){
+  dynloadAndMount(moduleName, AppLayout, importFunction, params);
+}
+
+function dynloadAndAdminMount(moduleName, importFunction, params){
+  if( !modules['AdminPage']){
+    import("/imports/ui/admin/AdminPage.jsx").then(({default: m})=>{
+      modules['AdminPage'] = m;
+      dynloadAndMount(moduleName, AdminLayout, importFunction, params);
+    })
+  }
+  else{
+    dynloadAndMount(moduleName, AdminLayout, importFunction, params);
+  }
+}
+
+function dynloadAndMount(moduleName, Layout, importFunction, params){
+  if( modules[moduleName] ){
+    const m = modules[moduleName];
+    if( params ){
+      mount(Layout, {content: React.createElement(m, params)});
+    }
+    else{
+      mount(Layout, {content: React.createElement(m)});
+    }
+  }
+  else{
+    importFunction().then(({default: m})=>{
+      modules[moduleName] = m;
+      if( params ){
+        mount(Layout, {content: React.createElement(m, params)});
+      }
+      else{
+        mount(Layout, {content: React.createElement(m)});
+      }
+    })
+
+  }
+
+}
+
+/*
+  IMPORTANT
+
+  The Meteor's dynamic import requires to receive the module path as statically analyzable string literal.
+  It is not possible to use variable to pass it. (e.g. const m = '/imports/ui/TopPage.jsx'; import(m); does not work.)
+  Please refer to https://github.com/meteor/meteor/issues/8744 for more information.
+*/
 export function initFlowRouter() {
 
   FlowRouter.route('/', {
@@ -55,77 +87,77 @@ export function initFlowRouter() {
 
   app.route('/', {
     action(){
-      appMount(<TopPage />)
+      dynloadAndAppMount('TopPage', ()=>{ return import('/imports/ui/TopPage.jsx')});
     },
     name: 'app'
   })
 
   app.route('/about', {
     action(){
-      appMount(<AboutAppPage />);
+      dynloadAndAppMount('AboutAppPage', ()=>{ return import('/imports/ui/AboutAppPage.jsx')});
     },
     name: 'about'
   })
 
   app.route('/usage', {
     action(){
-      appMount(<UsagePage />)
+      dynloadAndAppMount('UsagePage', ()=>{ return import('/imports/ui/UsagePage.jsx')});
     },
     name: 'usage'
   })
 
   app.route('/settings', {
     action(){
-      appMount(<PreferencesPage />)
+      dynloadAndAppMount('PreferencesPage', ()=>{ return import('/imports/ui/PreferencesPage.jsx')});
     },
     name: 'settings'
   })
 
   app.route('/earthquake/:id', {
     action(){
-      appMount(<EarthquakePage params={getParams()}/>)
+      dynloadAndAppMount('EarthquakePage', ()=>{ return import('/imports/ui/EarthquakePage.jsx')}, {params: getParams()});
     },
     name: 'earthquake'
   })
 
   app.route('/tsunami/:id', {
     action(){
-      appMount(<EarthquakePage params={getParams()}/>)
+      dynloadAndAppMount('EarthquakePage', ()=>{ return import('/imports/ui/EarthquakePage.jsx')}, {params: getParams()});
     },
     name: 'tsunami'
   })
 
   app.route('/heavyRain/:id', {
     action(){
-      appMount(<WarningPage params={getParams()}/>)
+      dynloadAndAppMount('WarningPage', ()=>{ return import('/imports/ui/WarningPage.jsx')}, {params: getParams()});
     },
     name: 'heavyRain'
   })
 
   app.route('/cyclone/:id', {
     action(){
-      appMount(<CyclonePage params={getParams()}/>)
+      dynloadAndAppMount('CyclonePage', ()=>{ return import('/imports/ui/CyclonePage.jsx')}, {params: getParams()});
     },
     name: 'cyclone'
   })
 
   app.route('/:warning/:id', {
     action(){
-      appMount(<WarningPage params={getParams()}/>)
+      dynloadAndAppMount('WarningPage', ()=>{ return import('/imports/ui/WarningPage.jsx')}, {params: getParams()});
     },
     name: 'warning'
   })
 
   app.route('/weather', {
     action(){
-      appMount(<WeatherPage />)
+      dynloadAndAppMount('WeatherPage', ()=>{ return import('/imports/ui/WeatherPage.jsx')});
     },
     name: 'weather'
   })
 
   app.route('/climate', {
     action(){
-      appMount(<ClimatePage />)
+      dynloadAndAppMount('ClimatePage', ()=>{ return import('/imports/ui/ClimatePage.jsx')});
     },
     name: 'climate'
   })
@@ -137,14 +169,14 @@ export function initFlowRouter() {
 
   admin.route('/', {
     action(){
-      adminMount(<AdminDashboard />)
+      dynloadAndAdminMount('AdminDashboard', ()=>{ return import('/imports/ui/admin/AdminDashboard.jsx')});
     },
     name: 'admin'
   })
 
   admin.route('/day-weather-matrix/:id', {
     action(){
-      adminMount(<WeatherDayIconMatrix params={{id: FlowRouter.getParam("id")}}/>)
+      dynloadAndAdminMount('WeatherDayIconMatrix', ()=>{ return import('/imports/ui/admin/WeatherDayIconMatrix.jsx')}, {params: {id: FlowRouter.getParam("id")}});
     },
     name: 'day-weather-matrix'
   })
