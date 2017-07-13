@@ -4,7 +4,6 @@ Weather forecast is pushed from the server through the Mongo Collection.
 Forecasts are stored locally into the GroundDB for offline use.
 
 */
-
 import {WeatherForecasts} from '../weathers.js';
 
 /* global Ground */

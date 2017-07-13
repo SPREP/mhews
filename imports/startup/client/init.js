@@ -34,6 +34,10 @@ Meteor.startup(()=>{
 //  initRouterWithAdminPage();
   initFlowRouter();
   FlowRouter.initialize();
+
+  // TODO: Try to move this after component mounted,
+  // so that the load of moment is done after the top page is rendered.
+  loadMoment();
 });
 
 // Initializations that can be deferred after the GUI is rendered.
@@ -48,6 +52,16 @@ export function initAfterComponentMounted(){
 
   }, 1000);
 //  configReloader();
+}
+
+function loadMoment(){
+  console.log("loadMoment");
+  // Set the global variable moment.
+  import("moment").then(({default: m})=>{
+    moment = m;
+    console.log("loading moment has completed.");
+  });
+
 }
 
 function initTapEventPlugin(){

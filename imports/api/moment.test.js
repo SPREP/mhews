@@ -1,4 +1,5 @@
 var assert = require('assert');
+import moment from 'moment';
 
 // Daylight saving time reference:
 // https://www.timeanddate.com/time/zone/samoa/apia
