@@ -1,5 +1,6 @@
 import React from 'react';
-import {CardMedia, CardTitle} from 'material-ui/Card';
+import CardMedia from 'material-ui/Card/CardMedia';
+import CardTitle from 'material-ui/Card/CardTitle';
 import { createContainer } from 'meteor/react-meteor-data';
 import SwipeableViews from 'react-swipeable-views';
 

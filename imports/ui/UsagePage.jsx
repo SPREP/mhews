@@ -6,10 +6,13 @@ import { translate } from 'react-i18next';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
 import RaisedButton from 'material-ui/RaisedButton';
-import {Card, CardMedia, CardActions, CardText} from 'material-ui/Card';
+import Card from 'material-ui/Card/Card';
+import CardMedia from 'material-ui/Card/CardMedia';
+import CardText from 'material-ui/Card/CardText';
+import CardActions from 'material-ui/Card/CardActions';
+
 
 import {playSoundNoDelay} from '../api/client/mediautils.js';
-import browserHistory from 'react-router/lib/browserHistory';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -111,7 +114,7 @@ class UsagePage extends React.Component {
                 disableTouchRipple={true}
                 disableFocusRipple={true}
                 primary={true}
-                onTouchTap={()=>{browserHistory.goBack()}}
+                onTouchTap={()=>{history.back()}}
                 style={{marginRight: 12}}
               />
             </CardActions>

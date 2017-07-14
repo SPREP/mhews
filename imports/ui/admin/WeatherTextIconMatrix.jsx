@@ -10,8 +10,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Snackbar from 'material-ui/Snackbar';
 
 import { createContainer } from 'meteor/react-meteor-data';
-import browserHistory from 'react-router/lib/browserHistory';
 import {updateForecast} from '../../api/client/admin/weather.js';
+import {FlowRouter} from 'meteor/kadira:flow-router';
 
 // FIXME Word-wrapping does not work as expected ...
 const forecastTextStyle = {
@@ -223,7 +223,7 @@ class WeatherTextIconMatrixPage extends React.Component {
   }
 
   openDayIconMatrixPage(bulletin){
-    browserHistory.push("/admin/day-weather-matrix/"+bulletin._id);
+    FlowRouter.go("/admin/day-weather-matrix/"+bulletin._id);
   }
 
   render(){

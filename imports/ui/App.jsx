@@ -1,6 +1,5 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import browserHistory from 'react-router/lib/browserHistory';
 
 /* i18n */
 import { translate } from 'react-i18next';
@@ -50,12 +49,7 @@ class AppClass extends React.Component {
 
   handlePageSelection(page){
     const path = page == topPageName ? "/" : "/app/"+page;
-    if( FlowRouter ){
-      FlowRouter.go(path);
-    }
-    else{
-      browserHistory.push(path);
-    }
+    FlowRouter.go(path);
   }
 
   onBackKeyDown(){

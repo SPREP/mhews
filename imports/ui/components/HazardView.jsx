@@ -1,5 +1,8 @@
 import React from 'react';
-import {Card, CardMedia, CardText, CardActions} from 'material-ui/Card';
+import Card from 'material-ui/Card/Card';
+import CardMedia from 'material-ui/Card/CardMedia';
+import CardText from 'material-ui/Card/CardText';
+import CardActions from 'material-ui/Card/CardActions';
 import FlatButton from 'material-ui/FlatButton';
 import {WarningCard} from './WarningCard.jsx';
 

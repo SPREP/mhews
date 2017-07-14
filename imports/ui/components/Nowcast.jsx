@@ -1,5 +1,5 @@
 import React from 'react';
-import {CardText} from 'material-ui/Card';
+import CardText from 'material-ui/Card/CardText';
 import {Moon} from '../../api/moonutils.js';
 import DailyTideTableContainer from './TideTable.jsx';
 import {SmallCard} from './SmallCard.jsx';

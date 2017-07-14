@@ -1,5 +1,8 @@
 import React from 'react';
-import {Card, CardHeader, CardActions} from 'material-ui/Card';
+import Card from 'material-ui/Card/Card';
+import CardHeader from 'material-ui/Card/CardHeader';
+import CardActions from 'material-ui/Card/CardActions';
+
 import SwipeableViews from 'react-swipeable-views';
 import {Nowcast} from './components/Nowcast.jsx';
 import {ExtendedForecast} from './components/ExtendedForecast.jsx';
