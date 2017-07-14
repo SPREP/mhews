@@ -55,12 +55,13 @@ export function initAfterComponentMounted(){
 }
 
 function loadMoment(){
-  console.log("loadMoment");
   // Set the global variable moment.
   import("moment").then(({default: m})=>{
     moment = m;
-    console.log("loading moment has completed.");
-  });
+  })
+  import("geolib").then(({default: m})=>{
+    geolib = m;
+  })
 
 }
 
@@ -177,19 +178,16 @@ function playSoundEffect(warning, oldWarning){
   }
 }
 
-// Unfortunately the FCM is unreliable.
-// Don't rely on the FCM but observe the Meteor collection to notify the user of a new warning.
-// So this function doesn't do anything except for updating the tracker.
-function onPushReceive(fcmData){
-  console.log("FCM data received."+JSON.stringify(fcmData));
+function onPushReceive(data){
+  console.log("Push message received."+JSON.stringify(data));
 
   Meteor.defer(()=>{
     ReceptionTracker.onBackgroundReception({
-      bulletinId: fcmData.bulletinId,
-      type: fcmData.type,
-      level: fcmData.level,
-      in_effect: fcmData.in_effect,
-      issued_at: fcmData.issued_at
+      bulletinId: data.bulletinId,
+      type: data.type,
+      level: data.level,
+      in_effect: data.in_effect,
+      issued_at: data.issued_at
     });
   })
 

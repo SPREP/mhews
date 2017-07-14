@@ -1,13 +1,21 @@
 import { Meteor } from 'meteor/meteor';
 import i18n from 'i18next';
 
-var request = require('request');
+var request;
 
-const _ = require('lodash');
+function importRequestModule(){
+  if( !request && Meteor.isServer ){
+    import('request').then(({default: m})=>{
+      request = m;
+    })
+  }
+}
 
 export class PushMessage {
 
   constructor(warning, body){
+    importRequestModule();
+
     this.warning = warning;
     this.body = body;
     this.serverError = {
@@ -175,13 +183,12 @@ export class PushMessage {
       "Authorization": "key="+fcmApiKey
     };
 
-    const options = {
+    const httpRequest = {
       url: "https://fcm.googleapis.com/fcm/send",
       method: "POST",
-      headers: fcmHeaders
+      headers: fcmHeaders,
+      json: this.body
     }
-
-    const httpRequest = _.merge(options, {json: this.body});
 
     request.post(httpRequest, Meteor.bindEnvironment((error, response, body)=>{
       if (!error && response.statusCode == 200) {

@@ -27,8 +27,6 @@ class i18n {
       _.extend(i18nextConfig, {resources: resources});
     });
 
-//    console.log(JSON.stringify(i18nextConfig));
-
     i18next.init(i18nextConfig);
   }
 
