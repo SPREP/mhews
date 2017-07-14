@@ -50,9 +50,10 @@ export class WeatherForecastForMobile extends React.Component {
         </SwipeableViews>
         <CardActions style={{"paddingTop": "0px", "paddingLeft": "16px"}}>
           {
-            forecasts.map((forecast)=>{
+            forecasts.map((forecast, index)=>{
               return (
                 <ExtendedForecast
+                  key={index}
                   forecast={forecast}
                   t={this.props.t}
                   onSelected={(date)=>{this.changeDisplayDate(date)}}

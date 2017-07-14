@@ -72,18 +72,23 @@ class AppClass extends React.Component {
   componentDidMount(){
     hideSplashScreen();
 
+    // It seems that while the following code is executed, we get the blank white screen.
+    // Use Meteor.defer so that componentDidMount returns earlier.
+
     initAfterComponentMounted();
 
-    if( Meteor.isCordova ){
-      document.addEventListener("backbutton", this.onBackKeyDown);
-    }
-    console.log("WeatherPage.componentDidMount()");
-    WeatherForecasts.start();
-    WeatherForecasts.onForecastUpdate(refreshWeatherChart);
+    Meteor.defer(()=>{
+      if( Meteor.isCordova ){
+        document.addEventListener("backbutton", this.onBackKeyDown);
+      }
+      console.log("App.componentDidMount()");
+      WeatherForecasts.start();
+      WeatherForecasts.onForecastUpdate(refreshWeatherChart);
+    })
   }
 
   componentWillUnmount(){
-    console.log("WeatherPage.componentWillUmount()");
+    console.log("App.componentWillUmount()");
     WeatherForecasts.stop();
   }
 
