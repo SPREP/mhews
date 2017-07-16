@@ -111,4 +111,5 @@ class ForecastWrapper {
 
 }
 
-export default new WeatherForecastsCollection("groundWeatherForecast");
+const WeatherForecastsGroundCollection = new WeatherForecastsCollection("groundWeatherForecast");
+export default WeatherForecastsGroundCollection;

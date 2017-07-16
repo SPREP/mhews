@@ -13,7 +13,6 @@ import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 
 /* Imports the mhews's components */
 import WeatherForecasts from '../api/client/weather.js';
-import FileCache from '../api/client/filecache.js';
 
 import ConnectionStatusIndicatorContainer from './components/ConnectionStatusIndicator.jsx';
 import DrawerMenu from './components/DrawerMenu.jsx';
@@ -25,8 +24,6 @@ import Config from '../config.js';
 import './css/App.css';
 
 import {FlowRouter} from 'meteor/kadira:flow-router';
-
-/* global navigator */
 
 const topPageName = Config.topPage;
 
@@ -70,7 +67,6 @@ class AppClass extends React.Component {
   }
 
   componentDidMount(){
-    hideSplashScreen();
 
     // It seems that while the following code is executed, we get the blank white screen.
     // Use Meteor.defer so that componentDidMount returns earlier.
@@ -83,7 +79,7 @@ class AppClass extends React.Component {
       }
       console.log("App.componentDidMount()");
       WeatherForecasts.start();
-      WeatherForecasts.onForecastUpdate(refreshWeatherChart);
+//      WeatherForecasts.onForecastUpdate(refreshWeatherChart);
     })
   }
 
@@ -135,15 +131,15 @@ class AppClass extends React.Component {
   }
 }
 
+function cacheFiles(){
 
-// Weather charts such as the surface streamline analysis should have been updated
-// before the weather forecast is updated. This function trigger refresh the charts in the cache.
-function refreshWeatherChart(_forecast){
-  [surfaceChartUrl, satelliteImageUrl].forEach((url)=>{
+  import('../../api/client/filecache.js').then(({default: m})=>{
+    FileCache = m; // global
 
-    const handle = FileCache.get(url);
-    if( handle ){
-      handle.refresh();
+    const cacheFiles = Config.cacheFiles;
+    for(let key in cacheFiles ){
+      const url = cacheFiles[key];
+      FileCache.add(url);
     }
   });
 }
@@ -187,12 +183,6 @@ class AppChildWrapper extends React.Component {
 AppChildWrapper.propTypes = {
   drawerOpen: React.PropTypes.bool,
   children: React.PropTypes.node
-}
-
-function hideSplashScreen(){
-  if( Meteor.isCordova ){
-    navigator.splashscreen.hide();
-  }
 }
 
 AppClass.propTypes = {

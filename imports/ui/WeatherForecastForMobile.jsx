@@ -21,7 +21,7 @@ export class WeatherForecastForMobile extends React.Component {
     if( this.state.displayDate != nextState.displayDate ){
       return true;
     }
-
+    return false;
   }
 
   render(){

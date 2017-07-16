@@ -2,7 +2,6 @@ import Warnings from '../../api/client/warnings.js';
 import {Preferences} from '../../api/client/preferences.js';
 import {playSound} from '../../api/client/mediautils.js';
 import ReceptionTracker from '../../api/receptionTracker.js';
-//import PushClientFactory from '../../api/client/pushclientFactory.js';
 import {FlowRouter} from 'meteor/kadira:flow-router';
 
 /* i18n */
@@ -11,15 +10,15 @@ import i18n from '../../api/i18n.js';
 /* This plugin captures the tap event in React. */
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
-//import {initRouterWithAdminPage} from '../../api/client/route.jsx';
 import {initFlowRouter} from '../../api/client/flowroute.jsx';
 
-import FileCache from '../../api/client/filecache.js';
 import Config from '/imports/config.js';
 
 let pushClient = null;
 
 FlowRouter.wait();
+
+/* global navigator */
 
 Meteor.startup(()=>{
 
@@ -38,6 +37,8 @@ Meteor.startup(()=>{
   // TODO: Try to move this after component mounted,
   // so that the load of moment is done after the top page is rendered.
   loadMoment();
+
+  hideSplashScreen();
 });
 
 // Initializations that can be deferred after the GUI is rendered.
@@ -48,7 +49,6 @@ export function initAfterComponentMounted(){
     initPushClient();
     subscribeForCollections();
     startWarningObserver();
-    cacheFiles();
 
   }, 5000);
 //  configReloader();
@@ -117,14 +117,6 @@ function subscribeForCollections(){
 
 }
 
-function cacheFiles(){
-  const cacheFiles = Config.cacheFiles;
-  for(let key in cacheFiles ){
-    const url = cacheFiles[key];
-    FileCache.add(url);
-  }
-}
-
 let handleForWarningObserver;
 
 function startWarningObserver(){
@@ -182,6 +174,7 @@ function onPushReceive(data){
   console.log("Push message received."+JSON.stringify(data));
 
   Meteor.defer(()=>{
+
     ReceptionTracker.onBackgroundReception({
       bulletinId: data.bulletinId,
       type: data.type,
@@ -191,4 +184,12 @@ function onPushReceive(data){
     });
   })
 
+}
+
+function hideSplashScreen(){
+  if( Meteor.isCordova ){
+    Meteor.defer(()=>{
+      navigator.splashscreen.hide();
+    })
+  }
 }

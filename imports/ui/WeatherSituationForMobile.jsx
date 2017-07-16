@@ -4,9 +4,11 @@ import CardTitle from 'material-ui/Card/CardTitle';
 import { createContainer } from 'meteor/react-meteor-data';
 import SwipeableViews from 'react-swipeable-views';
 
-import FileCache from '/imports/api/client/filecache.js';
+//import FileCache from '/imports/api/client/filecache.js';
 
 import Config from '/imports/config.js';
+
+/* global FileCache */
 
 class WeatherSituationImage extends React.Component {
 
