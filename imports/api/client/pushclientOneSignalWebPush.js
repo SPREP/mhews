@@ -1,5 +1,4 @@
 import {Meteor} from 'meteor/meteor';
-import ReceptionTracker from '../receptionTracker.js';
 import PushClient from './pushclient.js';
 
 /*

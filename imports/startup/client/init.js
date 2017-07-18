@@ -1,11 +1,7 @@
 import Warnings from '../../api/client/warnings.js';
 import {Preferences} from '../../api/client/preferences.js';
 import {playSound} from '../../api/client/mediautils.js';
-import ReceptionTracker from '../../api/receptionTracker.js';
 import {FlowRouter} from 'meteor/kadira:flow-router';
-
-/* i18n */
-import i18n from '../../api/i18n.js';
 
 /* This plugin captures the tap event in React. */
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -23,8 +19,11 @@ FlowRouter.wait();
 Meteor.startup(()=>{
 
   // These initializations are needed before rendering GUI.
-  i18n.init();
-  Preferences.onChange("language", i18n.changeLanguage);
+  import("../../api/i18n.js").then(({default: m})=>{
+    i18n = m;
+    i18n.init();
+    Preferences.onChange("language", i18n.changeLanguage);
+  })
 
   initTapEventPlugin();
 
@@ -173,8 +172,7 @@ function playSoundEffect(warning, oldWarning){
 function onPushReceive(data){
   console.log("Push message received."+JSON.stringify(data));
 
-  Meteor.defer(()=>{
-
+  import('../../api/receptionTracker.js').then(({default: ReceptionTracker})=>{
     ReceptionTracker.onBackgroundReception({
       bulletinId: data.bulletinId,
       type: data.type,

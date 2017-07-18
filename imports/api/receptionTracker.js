@@ -11,6 +11,8 @@ if(Meteor.isServer){
 export class ReceptionTrackerClass {
 
   constructor(){
+    console.log("============= ReceptionTrackerClass constructor.");
+    
     this.queue = [];
     this.trackerId = new ReactiveVar();
     this.hasNewData = new ReactiveVar(false);

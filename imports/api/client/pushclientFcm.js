@@ -1,5 +1,4 @@
 import {Meteor} from 'meteor/meteor';
-import ReceptionTracker from '../receptionTracker.js';
 import PushClient from './pushclient.js';
 
 /*
@@ -18,7 +17,9 @@ export class PushClientFcm extends PushClient {
     // onTokenRefresh is called even for the initial token setting.
     window.FirebasePlugin.onTokenRefresh((token)=>{
       console.log("FCM token refreshed: "+token);
-      ReceptionTracker.setTrackerId(token);
+      import('../receptionTracker.js').then(({default: ReceptionTracker})=>{
+        ReceptionTracker.setTrackerId(token);
+      })
     });
 
     this.subscribe(topicPrefix);
