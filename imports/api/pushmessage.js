@@ -1,20 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import i18n from 'i18next';
 
-var request;
-
-function importRequestModule(){
-  if( !request && Meteor.isServer ){
-    import('request').then(({default: m})=>{
-      request = m;
-    })
-  }
-}
-
 export class PushMessage {
 
   constructor(warning, body){
-    importRequestModule();
 
     this.warning = warning;
     this.body = body;
@@ -151,28 +140,35 @@ export class PushMessage {
 
     console.log("Sending message to OneSignal "+JSON.stringify(message));
 
-    const https = require('https');
+    import('https').then(({default: https})=>{
 
-    const req = https.request(oneSignalOptions,  (res)=> {
-      res.on('data', function(data) {
-        console.log("Response:");
-        console.log(JSON.parse(data));
-        if( onSuccess ){
-          onSuccess(data);
-        }
+      const req = https.request(oneSignalOptions,  (res)=> {
+        res.on('data', function(data) {
+          console.log("Response:");
+          console.log(JSON.parse(data));
+          if( onSuccess ){
+            onSuccess(data);
+          }
+        });
       });
-    });
 
-    req.on('error', function(e) {
-      console.log("ERROR:");
-      console.log(e);
-      if( onError ){
-        onError(e);
-      }
-    });
+      req.on('error', function(e) {
+        console.log("ERROR:");
+        console.log(e);
+        if( onError ){
+          onError(e);
+        }
 
-    req.write(JSON.stringify(message));
-    req.end();
+        // FIXME: It must try to resend the message depending on the error.
+        // Example) Connection failure due to unstable connection.
+        // I20170718-23:31:28.033(13)? ERROR:
+        // I20170718-23:31:28.037(13)? { [Error: socket hang up] code: 'ECONNRESET' }
+      });
+
+      req.write(JSON.stringify(message));
+      req.end();
+    })
+
   }
 
   postFcmMessage(onSuccess, onError){
@@ -190,33 +186,37 @@ export class PushMessage {
       json: this.body
     }
 
-    request.post(httpRequest, Meteor.bindEnvironment((error, response, body)=>{
-      if (!error && response.statusCode == 200) {
-        console.log("FCM message was successfully sent for warning "+this.warning.bulletinId);
-        console.log("Response body = "+ JSON.stringify(body));
-        if( onSuccess ){
-          onSuccess(this.warning);
-        }
-      }
-      else {
-        if( error ){
-          console.log("error: "+error);
-        }
-        if( response ){
-          console.log('error response: '+ response.statusCode+ " "+response.statusMessage);
-        }
+    import('request').then(({default: request})=>{
 
-        if( isServerError(response.statusCode) && this.serverError.retryCount++ < this.serverError.maxRetry ){
-          this.scheduleRetryOnError();
-        }
-        else{
-          console.error("FCM message couldn't be sent for warning "+this.warning.bulletinId);
-          if( onError ){
-            onError(this.warning, response);
+      request.post(httpRequest, Meteor.bindEnvironment((error, response, body)=>{
+        if (!error && response.statusCode == 200) {
+          console.log("FCM message was successfully sent for warning "+this.warning.bulletinId);
+          console.log("Response body = "+ JSON.stringify(body));
+          if( onSuccess ){
+            onSuccess(this.warning);
           }
         }
-      }
-    }));
+        else {
+          if( error ){
+            console.log("error: "+error);
+          }
+          if( response ){
+            console.log('error response: '+ response.statusCode+ " "+response.statusMessage);
+          }
+
+          if( isServerError(response.statusCode) && this.serverError.retryCount++ < this.serverError.maxRetry ){
+            this.scheduleRetryOnError();
+          }
+          else{
+            console.error("FCM message couldn't be sent for warning "+this.warning.bulletinId);
+            if( onError ){
+              onError(this.warning, response);
+            }
+          }
+        }
+      }));
+    })
+
   }
 
   scheduleRetryOnError(){

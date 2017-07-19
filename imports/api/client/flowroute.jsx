@@ -6,6 +6,8 @@ import {mount} from 'react-mounter';
 import App from '../../ui/App.jsx';
 import AppTemplate from '../../ui/AppTemplate.jsx';
 
+FlowRouter.wait();
+
 const AdminLayout = ({content})=>{
   const AdminPage = modules['AdminPage'];
   return (
@@ -180,4 +182,7 @@ export function initFlowRouter() {
     },
     name: 'day-weather-matrix'
   })
+
+  FlowRouter.initialize();
+  
 }

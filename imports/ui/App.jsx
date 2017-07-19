@@ -4,8 +4,6 @@ import { Meteor } from 'meteor/meteor';
 /* i18n */
 import { translate } from 'react-i18next';
 
-import {initAfterComponentMounted} from '../startup/client/init.js';
-
 /* Imports from the material-ui */
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
@@ -71,15 +69,16 @@ class AppClass extends React.Component {
     // It seems that while the following code is executed, we get the blank white screen.
     // Use Meteor.defer so that componentDidMount returns earlier.
 
-    initAfterComponentMounted();
+    import('../startup/client/init2.js').then(({initAfterComponentMounted})=>{
+      initAfterComponentMounted();
 
-    Meteor.defer(()=>{
       if( Meteor.isCordova ){
         document.addEventListener("backbutton", this.onBackKeyDown);
       }
       console.log("App.componentDidMount()");
       WeatherForecasts.start();
 //      WeatherForecasts.onForecastUpdate(refreshWeatherChart);
+
     })
   }
 
