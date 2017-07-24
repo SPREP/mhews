@@ -2,7 +2,7 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 
 /* i18n */
-import { translate } from 'react-i18next';
+import { translate, I18nextProvider } from 'react-i18next';
 
 /* Imports from the material-ui */
 import AppBar from 'material-ui/AppBar';
@@ -11,6 +11,7 @@ import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 
 /* Imports the mhews's components */
 import WeatherForecasts from '../api/client/weather.js';
+import {Preferences} from '../api/client/preferences.js';
 
 import ConnectionStatusIndicatorContainer from './components/ConnectionStatusIndicator.jsx';
 import DrawerMenu from './components/DrawerMenu.jsx';
@@ -36,7 +37,8 @@ class AppClass extends React.Component {
     this.state = {
       page: Config.topPage,
       drawerOpen: false,
-      dialogOpen: false
+      dialogOpen: false,
+      i18nReady: false
     }
     this.isSoftwareUpdateConfirmed = false;
     this.onBackKeyDown = this.onBackKeyDown.bind(this);
@@ -66,8 +68,14 @@ class AppClass extends React.Component {
 
   componentDidMount(){
 
-    // It seems that while the following code is executed, we get the blank white screen.
-    // Use Meteor.defer so that componentDidMount returns earlier.
+    console.log("App.componentDidMount()");
+
+    import("../api/i18n.js").then(({default: m})=>{
+      i18n = m;
+      i18n.init();
+      Preferences.onChange("language", i18n.changeLanguage);
+      this.setState({i18nReady: true});
+    })
 
     import('../startup/client/init2.js').then(({initAfterComponentMounted})=>{
       initAfterComponentMounted();
@@ -75,7 +83,7 @@ class AppClass extends React.Component {
       if( Meteor.isCordova ){
         document.addEventListener("backbutton", this.onBackKeyDown);
       }
-      console.log("App.componentDidMount()");
+
       WeatherForecasts.start();
 //      WeatherForecasts.onForecastUpdate(refreshWeatherChart);
 
@@ -88,14 +96,34 @@ class AppClass extends React.Component {
   }
 
   render(){
+    return this.state.i18nReady ? this.renderAfterI18nReady() : this.renderBeforeI18nReady();
+  }
+
+  renderBeforeI18nReady(){
+    const page = this.state.page;
+    const pageConfig = Config.pages[page];
+
+    return (
+      <div className="app">
+        <AppBar
+          title={""}
+          style={{"backgroundColor": "#F40000"}}
+          titleStyle={{"fontSize": "18px"}}
+          onLeftIconButtonTouchTap={()=>{this.toggleDrawerOpen()}}
+          iconElementLeft={<IconButton><MenuIcon /></IconButton>}
+        />
+      </div>
+    );
+  }
+  renderAfterI18nReady(){
     const page = this.state.page;
     const pageConfig = Config.pages[page];
     const t = this.props.t;
 
     return (
+      <I18nextProvider i18n={ i18n.getInstance() }>
       <div className="app">
         <AppBar
-//          title={t(pageConfig.title)}
           title={getTitle(this.getPathName(), t)}
           style={{"backgroundColor": "#F40000"}}
           titleStyle={{"fontSize": "18px"}}
@@ -114,6 +142,7 @@ class AppClass extends React.Component {
         </AppChildWrapper>
         <ConnectionStatusIndicatorContainer />
       </div>
+    </I18nextProvider>
     );
   }
   getPathName(){

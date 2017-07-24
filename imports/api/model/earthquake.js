@@ -1,8 +1,8 @@
-import i18n from 'i18next';
 import {Warning} from './warning.js';
 import {sprintf} from 'sprintf-js';
 import {getDistanceFromLatLonInKm} from '../geoutils.js';
 import Warnings from '../warnings.js';
+import {Preferences} from '/imports/api/client/preferences.js';
 
 export class Earthquake extends Warning {
   constructor(phenomena){
@@ -30,16 +30,18 @@ export class Earthquake extends Warning {
   }
 
   getDescription(t){
+    const lang = Preferences.load("language");
+
     const quake = this;
     const distanceKm = Math.round(quake.distance_km);
     const distanceMiles = Math.round(quake.distance_miles);
-    const direction = quake["direction_"+i18n.language];
+    const direction = quake["direction_"+lang];
 
     let description = sprintf(t("earthquake_description.location"), quake.mw, quake.region, quake.depth);
     description += ", ";
     description += sprintf(t("earthquake_description.town"), distanceKm, distanceMiles, direction, "Apia");
     description += ". ";
-    description += quake["description_"+i18n.language];
+    description += quake["description_"+lang];
 
     return description;
   }

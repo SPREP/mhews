@@ -1,4 +1,3 @@
-import {Preferences} from '../../api/client/preferences.js';
 
 /* This plugin captures the tap event in React. */
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -10,13 +9,6 @@ import {initFlowRouter} from '../../api/client/flowroute.jsx';
 Meteor.startup(()=>{
 
   // These initializations are needed before rendering GUI.
-  // TODO Move this after the first empty screen has been rendered.
-  import("../../api/i18n.js").then(({default: m})=>{
-    i18n = m;
-    i18n.init();
-    Preferences.onChange("language", i18n.changeLanguage);
-  })
-
   initTapEventPlugin();
 
   // Call this function after the initTapEventPlugin().

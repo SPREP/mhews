@@ -1,8 +1,8 @@
-import i18n from 'i18next';
 import {toTitleCase} from '../strutils.js';
 import {sprintf} from 'sprintf-js';
 import Config from '/imports/config.js';
 import {PushMessage} from '../pushmessage.js';
+import {Preferences} from '/imports/api/client/preferences.js';
 
 // Warning levels in the significance order.
 const levels = ["information", "advisory", "watch", "warning"];
@@ -39,7 +39,7 @@ export class Warning {
   }
 
   getDescription(){
-    return this["description_"+i18n.language];
+    return this["description_"+Preferences.load("language")];
   }
 
   // Method to identify if two warnings are about the same event.
