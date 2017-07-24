@@ -1,7 +1,6 @@
 import {CycloneBulletins} from '../bulletin.js';
 import {Warning} from './warning.js';
 import {sprintf} from 'sprintf-js';
-import {Preferences} from '/imports/api/client/preferences.js';
 
 export class Cyclone extends Warning {
   constructor(phenomena){
@@ -24,7 +23,7 @@ export class Cyclone extends Warning {
     const tc_info = bulletin.tc_info;
 
     let description = "";
-    const lang = Preferences.load("language");
+    const lang = super.getLanguage();
 
     // Predefined text to describe the TC's name, location and the distance from neighbour towns.
     description += sprintf(t("cyclone_description.location"), tc_info.name, tc_info.center.lat, tc_info.center.lng);

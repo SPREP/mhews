@@ -8,7 +8,7 @@ const i18nextConfig = {
   ns: ['common'],
   defaultNS: 'common',
 
-  debug: false,
+  debug: true,
 
   interpolation: {
     escapeValue: false // not needed for react!!
@@ -18,9 +18,13 @@ const i18nextConfig = {
 class i18n {
 
   init(){
+    if( this.initialized ) return;
+
     console.log("============== Initializing i18n");
     i18next.init(i18nextConfig);
     tweakTFunc(i18next);
+
+    this.initialized = true;
   }
 
   getInstance(){
@@ -32,6 +36,8 @@ class i18n {
 
     if( !i18next.hasResourceBundle(lang, ns)){
       const moduleName = "/locales/"+ lang + "." + ns + ".js";
+      console.log("Adding resource bundle "+moduleName);
+
       const resource = require(moduleName).default;
       i18next.addResourceBundle(lang, ns, resource);
     }

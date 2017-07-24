@@ -13,8 +13,6 @@ import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import WeatherForecasts from '../api/client/weather.js';
 import {Preferences} from '../api/client/preferences.js';
 
-import ConnectionStatusIndicatorContainer from './components/ConnectionStatusIndicator.jsx';
-import DrawerMenu from './components/DrawerMenu.jsx';
 import {quitApp} from '../api/client/appcontrol.js';
 import {toTitleCase} from '../api/strutils.js';
 
@@ -29,6 +27,10 @@ const topPageName = Config.topPage;
 const surfaceChartUrl = Config.cacheFiles.surfaceChart;
 
 const satelliteImageUrl = Config.cacheFiles.satelliteImage;
+
+let ConnectionStatusIndicatorContainer;
+
+let DrawerMenu;
 
 class AppClass extends React.Component {
 
@@ -74,6 +76,18 @@ class AppClass extends React.Component {
       i18n = m;
       i18n.init();
       Preferences.onChange("language", i18n.changeLanguage);
+    }).then(()=>{
+      return Promise.all([
+        import('./components/DrawerMenu.jsx').then(({default: m})=>{
+          DrawerMenu = m;
+        }),
+        import('./components/ConnectionStatusIndicator.jsx').then(({default: m})=>{
+          ConnectionStatusIndicatorContainer = m;
+        })
+      ])
+    }).then(()=>{
+      const lang = Preferences.load("language");
+      i18n.changeLanguage(lang);
       this.setState({i18nReady: true});
     })
 
@@ -118,7 +132,9 @@ class AppClass extends React.Component {
   renderAfterI18nReady(){
     const page = this.state.page;
     const pageConfig = Config.pages[page];
-    const t = this.props.t;
+    const t = i18n.getInstance().t;
+
+    console.log("========== Language = "+i18n.getInstance().language);
 
     return (
       <I18nextProvider i18n={ i18n.getInstance() }>
@@ -214,9 +230,10 @@ AppChildWrapper.propTypes = {
 }
 
 AppClass.propTypes = {
-  t: React.PropTypes.func,
+//  t: React.PropTypes.func,
   children: React.PropTypes.node,
   location: React.PropTypes.object // Set by React Router
 }
 
-export default translate(['common'])(AppClass);
+//export default translate(['common'])(AppClass);
+export default AppClass;

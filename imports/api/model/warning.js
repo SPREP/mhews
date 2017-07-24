@@ -2,7 +2,9 @@ import {toTitleCase} from '../strutils.js';
 import {sprintf} from 'sprintf-js';
 import Config from '/imports/config.js';
 import {PushMessage} from '../pushmessage.js';
-import {Preferences} from '/imports/api/client/preferences.js';
+import {Meteor} from 'meteor/meteor';
+
+let Preferences;
 
 // Warning levels in the significance order.
 const levels = ["information", "advisory", "watch", "warning"];
@@ -10,6 +12,12 @@ const levels = ["information", "advisory", "watch", "warning"];
 export class Warning {
   constructor(phenomena){
     _.extend(this, phenomena);
+
+    if( Meteor.isClient ){
+      import('/imports/api/client/preferences.js').then(({Preferences: m})=>{
+        Preferences = m;
+      })
+    }
   }
 
   check(){
@@ -20,6 +28,11 @@ export class Warning {
     Config.languages.forEach((lang)=>{
       check(this["description_"+lang], String);
     });
+  }
+
+  // This method can only be called from the client.
+  getLanguage(){
+    return Preferences.load("language");
   }
 
   getHeaderTitle(t){
@@ -38,8 +51,9 @@ export class Warning {
     return moment(this.issued_at).format("YYYY-MM-DD HH:mm");
   }
 
+  // This method can only be called from the client.
   getDescription(){
-    return this["description_"+Preferences.load("language")];
+    return this["description_"+this.getLanguage()];
   }
 
   // Method to identify if two warnings are about the same event.

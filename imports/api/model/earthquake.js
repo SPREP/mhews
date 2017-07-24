@@ -2,7 +2,6 @@ import {Warning} from './warning.js';
 import {sprintf} from 'sprintf-js';
 import {getDistanceFromLatLonInKm} from '../geoutils.js';
 import Warnings from '../warnings.js';
-import {Preferences} from '/imports/api/client/preferences.js';
 
 export class Earthquake extends Warning {
   constructor(phenomena){
@@ -30,7 +29,7 @@ export class Earthquake extends Warning {
   }
 
   getDescription(t){
-    const lang = Preferences.load("language");
+    const lang = super.getLanguage();
 
     const quake = this;
     const distanceKm = Math.round(quake.distance_km);
