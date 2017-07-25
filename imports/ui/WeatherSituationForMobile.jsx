@@ -4,11 +4,7 @@ import CardTitle from 'material-ui/Card/CardTitle';
 import { createContainer } from 'meteor/react-meteor-data';
 import SwipeableViews from 'react-swipeable-views';
 
-//import FileCache from '/imports/api/client/filecache.js';
-
 import Config from '/imports/config.js';
-
-/* global FileCache */
 
 class WeatherSituationImage extends React.Component {
 
@@ -48,6 +44,8 @@ const WeatherSituationImageContainer = createContainer(({imageHandler})=>{
 
 }, WeatherSituationImage);
 
+let FileCache;
+
 export class WeatherSituation extends React.Component {
 
   constructor(props){
@@ -55,20 +53,33 @@ export class WeatherSituation extends React.Component {
     this.imageUrls = [
       Config.cacheFiles.surfaceChart,
       Config.cacheFiles.satelliteImage
-    ]
+    ];
+    this.state = {
+      isFileCacheReady: FileCache ? true : false
+    }
+
+    if( !FileCache ){
+      import('/imports/api/client/filecache.js').then(({default: m})=>{
+        console.log("============= import filecache.js");
+        FileCache = m;
+        this.setState({isFileCacheReady: true});
+      })
+    }
   }
 
   getImageHandlers(){
     const handlers = [];
-    this.imageUrls.forEach((url)=>{
-      const handler = FileCache.get(url);
-      if( handler ){
-        handlers.push(handler);
-      }
-      else{
-        console.error("No handler for image "+url);
-      }
-    })
+    if( this.state.isFileCacheReady ){
+      this.imageUrls.forEach((url)=>{
+        const handler = FileCache.get(url);
+        if( handler ){
+          handlers.push(handler);
+        }
+        else{
+          console.error("No handler for image "+url);
+        }
+      })
+    }
     return handlers;
   }
 
@@ -77,14 +88,11 @@ export class WeatherSituation extends React.Component {
     console.log("WeatherSituation.render()");
 
     const cardTitle = (<CardTitle title={t("Situation")} subtitle={this.props.situation} />);
-    let key = 0;
 
     return (
       <SwipeableViews>
         {
-          this.getImageHandlers().map((imageHandler)=>{
-            key++;
-            console.log("getHandlers().map(): key = "+key);
+          this.getImageHandlers().map((imageHandler, key)=>{
             return (
               <WeatherSituationImageContainer
                 key={key}

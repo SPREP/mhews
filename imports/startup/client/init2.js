@@ -2,6 +2,9 @@ import {Preferences} from '../../api/client/preferences.js';
 import {playSound} from '../../api/client/mediautils.js';
 import Config from '/imports/config.js';
 
+const surfaceChartUrl = Config.cacheFiles.surfaceChart;
+
+const satelliteImageUrl = Config.cacheFiles.satelliteImage;
 
 let pushClient = null;
 
@@ -12,6 +15,7 @@ export function initAfterComponentMounted(){
   initPushClient();
   subscribeForCollections();
   startWarningObserver();
+  cacheFiles();
 
 //  configReloader();
 }
@@ -97,6 +101,18 @@ function onPushReceive(data){
     });
   })
 
+}
+
+function cacheFiles(){
+
+  import('../../api/client/filecache.js').then(({default: FileCache})=>{
+    const cacheFiles = Config.cacheFiles;
+    for(let key in cacheFiles ){
+      const url = cacheFiles[key];
+      console.log("Adding file cache for "+url);
+      FileCache.add(url).refresh();
+    }
+  });
 }
 
 // Enqueue the sound effect to avoid multiple sound files are played

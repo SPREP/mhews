@@ -24,10 +24,6 @@ import {FlowRouter} from 'meteor/kadira:flow-router';
 
 const topPageName = Config.topPage;
 
-const surfaceChartUrl = Config.cacheFiles.surfaceChart;
-
-const satelliteImageUrl = Config.cacheFiles.satelliteImage;
-
 let ConnectionStatusIndicatorContainer;
 
 let DrawerMenu;
@@ -173,19 +169,6 @@ class AppClass extends React.Component {
       return routeName;
     }
   }
-}
-
-function cacheFiles(){
-
-  import('../../api/client/filecache.js').then(({default: m})=>{
-    FileCache = m; // global
-
-    const cacheFiles = Config.cacheFiles;
-    for(let key in cacheFiles ){
-      const url = cacheFiles[key];
-      FileCache.add(url);
-    }
-  });
 }
 
 function getTitle(pageName, t){
