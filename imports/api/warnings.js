@@ -95,7 +95,6 @@ export class WarningCollection extends Mongo.Collection {
     return result;
   }
 
-
 }
 
 // This transform function is run by the Meteor Collection when it returns a data entry

@@ -2,6 +2,9 @@ import {chai} from 'meteor/practicalmeteor:chai';
 import {Earthquake} from './earthquake.js';
 import {sinon} from 'meteor/practicalmeteor:sinon';
 
+moment = require('moment');
+geolib = require('geolib');
+
 const _ = require("lodash");
 
 const phenomena = {
