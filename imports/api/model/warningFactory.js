@@ -16,4 +16,5 @@ class WarningFactory {
   }
 }
 
-export default new WarningFactory();
+const Factory = new WarningFactory();
+export default Factory;

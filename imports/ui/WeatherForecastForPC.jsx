@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Card} from 'material-ui/Card';
+import Card from 'material-ui/Card/Card';
 import {Nowcast} from './components/Nowcast.jsx';
 
 /*
@@ -32,7 +32,7 @@ export class WeatherForecastForPC extends React.Component {
 WeatherForecastForPC.propTypes = {
   t: React.PropTypes.func,
   dates: React.PropTypes.array,
-  issuedAt: React.PropTypes.string,
+  issuedAt: React.PropTypes.object,
   situation: React.PropTypes.string,
   forecasts: React.PropTypes.array
 }

@@ -8,7 +8,6 @@ import Toggle from 'material-ui/Toggle';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import { createContainer } from 'meteor/react-meteor-data';
 import {Preferences} from '../api/client/preferences.js';
-import browserHistory from 'react-router/lib/browserHistory';
 
 import {toTitleCase} from '../api/strutils.js';
 
@@ -157,7 +156,7 @@ class PreferencesPage extends React.Component {
     this.savePreference("district", this.selectedDistrict);
     this.savePreference("exercise", this.exercise ? "true" : "false");
     this.savePreference("quakeDistance", this.quakeDistance);
-    browserHistory.goBack();
+    history.back();
   }
 
   savePreference(key, value){

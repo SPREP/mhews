@@ -7,9 +7,6 @@ import {Preferences} from '../api/client/preferences.js';
 /* i18n */
 import { translate } from 'react-i18next';
 
-import {WeatherForecastForMobile} from './WeatherForecastForMobile.jsx';
-import {WeatherForecastForPC} from './WeatherForecastForPC.jsx';
-
 import {getForecastsForDisplay} from '../api/weatherutils.js';
 
 /**
@@ -45,27 +42,24 @@ class WeatherPage extends React.Component {
     const t = this.props.t;
 
     if( Meteor.isCordova ){
-      return (
-        <WeatherForecastForMobile
-          t={t}
-          dates={dates}
-          issuedAt={issuedAt}
-          situation={situation}
-          forecasts={forecasts}
-        />
-      )
-
+      import {WeatherForecastForMobile} from './WeatherForecastForMobile.jsx';
+      return <WeatherForecastForMobile
+            t={t}
+            dates={dates}
+            issuedAt={issuedAt}
+            situation={situation}
+            forecasts={forecasts}
+          />;
     }
     else{
-      return (
-        <WeatherForecastForPC
-          t={t}
-          dates={dates}
-          issuedAt={issuedAt}
-          situation={situation}
-          forecasts={forecasts}
-        />
-      )
+      import {WeatherForecastForPC} from './WeatherForecastForPC.jsx';
+      return <WeatherForecastForPC
+            t={t}
+            dates={dates}
+            issuedAt={issuedAt}
+            situation={situation}
+            forecasts={forecasts}
+          />;
 
     }
   }
@@ -94,6 +88,11 @@ class WeatherPage extends React.Component {
     return moment(dateTime).format("YYYY-MM-DD HH:mm");
   }
 
+}
+
+async function syncImport(name){
+  const Module = await import(name);
+  return Module;
 }
 
 WeatherPage.propTypes = {

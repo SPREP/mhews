@@ -7,6 +7,9 @@ import WarningFactory from '../model/warningFactory.js';
 import i18n from 'i18next';
 import Config from '/imports/config.js';
 
+// The dynamic import in the server/init.js seems not work for the deferred call of obsoleteOldInformation.
+import moment from 'moment';
+
 class WarningCollectionServer {
 
   constructor(collection){

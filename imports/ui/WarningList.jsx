@@ -10,7 +10,6 @@ import { translate } from 'react-i18next';
 import Warnings from '../api/client/warnings.js';
 import {WarningCard} from './components/WarningCard.jsx';
 
-import ReceptionTracker from '../api/receptionTracker.js';
 import {Preferences} from '../api/client/preferences.js';
 
 export class WarningList extends React.Component {
@@ -32,6 +31,9 @@ export class WarningList extends React.Component {
   }
 
   componentDidMount(){
+    // FIXME At the time of componentDidMount, props.warnings is empty.
+    // It is updated after the Collection is ready.
+    // Makes this reactive otherwise the ReceptionTracker is not called.
     updateReceptionTracker(this.props.warnings);
   }
 
@@ -50,7 +52,7 @@ export class WarningList extends React.Component {
     }
     else{
       itemlist.push(
-        <WarningCard t={t} />
+        <WarningCard key={1} t={t} />
       )
     }
 
@@ -97,7 +99,13 @@ const WarningListContainer = createContainer(()=>{
 }, WarningList);
 
 function updateReceptionTracker(warnings){
-  Meteor.defer(()=>{
+  if( !warnings || warnings.length < 1 ){
+    console.log("updateReceptionTracker: no warnings");
+    return;
+  }
+
+  console.log("updateReceptionTracker: There are warnings. Loading receptionTracker.js");
+  import('../api/receptionTracker.js').then(({default: ReceptionTracker})=>{
     warnings.forEach((warning)=>{
       ReceptionTracker.onForegroundReception({
         bulletinId: warning.bulletinId,
@@ -105,9 +113,9 @@ function updateReceptionTracker(warnings){
         level: warning.level,
         in_effect: warning.in_effect,
         issued_at: warning.issued_at
-      });
-    });
-  });
+      })
+    })
+  })
 }
 
 export default translate(['common'])(WarningListContainer);

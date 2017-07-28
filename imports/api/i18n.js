@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import Config from '/imports/config.js';
+import {toTitleCase} from '../api/strutils.js';
 
 const i18nextConfig = {
   lng: 'en',
@@ -18,24 +18,56 @@ const i18nextConfig = {
 class i18n {
 
   init(){
-    Config.languages.forEach((lang)=>{
-      const ns = "common";
-      const moduleName = "/locales/"+ lang + "." + ns + ".js";
-      const resources = i18nextConfig.resources ? i18nextConfig.resources : {};
-      resources[lang] = {};
-      resources[lang][ns] = require(moduleName).default;
-      _.extend(i18nextConfig, {resources: resources});
-    });
+    if( this.initialized ) return;
 
-    console.log(JSON.stringify(i18nextConfig));
-
+    console.log("============== Initializing i18n");
     i18next.init(i18nextConfig);
+    tweakTFunc(i18next);
+
+    this.initialized = true;
+  }
+
+  getInstance(){
+    return i18next;
   }
 
   changeLanguage(lang){
+    const ns = "common";
+
+    if( !i18next.hasResourceBundle(lang, ns)){
+      const moduleName = "/locales/"+ lang + "." + ns + ".js";
+      console.log("Adding resource bundle "+moduleName);
+
+      const resource = require(moduleName).default;
+      i18next.addResourceBundle(lang, ns, resource);
+    }
     i18next.changeLanguage(lang);
   }
 
 }
 
-export default new i18n();
+function tweakTFunc(i18n){
+  i18n.t = (function(){
+    const context = i18n;
+    const originalT = i18n.t;
+
+    return function(key, options){
+      if( !key ){
+        return key;
+      }
+      const lowerCaseKey = key.toLowerCase();
+      const result = originalT.call(context, lowerCaseKey, options);
+
+      // If the original key started with a capital letter, capitalize the result.
+      return (key.charAt(0) == key.charAt(0).toUpperCase()) ? toTitleCase(result) : result;
+
+    }
+  })();
+
+  return i18n;
+}
+
+
+
+const i18nInstance = new i18n();
+export default i18nInstance;

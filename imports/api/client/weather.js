@@ -4,7 +4,6 @@ Weather forecast is pushed from the server through the Mongo Collection.
 Forecasts are stored locally into the GroundDB for offline use.
 
 */
-
 import {WeatherForecasts} from '../weathers.js';
 
 /* global Ground */
@@ -23,7 +22,7 @@ class WeatherForecastsCollection extends Ground.Collection {
     console.log("WeatherForecastsCollection.start");
 
     // To receive the data from the weatherForecast collection
-    Meteor.subscribe("weatherForecast", ()=>{
+    this.subscriptionHandler = Meteor.subscribe("weatherForecast", ()=>{
       console.log("Meteor.subscribe weather callback.");
 
       // Make GroundDB observe the Mongo db and copy the data to the local storage.
@@ -43,7 +42,7 @@ class WeatherForecastsCollection extends Ground.Collection {
       this.forecastUpdateHandler = null;
     }
 
-    Meteor.unsubscribe(this.collection);
+    this.subscriptionHandler.stop();
     // TODO What's the right unsubscribe operation for the GroundDB??
   }
 
@@ -112,4 +111,5 @@ class ForecastWrapper {
 
 }
 
-export default new WeatherForecastsCollection("groundWeatherForecast");
+const WeatherForecastsGroundCollection = new WeatherForecastsCollection("groundWeatherForecast");
+export default WeatherForecastsGroundCollection;

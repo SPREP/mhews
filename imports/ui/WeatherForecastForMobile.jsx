@@ -1,5 +1,8 @@
 import React from 'react';
-import {Card, CardHeader, CardActions} from 'material-ui/Card';
+import Card from 'material-ui/Card/Card';
+import CardHeader from 'material-ui/Card/CardHeader';
+import CardActions from 'material-ui/Card/CardActions';
+
 import SwipeableViews from 'react-swipeable-views';
 import {Nowcast} from './components/Nowcast.jsx';
 import {ExtendedForecast} from './components/ExtendedForecast.jsx';
@@ -18,7 +21,7 @@ export class WeatherForecastForMobile extends React.Component {
     if( this.state.displayDate != nextState.displayDate ){
       return true;
     }
-
+    return false;
   }
 
   render(){
@@ -47,9 +50,10 @@ export class WeatherForecastForMobile extends React.Component {
         </SwipeableViews>
         <CardActions style={{"paddingTop": "0px", "paddingLeft": "16px"}}>
           {
-            forecasts.map((forecast)=>{
+            forecasts.map((forecast, index)=>{
               return (
                 <ExtendedForecast
+                  key={index}
                   forecast={forecast}
                   t={this.props.t}
                   onSelected={(date)=>{this.changeDisplayDate(date)}}
@@ -88,7 +92,7 @@ export class WeatherForecastForMobile extends React.Component {
 WeatherForecastForMobile.propTypes = {
   t: React.PropTypes.func,
   dates: React.PropTypes.array,
-  issuedAt: React.PropTypes.string,
+  issuedAt: React.PropTypes.object,
   situation: React.PropTypes.string,
   forecasts: React.PropTypes.array,
 

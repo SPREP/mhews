@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 import {TideTableCollection} from '../tidetable.js';
+import moment from 'moment';
 
 class TideTableServer {
 

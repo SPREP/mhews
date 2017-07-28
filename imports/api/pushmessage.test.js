@@ -1,6 +1,7 @@
 import {Earthquake} from './model/earthquake.js';
 import {sinon} from 'meteor/practicalmeteor:sinon';
 import {Meteor} from 'meteor/meteor';
+import PushMessageSenderFcm from './server/pushmessageSenderFcm.js';
 
 var request = require('request');
 
@@ -29,17 +30,17 @@ const phenomena = {
 describe('pushmessage', function() {
 
   if( Meteor.isServer ){
+
     describe('#doSend', function() {
       it('calls post method with correct options.', sinon.test(function() {
-        this.stub(request, "post", (_options, callback)=>{
-          const response = {statusCode: 200};
-          callback(undefined, response);
-        });
+        stubPost(this, {statusCode: 200});
+        stubWithRequest(this);
+
         const message = createSampleMessage();
         const onSuccess = this.spy();
         const onError = this.spy();
         const scheduleRetryOnError = this.spy(message, "scheduleRetryOnError");
-        message.sendOnce(onSuccess, onError);
+        PushMessageSenderFcm.post(message, onSuccess, onError);
 
         sinon.assert.calledOnce(request.post);
         sinon.assert.calledWith(request.post, sinon.match({json: message.body}));
@@ -49,15 +50,14 @@ describe('pushmessage', function() {
       }))
 
       it('should not try resend in case of 400 response from FCM', sinon.test(function() {
-        this.stub(request, "post", (_options, callback)=>{
-          const response = {statusCode: 400};
-          callback(undefined, response);
-        });
+        stubPost(this, {statusCode: 400});
+        stubWithRequest(this);
+
         const message = createSampleMessage();
         const onSuccess = this.spy();
         const onError = this.spy();
         const scheduleRetryOnError = this.spy(message, "scheduleRetryOnError");
-        message.sendOnce(onSuccess, onError);
+        PushMessageSenderFcm.post(message, onSuccess, onError);
 
         sinon.assert.calledOnce(request.post);
         sinon.assert.notCalled(onSuccess);
@@ -66,15 +66,14 @@ describe('pushmessage', function() {
       }))
 
       it('should retry in case of 500 response from FCM', sinon.test(function() {
-        this.stub(request, "post", (_options, callback)=>{
-          const response = {statusCode: 500};
-          callback(undefined, response);
-        });
+        stubPost(this, {statusCode: 500});
+        stubWithRequest(this);
+
         const message = createSampleMessage();
         const onSuccess = this.spy();
         const onError = this.spy();
         const scheduleRetryOnError = this.spy(message, "scheduleRetryOnError");
-        message.sendOnce(onSuccess, onError);
+        PushMessageSenderFcm.post(message, onSuccess, onError);
 
         sinon.assert.calledOnce(request.post);
         sinon.assert.notCalled(onSuccess);
@@ -85,6 +84,18 @@ describe('pushmessage', function() {
 
   }
 });
+
+function stubPost(thisSinon, response){
+  thisSinon.stub(request, "post", (_options, callback)=>{
+    callback(undefined, response);
+  });
+}
+
+function stubWithRequest(thisSinon){
+  thisSinon.stub(PushMessageSenderFcm, "withRequest", (func)=>{
+    func(request);
+  });
+}
 
 function createSampleMessage(){
   const quake = new Earthquake(phenomena);

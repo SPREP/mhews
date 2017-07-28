@@ -1,6 +1,6 @@
 import React from 'react';
 import RightArrowIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
-import browserHistory from 'react-router/lib/browserHistory';
+import {FlowRouter} from 'meteor/kadira:flow-router';
 
 import Paper from 'material-ui/Paper';
 
@@ -62,8 +62,10 @@ function getWarningStyle(warning){
   return {color: "#000000"};
 }
 
-function openLink(path){
-  browserHistory.push("/app/"+path);
+function openLink(page){
+  const path = "/app/"+page;
+
+  FlowRouter.go(path);
 }
 
 function getWarningTypeIcon(warning){

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Card} from 'material-ui/Card';
+import Card from 'material-ui/Card/Card';
 import {Tabs, Tab} from 'material-ui/Tabs';
 
 import {WeatherMap} from '/imports/ui/components/WeatherMap.jsx';

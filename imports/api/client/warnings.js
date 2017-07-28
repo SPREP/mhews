@@ -4,6 +4,8 @@ import Warnings from '../warnings.js';
 class WarningCollectionClient {
 
   constructor(collection){
+    console.log("============== WarningCollectionClient");
+
     _.extend(this, collection);
     this.cancelWarning = this.cancelWarning.bind(this);
   }
@@ -26,4 +28,5 @@ class WarningCollectionClient {
   }
 }
 
-export default new WarningCollectionClient(Warnings);
+const Client = new WarningCollectionClient(Warnings);
+export default Client;

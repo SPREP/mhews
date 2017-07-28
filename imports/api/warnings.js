@@ -3,7 +3,13 @@ import { check } from 'meteor/check';
 import WarningFactory from './model/warningFactory.js';
 import Config from '/imports/config.js';
 
+console.log("================= WarningCollection");
+
 export class WarningCollection extends Mongo.Collection {
+
+  constructor(...args){
+    super(...args);
+  }
 
   findWarningsInEffect(type, area, direction, joinExercise){
     check(type, Match.Maybe(String));
@@ -89,7 +95,6 @@ export class WarningCollection extends Mongo.Collection {
     return result;
   }
 
-
 }
 
 // This transform function is run by the Meteor Collection when it returns a data entry
@@ -98,4 +103,5 @@ function transform(warning){
   return WarningFactory.create(warning);
 }
 
-export default new WarningCollection("warnings", {transform: transform});
+const Collection = new WarningCollection("warnings", {transform: transform});
+export default Collection;

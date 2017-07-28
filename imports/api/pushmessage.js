@@ -1,13 +1,9 @@
 import { Meteor } from 'meteor/meteor';
-import i18n from 'i18next';
-
-var request = require('request');
-
-const _ = require('lodash');
 
 export class PushMessage {
 
   constructor(warning, body){
+
     this.warning = warning;
     this.body = body;
     this.serverError = {
@@ -26,6 +22,11 @@ export class PushMessage {
 
     this.sendToTopic = this.sendToTopic.bind(this);
     this.sendToToken = this.sendToToken.bind(this);
+  }
+
+  sender(sender){
+    this.sender = sender;
+    return this;
   }
 
   // Set the number of times to resend. 0 means that a message is sent once without resend.
@@ -101,115 +102,7 @@ export class PushMessage {
 
     console.log(JSON.stringify(this.body));
 
-    /*
-      Send the message to both OneSignal and Fcm, until all the FCM client will be replaced by OneSignal client.
-    */
-    this.postOneSignalMessage(onSuccess, onError);
-    this.postFcmMessage(onSuccess, onError);
-  }
-
-  postOneSignalMessage(onSuccess, onError){
-
-    const restApiKey = Meteor.settings.oneSignalRestApiKey;
-    const appId = Meteor.settings.public.oneSignalAppId;
-
-    const oneSignalHeaders = {
-      "Content-Type": "application/json; charset=utf-8",
-      "Authorization": "Basic "+restApiKey
-    };
-
-    const oneSignalOptions = {
-      host: "onesignal.com",
-      port: 443,
-      path: "/api/v1/notifications",
-      method: "POST",
-      headers: oneSignalHeaders
-    }
-
-    const filters = this.warning.getOneSignalFilters(this.topic);
-
-    // https://documentation.onesignal.com/reference
-    // OneSignal requires that the sound file excludes the file extension.
-    const message = {
-      app_id: appId,
-      contents: {"en": this.warning.getHeaderTitle((word)=>{return i18n.t(word, {lang: "en"})})},
-      headings: {"en": this.body.notification.title},
-      data: this.body.data,
-      android_sound: removeFileExtension(this.body.notification.sound),
-      ttl: this.body.time_to_live,
-      priority: 10,
-      filters: filters
-    }
-
-    console.log("Sending message to OneSignal "+JSON.stringify(message));
-
-    const https = require('https');
-
-    const req = https.request(oneSignalOptions,  (res)=> {
-      res.on('data', function(data) {
-        console.log("Response:");
-        console.log(JSON.parse(data));
-        if( onSuccess ){
-          onSuccess(data);
-        }
-      });
-    });
-
-    req.on('error', function(e) {
-      console.log("ERROR:");
-      console.log(e);
-      if( onError ){
-        onError(e);
-      }
-    });
-
-    req.write(JSON.stringify(message));
-    req.end();
-  }
-
-  postFcmMessage(onSuccess, onError){
-    const fcmApiKey = Meteor.settings.fcmApiKey;
-
-    const fcmHeaders = {
-      "Content-Type": "application/json",
-      "Authorization": "key="+fcmApiKey
-    };
-
-    const options = {
-      url: "https://fcm.googleapis.com/fcm/send",
-      method: "POST",
-      headers: fcmHeaders
-    }
-
-    const httpRequest = _.merge(options, {json: this.body});
-
-    request.post(httpRequest, Meteor.bindEnvironment((error, response, body)=>{
-      if (!error && response.statusCode == 200) {
-        console.log("FCM message was successfully sent for warning "+this.warning.bulletinId);
-        console.log("Response body = "+ JSON.stringify(body));
-        if( onSuccess ){
-          onSuccess(this.warning);
-        }
-      }
-      else {
-        if( error ){
-          console.log("error: "+error);
-        }
-        if( response ){
-          console.log('error response: '+ response.statusCode+ " "+response.statusMessage);
-        }
-
-        if( isServerError(response.statusCode) && this.serverError.retryCount++ < this.serverError.maxRetry ){
-          this.scheduleRetryOnError();
-        }
-        else{
-          console.error("FCM message couldn't be sent for warning "+this.warning.bulletinId);
-          if( onError ){
-            onError(this.warning, response);
-          }
-        }
-      }
-    }));
+    this.sender.post(this, onSuccess, onError);
   }
 
   scheduleRetryOnError(){
@@ -222,15 +115,4 @@ export class PushMessage {
   getInterval(){
     return Math.pow(this.serverError.intervalBase, this.serverError.retryCount);
   }
-}
-
-function isServerError(statusCode){
-  return statusCode >= 500;
-}
-
-function removeFileExtension(soundFile){
-  soundFile = soundFile.replace(new RegExp("\.wav$"), "");
-  soundFile = soundFile.replace(new RegExp("\.mp3$"), "");
-
-  return soundFile;
 }

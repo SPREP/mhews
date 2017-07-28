@@ -12,8 +12,9 @@ import ServerUtils from '../../api/server/serverutils.js';
 
 import i18n from '../../api/i18n.js';
 
-Meteor.startup(() => {
+loadMoment();
 
+Meteor.startup(() => {
   exposeRemoteMethods();
 
   i18n.init();
@@ -35,6 +36,14 @@ function exposeRemoteMethods(){
     cancelWarning: adminAccess(WarningServer.cancelWarning),
     publishBulletin: adminAccess(CycloneBulletinsServer.publishBulletin),
     cancelBulletin: adminAccess(CycloneBulletinsServer.cancelBulletin)
+  });
+}
+
+async function loadMoment(){
+  console.log("loadMoment");
+  // Set the global variable moment.
+  import("moment").then(({default: m})=>{
+    moment = m;
   });
 }
 

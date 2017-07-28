@@ -6,10 +6,13 @@ import { translate } from 'react-i18next';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
 import RaisedButton from 'material-ui/RaisedButton';
-import {Card, CardMedia, CardActions, CardText} from 'material-ui/Card';
+import Card from 'material-ui/Card/Card';
+import CardMedia from 'material-ui/Card/CardMedia';
+import CardText from 'material-ui/Card/CardText';
+import CardActions from 'material-ui/Card/CardActions';
+
 
 import {playSoundNoDelay} from '../api/client/mediautils.js';
-import browserHistory from 'react-router/lib/browserHistory';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -73,8 +76,8 @@ class UsagePage extends React.Component {
 
   render(){
     const imageStyle = {
-      "max-height": "70%",
-      "min-width": "0%",
+      "maxHeight": "70%",
+      "minWidth": "0%",
       "width": "auto",
       "height": "auto",
       "margin": "0 auto"
@@ -87,9 +90,9 @@ class UsagePage extends React.Component {
         onChangeIndex={this.onChangeIndex}
         >
           {
-            pages.map((page)=>{
+            pages.map((page, index)=>{
               return (
-                <Card style={{minHeight: "100%"}}>
+                <Card style={{minHeight: "100%"}} key={index}>
                   <CardMedia style={{margin: "0 auto"}}>
                     <img
                       src={"/images/screenshots/"+page.image}
@@ -111,7 +114,7 @@ class UsagePage extends React.Component {
                 disableTouchRipple={true}
                 disableFocusRipple={true}
                 primary={true}
-                onTouchTap={()=>{browserHistory.goBack()}}
+                onTouchTap={()=>{history.back()}}
                 style={{marginRight: 12}}
               />
             </CardActions>
@@ -129,9 +132,9 @@ class UsagePage extends React.Component {
     else{
       this.setState({finished: true})
     }
-    if( pages[index].sound && Meteor.isCordova ){
+    if( pages[index-1].sound && Meteor.isCordova ){
       Meteor.defer(()=>{
-        playSoundNoDelay(pages[index].sound);
+        playSoundNoDelay(pages[index-1].sound);
       })
     }
   }

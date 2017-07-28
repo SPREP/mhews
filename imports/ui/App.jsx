@@ -1,11 +1,8 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import browserHistory from 'react-router/lib/browserHistory';
 
 /* i18n */
-import { translate } from 'react-i18next';
-
-import {initAfterComponentMounted} from '../startup/client/init.js';
+import { translate, I18nextProvider } from 'react-i18next';
 
 /* Imports from the material-ui */
 import AppBar from 'material-ui/AppBar';
@@ -14,10 +11,8 @@ import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 
 /* Imports the mhews's components */
 import WeatherForecasts from '../api/client/weather.js';
-import FileCache from '../api/client/filecache.js';
+import {Preferences} from '../api/client/preferences.js';
 
-import ConnectionStatusIndicatorContainer from './components/ConnectionStatusIndicator.jsx';
-import DrawerMenu from './components/DrawerMenu.jsx';
 import {quitApp} from '../api/client/appcontrol.js';
 import {toTitleCase} from '../api/strutils.js';
 
@@ -25,13 +20,13 @@ import Config from '../config.js';
 
 import './css/App.css';
 
-/* global navigator */
+import {FlowRouter} from 'meteor/kadira:flow-router';
 
 const topPageName = Config.topPage;
 
-const surfaceChartUrl = Config.cacheFiles.surfaceChart;
+let ConnectionStatusIndicatorContainer;
 
-const satelliteImageUrl = Config.cacheFiles.satelliteImage;
+let DrawerMenu;
 
 class AppClass extends React.Component {
 
@@ -40,20 +35,16 @@ class AppClass extends React.Component {
     this.state = {
       page: Config.topPage,
       drawerOpen: false,
-      dialogOpen: false
+      dialogOpen: false,
+      i18nReady: false
     }
     this.isSoftwareUpdateConfirmed = false;
     this.onBackKeyDown = this.onBackKeyDown.bind(this);
   }
 
   handlePageSelection(page){
-    if( page == topPageName ){
-      browserHistory.push("/");
-    }
-    else{
-      browserHistory.push("/app/"+page);
-    }
-//    this.setState({page: page});
+    const path = page == topPageName ? "/" : "/app/"+page;
+    FlowRouter.go(path);
   }
 
   onBackKeyDown(){
@@ -74,33 +65,78 @@ class AppClass extends React.Component {
   }
 
   componentDidMount(){
-    hideSplashScreen();
 
-    initAfterComponentMounted();
+    console.log("App.componentDidMount()");
 
-    if( Meteor.isCordova ){
-      document.addEventListener("backbutton", this.onBackKeyDown);
-    }
-    console.log("WeatherPage.componentDidMount()");
-    WeatherForecasts.start();
-    WeatherForecasts.onForecastUpdate(refreshWeatherChart);
+    import("../api/i18n.js").then(({default: m})=>{
+      i18n = m;
+      i18n.init();
+      Preferences.onChange("language", i18n.changeLanguage);
+    }).then(()=>{
+      return Promise.all([
+        import('./components/DrawerMenu.jsx').then(({default: m})=>{
+          DrawerMenu = m;
+        }),
+        import('./components/ConnectionStatusIndicator.jsx').then(({default: m})=>{
+          ConnectionStatusIndicatorContainer = m;
+        })
+      ])
+    }).then(()=>{
+      const lang = Preferences.load("language");
+      i18n.changeLanguage(lang);
+      this.setState({i18nReady: true});
+    })
+
+    import('../startup/client/init2.js').then(({initAfterComponentMounted})=>{
+      initAfterComponentMounted();
+
+      if( Meteor.isCordova ){
+        document.addEventListener("backbutton", this.onBackKeyDown);
+      }
+
+      WeatherForecasts.start();
+//      WeatherForecasts.onForecastUpdate(refreshWeatherChart);
+
+    })
   }
 
   componentWillUnmount(){
-    console.log("WeatherPage.componentWillUmount()");
+    console.log("App.componentWillUmount()");
     WeatherForecasts.stop();
   }
 
   render(){
+    return this.state.i18nReady ? this.renderAfterI18nReady() : this.renderBeforeI18nReady();
+  }
+
+  renderBeforeI18nReady(){
     const page = this.state.page;
     const pageConfig = Config.pages[page];
-    const t = this.props.t;
 
     return (
       <div className="app">
         <AppBar
-//          title={t(pageConfig.title)}
-          title={getTitle(getPageName(this.props.location.pathname), t)}
+          title={""}
+          style={{"backgroundColor": "#F40000"}}
+          titleStyle={{"fontSize": "18px"}}
+          onLeftIconButtonTouchTap={()=>{this.toggleDrawerOpen()}}
+          iconElementLeft={<IconButton><MenuIcon /></IconButton>}
+        />
+      </div>
+    );
+  }
+  renderAfterI18nReady(){
+    const page = this.state.page;
+    const pageConfig = Config.pages[page];
+    const t = i18n.getInstance().t;
+
+    console.log("========== Language = "+i18n.getInstance().language);
+
+    return (
+      <I18nextProvider i18n={ i18n.getInstance() }>
+      <div className="app">
+        <AppBar
+          title={getTitle(this.getPathName(), t)}
           style={{"backgroundColor": "#F40000"}}
           titleStyle={{"fontSize": "18px"}}
           onLeftIconButtonTouchTap={()=>{this.toggleDrawerOpen()}}
@@ -118,20 +154,21 @@ class AppClass extends React.Component {
         </AppChildWrapper>
         <ConnectionStatusIndicatorContainer />
       </div>
+    </I18nextProvider>
     );
   }
-}
-
-// Weather charts such as the surface streamline analysis should have been updated
-// before the weather forecast is updated. This function trigger refresh the charts in the cache.
-function refreshWeatherChart(_forecast){
-  [surfaceChartUrl, satelliteImageUrl].forEach((url)=>{
-
-    const handle = FileCache.get(url);
-    if( handle ){
-      handle.refresh();
+  getPathName(){
+    if( this.props.location ){
+      // Still using the React Router
+      return getPageName(this.props.location.pathname);
     }
-  });
+    else{
+      // Using the Flow Router
+      const routeName = FlowRouter.current().route.name;
+      console.log("routeName = "+routeName);
+      return routeName;
+    }
+  }
 }
 
 function getTitle(pageName, t){
@@ -175,16 +212,11 @@ AppChildWrapper.propTypes = {
   children: React.PropTypes.node
 }
 
-function hideSplashScreen(){
-  if( Meteor.isCordova ){
-    navigator.splashscreen.hide();
-  }
-}
-
 AppClass.propTypes = {
-  t: React.PropTypes.func,
+//  t: React.PropTypes.func,
   children: React.PropTypes.node,
   location: React.PropTypes.object // Set by React Router
 }
 
-export default translate(['common'])(AppClass);
+//export default translate(['common'])(AppClass);
+export default AppClass;

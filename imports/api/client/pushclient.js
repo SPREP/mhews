@@ -1,6 +1,4 @@
 import {Meteor} from 'meteor/meteor';
-import ReceptionTracker from '../receptionTracker.js';
-import Config from '/imports/config.js';
 
 /*
 

@@ -1,4 +1,5 @@
 import {Moon} from './moonutils.js';
+import moment from 'moment';
 
 var assert = require('assert');
 describe('Moon', function() {
