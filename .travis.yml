@@ -14,6 +14,7 @@ cache:
 before_script:
   - meteor npm install
   - meteor add dispatch:mocha
+  - meteor npm i spacejam
   - meteor npm i --save-dev https://github.com/serut/spacejam/tarball/windows-suppport-rc4
 script:
   - date
