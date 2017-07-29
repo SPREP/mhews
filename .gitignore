@@ -12,3 +12,4 @@ private/parallel-access-mhews.js
 icons/Samet*
 .coverage/
 packages/meteor-chai
+*.log

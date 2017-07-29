@@ -47,7 +47,7 @@
     "eslint-plugin-meteor": "^4.0.0",
     "eslint-plugin-react": "^6.2.1",
     "eslint-plugin-mocha": "^4.8.0",
-    "sinon": "^1.17.7",
+    "sinon": "^1.17.7"
   },
   "uglifyjs2": {
     "deadCodes": [
@@ -62,7 +62,7 @@
       "practicalmeteor:sinon",
       "practicalmeteor:mocha",
       "practicalmeteor:mocha-console-runner",
-      "lmieulet:meteor-coverage"      
+      "lmieulet:meteor-coverage"
     ],
     "packageDebug": false,
     "options": {
