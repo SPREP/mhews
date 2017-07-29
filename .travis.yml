@@ -6,17 +6,16 @@ before_install:
   - export TZ=Pacific/Apia
   - curl https://install.meteor.com | /bin/sh
   - export PATH="$HOME/.meteor:$PATH"
+  - cat package.json
+  - npm i spacejam
+  - npm i --save-dev https://github.com/serut/spacejam/tarball/windows-suppport-rc4
 script:
   - meteor build $HOME/build.tgz
 cache:
   directories:
     - node_modules
 before_script:
-  - cat package.json
-  - meteor npm install
   - meteor add dispatch:mocha
-  - meteor npm i spacejam
-  - meteor npm i --save-dev https://github.com/serut/spacejam/tarball/windows-suppport-rc4
 script:
   - date
   - ./node_modules/spacejam/bin/spacejam --driver-package=practicalmeteor:mocha-console-runner test --coverage 'out_lcovonly out_coverage out_html'
