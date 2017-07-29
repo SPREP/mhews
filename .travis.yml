@@ -12,6 +12,7 @@ cache:
   directories:
     - node_modules
 before_script:
+  - cat package.json
   - meteor npm install
   - meteor add dispatch:mocha
   - meteor npm i spacejam
