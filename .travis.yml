@@ -8,18 +8,20 @@ before_install:
   - export PATH="$HOME/.meteor:$PATH"
 #  - cat package.json
   - npm i -g spacejam
+  - npm i --save-dev phantomjs-prebuilt
 #  - npm i --save-dev https://github.com/serut/spacejam/tarball/windows-suppport-rc4
 script:
   - meteor build $HOME/build.tgz
 cache:
   directories:
     - node_modules
-#before_script:
-#  - meteor add dispatch:mocha
+before_script:
+  - meteor add dispatch:mocha
 script:
   - date
 #  - ./node_modules/spacejam/bin/spacejam --driver-package=practicalmeteor:mocha-console-runner test --coverage 'out_lcovonly out_coverage out_html'
-  - spacejam --driver-package=practicalmeteor:mocha-console-runner test --coverage 'out_lcovonly out_coverage out_html'
+#  - spacejam --driver-package=practicalmeteor:mocha-console-runner test --coverage 'out_lcovonly out_coverage out_html'
+  - TEST_BROWSER_DRIVER=phantomjs meteor test --once --driver-package dispatch:mocha
 addons:
     code_climate:
         repo_token: 67cabf430516e7b78e7be6a5c4f642bb76c8f54387fd1de9e30bf3472b178092
