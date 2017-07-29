@@ -17,7 +17,6 @@
     "babel-runtime": "6.18.0",
     "blueimp-md5": "^2.6.0",
     "d": "^0.1.1",
-    "eslint-plugin-mocha": "^4.8.0",
     "geolib": "^2.0.22",
     "i18next": "^4.1.0",
     "ip": "^1.1.4",
@@ -36,7 +35,6 @@
     "react-swipeable-views-utils": "^0.9.2",
     "react-tap-event-plugin": "^2.0.0",
     "request": "^2.79.0",
-    "sinon": "^1.17.7",
     "sprintf-js": "^1.0.3",
     "suncalc": "^1.8.0"
   },
@@ -47,6 +45,53 @@
     "eslint-plugin-import": "^1.15.0",
     "eslint-plugin-jsx-a11y": "^2.2.2",
     "eslint-plugin-meteor": "^4.0.0",
-    "eslint-plugin-react": "^6.2.1"
+    "eslint-plugin-react": "^6.2.1",
+    "eslint-plugin-mocha": "^4.8.0",
+    "sinon": "^1.17.7",
+  },
+  "uglifyjs2": {
+    "deadCodes": [
+      "_meteor.Meteor.isServer",
+      "Meteor.isServer"
+    ],
+    "fileRemoval": [
+      "packages/ddp-server.js",
+      "packages/shell-server.js",
+      "packages/ssrwpo_uglifyjs2.js",
+      "practicalmeteor:chai",
+      "practicalmeteor:sinon",
+      "practicalmeteor:mocha",
+      "practicalmeteor:mocha-console-runner",
+      "lmieulet:meteor-coverage"      
+    ],
+    "packageDebug": false,
+    "options": {
+      "fromString": true,
+      "compress": {
+        "properties": true,
+        "dead_code": true,
+        "drop_debugger": true,
+        "conditionals": true,
+        "comparisons": true,
+        "evaluate": true,
+        "booleans": true,
+        "loops": true,
+        "unused": true,
+        "hoist_funs": true,
+        "if_return": true,
+        "join_vars": true,
+        "cascade": true,
+        "collapse_vars": true,
+        "negate_iife": true,
+        "pure_getters": true,
+        "drop_console": true,
+        "keep_fargs": false,
+        "keep_fnames": false,
+        "passes": 2,
+        "global_defs": {
+          "UGLYFYJS_DEAD": false
+        }
+      }
+    }
   }
 }
