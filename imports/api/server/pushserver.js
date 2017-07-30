@@ -98,7 +98,7 @@ function pushWarning(warning, needsAttention){
     console.log("Sending push message to topic "+topic+" needsAttention = "+needsAttention);
 
     senders.forEach(({name, sender})=>{
-      if( warning.in_effect && warning.notified_by[name] ){
+      if( warning.in_effect && warning.notified_by && warning.notified_by[name] ){
         // This warning message has already been sent by this sender.
         return;
       }
