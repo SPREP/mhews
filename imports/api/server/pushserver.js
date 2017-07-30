@@ -9,13 +9,15 @@ import PushMessageSenderOneSignal from './pushmessageSenderOneSignal.js';
 const topicPrefix = Meteor.settings.public.topicPrefix;
 
 // Push message services used for sending push message.
-const senders = [{
-  name: "OneSignal",
-  sender: PushMessageSenderOneSignal
-},{
-  name: "FCM",
-  sender: PushMessageSenderFcm
-}];
+const senders = [
+  {
+    name: "OneSignal",
+    sender: PushMessageSenderOneSignal
+  },{
+    name: "FCM",
+    sender: PushMessageSenderFcm
+  }
+];
 
 // PushServer checks incoming warning messages in the Warning Collection,
 // and send push notification to the mobile clients.
@@ -74,10 +76,7 @@ function withTranslation(observer){
 }
 
 function pushWarning(warning, needsAttention){
-  if( warning.in_effect && warning.is_user_notified ){
-    // FCM message has already been sent for this warning.
-    return;
-  }
+
   if( !warning.in_effect && warning.level == "information"){
     // Don't send notification for expiry of Information.
     return;
@@ -99,11 +98,18 @@ function pushWarning(warning, needsAttention){
     console.log("Sending push message to topic "+topic+" needsAttention = "+needsAttention);
 
     senders.forEach(({name, sender})=>{
+      if( warning.in_effect && warning.notified_by[name] ){
+        // This warning message has already been sent by this sender.
+        return;
+      }
+
       const message = warning.toPushMessage(needsAttention);
       message.sender(sender).sendToTopic(topic, (warning)=>{
         console.log("Sending push message to topic "+topic+" over "+name+" succeeded.");
         // This will prevent the server from sending the push message twice or more.
-        Warnings.update({_id: warning._id}, {"$set": {is_user_notified: true}});
+        const notifiedBy = {};
+        notifiedBy[name] = true;
+        Warnings.update({_id: warning._id}, {"$set": {notified_by: notifiedBy}});
       });
     })
 
