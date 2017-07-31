@@ -1,6 +1,6 @@
 App.info({
   id: 'ws.gov.samet.mhews',
-  version: "1.1.1",
+  version: "1.2.0",
   name: 'Samoa weather',
   description: 'Multi-Hazard Early Warning System mobile app',
   author: 'Samoa Meteorology Division',
@@ -8,25 +8,30 @@ App.info({
 });
 
 App.icons({
-  'android_mdpi': 'icons/Samet_mdpi.png',
-  'android_hdpi': 'icons/Samet_hdpi.png',
-  'android_xhdpi': 'icons/Samet_xhdpi.png',
-  'android_xxhdpi': 'icons/Samet_xxhdpi.png',
-  'android_xxxhdpi': 'icons/Samet_xxhdpi.png',
-  'iphone': 'icons/Samet_60x60.png',
-  'iphone_2x': 'icons/Samet_120x120.png',
-  'iphone_3x': 'icons/Samet_180x180.png',
+  'android_mdpi': 'icons/android/icon-48-mdpi.png',
+  'android_hdpi': 'icons/android/icon-72-hdpi.png',
+  'android_xhdpi': 'icons/android/icon-96-xhdpi.png',
+  'android_xxhdpi': 'icons/android/icon-144-xxhdpi.png',
+  'android_xxxhdpi': 'icons/android/icon-192-xxxhdpi.png',
+  'iphone': 'icons/ios/icon-60.png',
+  'iphone_2x': 'icons/ios/icon-60-2x.png',
+  'iphone_3x': 'icons/ios/icon-60-3x.png',
+  'ipad': 'icons/ios/icon-76.png',
+  'ipad_2x': 'icons/ios/icon-76-2x.png'
 });
 
 App.launchScreens({
-  'android_mdpi_portrait': 'icons/Samet_mdpi_portrait.png',
-  'android_hdpi_portrait': 'icons/Samet_hdpi_portrait.png',
-  'android_xhdpi_portrait': 'icons/Samet_hdpi_portrait.png',
-  'android_xxhdpi_portrait': 'icons/Samet_hdpi_portrait.png',
-  'android_xxxhdpi_portrait': 'icons/Samet_hdpi_portrait.png',
-  'iphone': 'icons/Samet_hdpi_portrait.png',
-  'iphone_2x': 'icons/Samet_hdpi_portrait.png',
-  'iphone_3x': 'icons/Samet_hdpi_portrait.png'
+  'android_mdpi_portrait': 'screens/android/screen-mdpi-portrait.png',
+  'android_hdpi_portrait': 'screens/android/screen-hdpi-portrait.png',
+  'android_xhdpi_portrait': 'screens/android/screen-xhdpi-portrait.png',
+  'android_xxhdpi_portrait': 'screens/android/screen-xxhdpi-portrait.png',
+  'android_xxxhdpi_portrait': 'screens/android/screen-xxxhdpi-portrait.png',
+  'iphone_2x': 'screens/ios/screen-iphone-portrait-2x.png',
+  'iphone5': 'screens/ios/screen-iphone-portrait-568h-2x.png',
+  'iphone6': 'screens/ios/screen-iphone-portrait-667h.png',
+  'iphone6p_portrait': 'screens/ios/screen-iphone-portrait-736h.png',
+  'ipad_portrait': 'screens/ios/screen-ipad-portrait.png',
+  'ipad_portrait_2x': 'screens/ios/screen-ipad-portrait-2x.png'
 });
 
 App.configurePlugin('cordova-plugin-googlemaps', {
