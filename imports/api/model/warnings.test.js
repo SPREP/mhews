@@ -88,7 +88,7 @@ describe('warning', function() {
       const watch = new Warning(_.create(phenomena, {level: "watch"}));
       const message = watch.toPushMessage().body;
       chai.assert.equal(message.priority, "high");
-      chai.assert.isTrue(message.notification.title.indexOf(watch.type) >= 0);
+      chai.assert.isTrue(message.notification.title.toLowerCase().indexOf(watch.type) >= 0);
       chai.assert.isTrue(message.notification.title.indexOf(watch.level) >= 0);
       chai.assert.equal(message.data.type, watch.type);
       chai.assert.equal(message.data.level, watch.level);
