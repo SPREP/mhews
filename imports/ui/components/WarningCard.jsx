@@ -55,7 +55,7 @@ function getWarningStyle(warning){
         return {color: "#ff0000"};
       }
       else if( str == "watch"){
-        return {color: "#ffff00"};
+        return {color: "#FFBF00"};
       }
     }
   }
