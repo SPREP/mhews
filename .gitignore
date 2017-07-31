@@ -1,5 +1,6 @@
 node_modules/
 .DS_Store
+**/.DS_Store
 .coverage
 cordova-build-override/platforms/android/google-services.json
 cordova-build-override/google-services.json

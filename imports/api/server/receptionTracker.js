@@ -13,4 +13,5 @@ class ReceptionTrackerServer {
 
 }
 
-export default new ReceptionTrackerServer();
+const instance = new ReceptionTrackerServer();
+export default instance;

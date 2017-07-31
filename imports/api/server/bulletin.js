@@ -127,4 +127,5 @@ function createBulletinsServer(bulletinCollection){
 
 }
 
-export default createBulletinsServer(CycloneBulletins);
+const instance = createBulletinsServer(CycloneBulletins);
+export default instance;

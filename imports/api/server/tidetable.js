@@ -41,4 +41,5 @@ class TideTableServer {
   }
 }
 
-export default new TideTableServer(TideTableCollection);
+const instance = new TideTableServer(TideTableCollection);
+export default instance;

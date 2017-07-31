@@ -109,4 +109,5 @@ function findBulletinForLang(bulletin, lang){
 }
 
 
-export default new WeatherServer(WeatherForecasts);
+const instance = new WeatherServer(WeatherForecasts);
+export default instance;
