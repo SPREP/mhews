@@ -119,7 +119,7 @@ export class Warning {
   // In case of overriding, the subclass must call the superclass's toFcmMessage() method,
   // update and return the fcmMessage returned by the superclass's method.
   toFcmMessage(){
-    let title = this.type + " " + this.level;
+    let title = toTitleCase(this.type + " " + this.level);
     if( this.is_exercise == undefined ){
       this.is_exercise = false;
     }

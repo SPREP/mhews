@@ -18,6 +18,7 @@ Meteor.startup(() => {
   exposeRemoteMethods();
 
   i18n.init();
+  i18n.changeLanguage("en");
 
   CycloneBulletinsServer.start();
   WarningServer.start();

@@ -1,5 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-import i18n from 'i18next';
 
 class PushMessageSenderOneSignal {
 
@@ -29,7 +28,7 @@ class PushMessageSenderOneSignal {
     // OneSignal requires that the sound file excludes the file extension.
     const message = {
       app_id: appId,
-      contents: {"en": warning.getHeaderTitle((word)=>{return i18n.t(word, {lang: "en"})})},
+      contents: {"en": body.notification.body},
       headings: {"en": body.notification.title},
       data: body.data,
       android_sound: removeFileExtension(body.notification.sound),
