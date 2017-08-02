@@ -13,7 +13,7 @@ export class WeatherForecastForMobile extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      displayDate: null
+      displayDate: props.dates ? props.dates[0]: null
     };
   }
 
@@ -35,7 +35,9 @@ export class WeatherForecastForMobile extends React.Component {
     // The Weather card expands/shrinks when the CardText is tapped.
     return (
       <Card>
-        <SwipeableViews index={displayDateIndex}>
+        <SwipeableViews index={displayDateIndex} onChangeIndex={(index)=>{
+          this.setState({displayDate: dates[index]});
+        }}>
           {
             forecasts.map((forecast, index) => {
               return (
