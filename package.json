@@ -58,12 +58,7 @@
     "fileRemoval": [
       "packages/ddp-server.js",
       "packages/shell-server.js",
-      "packages/ssrwpo_uglifyjs2.js",
-      "practicalmeteor:chai",
-      "practicalmeteor:sinon",
-      "practicalmeteor:mocha",
-      "practicalmeteor:mocha-console-runner",
-      "lmieulet:meteor-coverage"
+      "packages/ssrwpo_uglifyjs2.js"
     ],
     "packageDebug": false,
     "options": {
