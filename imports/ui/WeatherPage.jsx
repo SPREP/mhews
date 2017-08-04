@@ -9,6 +9,10 @@ import { translate } from 'react-i18next';
 
 import {getForecastsForDisplay} from '../api/weatherutils.js';
 
+// React component for rendering weather forecast.
+// Actual module the component is loaded from differs between PC and Smartphone and thus dynaically loaded.
+let WeatherForecast;
+
 /**
 * This page should show the latest weather forecast.
 * The latest forecast should be retrieved from the SmartMet product.
@@ -19,8 +23,11 @@ class WeatherPage extends React.Component {
     super();
 
     this.state = {
-      forecastTimeout: false
+      forecastTimeout: false,
+      forecastComponentLoaded: false
     }
+
+    this.loadWeatherForecastComponent();
   }
 
   shouldComponentUpdate(nextProps, nextState){
@@ -52,6 +59,22 @@ class WeatherPage extends React.Component {
     return true;
   }
 
+  loadWeatherForecastComponent(){
+
+    if( Meteor.isCordova ){
+      import('./WeatherForecastForMobile.jsx').then(({WeatherForecastForMobile: m})=>{
+        WeatherForecast = m;
+        this.setState({forecastComponentLoaded: true});
+      })
+    }
+    else{
+      import('./WeatherForecastForPC.jsx').then(({WeatherForecastForPC: m})=>{
+        WeatherForecast = m;
+        this.setState({forecastComponentLoaded: true});
+      })
+    }
+  }
+
   renderForecast(bulletin){
     const issuedAt = bulletin.issued_at;
     const situation = bulletin.situation;
@@ -60,27 +83,13 @@ class WeatherPage extends React.Component {
     const forecasts = getForecastsForDisplay(dates, bulletin, district);
     const t = this.props.t;
 
-    if( Meteor.isCordova ){
-      import {WeatherForecastForMobile} from './WeatherForecastForMobile.jsx';
-      return <WeatherForecastForMobile
-            t={t}
-            dates={dates}
-            issuedAt={issuedAt}
-            situation={situation}
-            forecasts={forecasts}
-          />;
-    }
-    else{
-      import {WeatherForecastForPC} from './WeatherForecastForPC.jsx';
-      return <WeatherForecastForPC
-            t={t}
-            dates={dates}
-            issuedAt={issuedAt}
-            situation={situation}
-            forecasts={forecasts}
-          />;
-
-    }
+    return <WeatherForecast
+      t={t}
+      dates={dates}
+      issuedAt={issuedAt}
+      situation={situation}
+      forecasts={forecasts}
+    />;
   }
 
   renderNoForecast(){
@@ -96,7 +105,7 @@ class WeatherPage extends React.Component {
 
     const forecast = this.props.forecast;
 
-    if( forecast ){
+    if( forecast && this.state.forecastComponentLoaded ){
       return this.renderForecast(forecast);
     }
     else if( this.state.forecastTimeout ){
@@ -110,11 +119,6 @@ class WeatherPage extends React.Component {
     return moment(dateTime).format("YYYY-MM-DD HH:mm");
   }
 
-}
-
-async function syncImport(name){
-  const Module = await import(name);
-  return Module;
 }
 
 WeatherPage.propTypes = {
