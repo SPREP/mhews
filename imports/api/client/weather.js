@@ -47,6 +47,7 @@ class WeatherForecastsCollection extends Ground.Collection {
   }
 
   // Call the callback function when the weather forecast is updated.
+  // TODO Check if the GroundDB supports Cursor.observe. If it supports, change the WeatherForecasts.find.
   onForecastUpdate(callback){
 
     const cursor = WeatherForecasts.find({lang: "en", in_effect: true});
@@ -56,7 +57,7 @@ class WeatherForecastsCollection extends Ground.Collection {
   }
 
   getLatestForecast(lng){
-    let forecasts = WeatherForecasts.find(
+    let forecasts = this.find(
       {lang: lng, in_effect: true},
       {sort: {'issued_at': -1}}
     ).fetch();

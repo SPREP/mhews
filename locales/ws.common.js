@@ -68,7 +68,7 @@ export default {
   },
   "is in effect in": "i aafiaga i le",
   no_warning_in_effect: "No warnings in effect. No severe quakes within the last 24h.",
-  no_weather_forecast_error: "Tulou e leai forecast...",
+  no_weather_forecast_error: "Tulou leai se forecast...",
   no_data_to_display: "No data to be displayed",
   situation: "tulaga",
   loading_map: "Loading Google map...",

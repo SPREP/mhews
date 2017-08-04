@@ -3,6 +3,9 @@ import Card from 'material-ui/Card/Card';
 import CardHeader from 'material-ui/Card/CardHeader';
 import CardActions from 'material-ui/Card/CardActions';
 
+import RightArrowIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
+import LeftArrowIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-left';
+
 import SwipeableViews from 'react-swipeable-views';
 import {Nowcast} from './components/Nowcast.jsx';
 import {ExtendedForecast} from './components/ExtendedForecast.jsx';
@@ -35,9 +38,10 @@ export class WeatherForecastForMobile extends React.Component {
     // The Weather card expands/shrinks when the CardText is tapped.
     return (
       <Card>
-        <SwipeableViews index={displayDateIndex} onChangeIndex={(index)=>{
-          this.setState({displayDate: dates[index]});
-        }}>
+          <SwipeableViews style={{display: "inline-block", width: "300px"}}
+            index={displayDateIndex} onChangeIndex={(index)=>{
+            this.setState({displayDate: dates[index]});
+          }}>
           {
             forecasts.map((forecast, index) => {
               return (

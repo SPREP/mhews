@@ -67,7 +67,7 @@ export default {
   },
   "is in effect in": "is in effect in",
   no_warning_in_effect: "No warnings in effect. No severe quakes within the last 24h.",
-  no_weather_forecast_error: "Sorry there is no forecast... Perhaps the app failed to contact the server.",
+  no_weather_forecast_error: "Sorry there is no weather forecast... Perhaps the app failed to contact the server.",
   no_data_to_display: "No data to be displayed",
   situation: "situation",
   loading_map: "Loading Google map...",

@@ -15,7 +15,15 @@ import {getForecastsForDisplay} from '../api/weatherutils.js';
 */
 class WeatherPage extends React.Component {
 
-  shouldComponentUpdate(nextProps, _nextState){
+  constructor(){
+    super();
+
+    this.state = {
+      forecastTimeout: false
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState){
     if( this.props.district != nextProps.district ){
       return true;
     }
@@ -25,8 +33,19 @@ class WeatherPage extends React.Component {
     if( this.props.connected != nextProps.connected ){
       return true;
     }
+    if( this.state != nextState ){
+      return true;
+    }
 
     return false;
+  }
+
+  componentDidMount(){
+    Meteor.setTimeout(()=>{
+      if( !this.props.forecast ){
+        this.setState({forecastTimeout: true});
+      }
+    }, 5000);
   }
 
   validatePhenomena(){
@@ -80,8 +99,11 @@ class WeatherPage extends React.Component {
     if( forecast ){
       return this.renderForecast(forecast);
     }
-    else{
+    else if( this.state.forecastTimeout ){
       return this.renderNoForecast();
+    }
+    else{
+      return (<div></div>);
     }
   }
   dateTimeToString(dateTime){
