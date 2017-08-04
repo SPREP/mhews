@@ -13,11 +13,11 @@ export default class AboutAppPage extends React.Component {
   render(){
     return(
       <div className="app">
-        <h3>Multi Hazard Early Warning System (MHEWS) version 1.2.0</h3>
+        <h3>Samoa Weather version 1.2.0</h3>
         <p>
 This smartphone application provides the weather forecast and
 hazard warning information from Samoa Meteorology Division (SMD)
-so that the users can take early actions to reduce the impact by potential disasters.
+so that the users can take early actions to reduce the impact by natural hazards.
 Please visit <Link href='http://www.samet.gov.ws/'>SMD's web site</Link> as
 well as our <Link href='https://www.facebook.com/SamoaMeteorologicalServices/'>Facebook page</Link>,
 where you can find more about the weather, climate, and geophysics in Samoa.
