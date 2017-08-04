@@ -14,6 +14,8 @@ import CardActions from 'material-ui/Card/CardActions';
 
 import {playSoundNoDelay} from '../api/client/mediautils.js';
 
+/* global device */
+
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 // Shows the usage when the user starts the app for the first time.
@@ -25,44 +27,54 @@ const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 const pages = [
   {
     image: "toppage.jpg",
-    text: "The app shows the weather forecast and alert list. If there's no alert in effect, a smile icon is displayed."
+    text: "The app shows the weather forecast and alert list. If there's no alert in effect, a smile icon is displayed.",
+    platforms: ["browser", "android", "ios"]
   },
   {
     image: "weather_details.jpg",
-    text: "The details of the weather forecast are displayed by tapping on the rectangle."
+    text: "The details of the weather forecast are displayed by tapping on the rectangle.",
+    platforms: ["browser", "android", "ios"]
   },
   {
     image: "weather_surface_chart.jpg",
-    text: "By swiping on the image, you can see either the surface chart..."
+    text: "By swiping on the image, you can see either the surface chart...",
+    platforms: ["browser", "android", "ios"]
   },
   {
     image: "weather_satellite.jpg",
-    text: "Or the satellite image."
+    text: "Or the satellite image.",
+    platforms: ["browser", "android", "ios"]
   },
   {
     image: "toppage_with_warnings.jpg",
-    text: "By tapping on the alert list, you can see the details like potentially affected area."
+    text: "By tapping on the alert list, you can see the details like potentially affected area.",
+    platforms: ["browser", "android", "ios"]
   },
   {
     image: "sidemenu_before.jpg",
-    text: "Tapping on the left top corner will open the side menu."
+    text: "Tapping on the left top corner will open the side menu.",
+    platforms: ["browser", "android", "ios"]
   },
   {
     image: "sidemenu_after.jpg",
-    text: "The app can be closed by selecting 'Quit' here. Or you can use the Home button and the Back button of your smartphone."
+    text: "The app can be closed by selecting 'Quit' here. Or you can use the Home button and the Back button of your smartphone.",
+    platforms: ["android"]
   },
   {
     image: "home_screen.jpg",
-    text: "An alert can be received while the app is not running. The alert will appear in the notification list."
+    text: "An alert can be received while the app is not running. The alert will appear in the notification list.",
+    platforms: ["browser", "android", "ios"]
   },
   {
     image: "home_screen.jpg",
     text: "If you hear this sound, a Tsunami watch or warning has been issued. Please check the information right away.",
-    sound: "tsunami_warning.wav"
+    sound: "tsunami_warning.wav",
+    platforms: ["browser", "android", "ios"]
   },
   {
     image: "background_reception.jpg",
-    text: "Tapping the notification will open the app."
+    text: "Tapping the notification will open the app.",
+    platforms: ["browser", "android", "ios"]
   }
 ];
 
@@ -72,6 +84,10 @@ class UsagePage extends React.Component {
     super(props);
     this.state = {index: 0, finished: false};
     this.onChangeIndex = this.onChangeIndex.bind(this);
+    this.platform = Meteor.isCordova ? device.platform.toLowerCase() : "browser";
+    this.pages = pages.filter((page)=>{
+      return page.platforms.indexOf(this.platform) >= 0;
+    });
   }
 
   render(){
@@ -90,7 +106,7 @@ class UsagePage extends React.Component {
         onChangeIndex={this.onChangeIndex}
         >
           {
-            pages.map((page, index)=>{
+            this.pages.map((page, index)=>{
               return (
                 <Card style={{minHeight: "100%"}} key={index}>
                   <CardMedia style={{margin: "0 auto"}}>
@@ -132,9 +148,9 @@ class UsagePage extends React.Component {
     else{
       this.setState({finished: true})
     }
-    if( pages[index-1].sound && Meteor.isCordova ){
+    if( this.pages[index].sound && Meteor.isCordova ){
       Meteor.defer(()=>{
-        playSoundNoDelay(pages[index-1].sound);
+        playSoundNoDelay(this.pages[index].sound);
       })
     }
   }
