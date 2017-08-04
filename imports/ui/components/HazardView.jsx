@@ -24,6 +24,7 @@ class HazardView extends React.Component {
         <WarningCard
           t={this.props.t}
           warning={this.props.warning}
+          expanded={this.props.expanded}
         />
         <CardMedia expandable={true}>
           {this.props.children}

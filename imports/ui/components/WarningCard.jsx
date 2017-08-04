@@ -1,5 +1,6 @@
 import React from 'react';
 import RightArrowIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
+import LeftArrowIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-left';
 import {FlowRouter} from 'meteor/kadira:flow-router';
 
 import Paper from 'material-ui/Paper';
@@ -30,8 +31,12 @@ export class WarningCard extends React.Component {
           {
             warning ?
             <div className="warningcard_innerDiv2"
-              onTouchTap={()=>{openLink(warning.type+"/"+warning._id)}}>
-              <RightArrowIcon style={{display: "inline-block", width: "32px"}} />
+              onTouchTap={()=>{navigatePage(warning, !this.props.expanded)}}>
+              {
+                this.props.expanded ?
+                <LeftArrowIcon style={{display: "inline-block", width: "32px"}} /> :
+                <RightArrowIcon style={{display: "inline-block", width: "32px"}} />
+              }
             </div>
             : ""
           }
@@ -43,7 +48,8 @@ export class WarningCard extends React.Component {
 
 WarningCard.propTypes = {
   t: React.PropTypes.func,
-  warning: React.PropTypes.object
+  warning: React.PropTypes.object,
+  expanded: React.PropTypes.bool
 }
 
 function getWarningStyle(warning){
@@ -60,6 +66,15 @@ function getWarningStyle(warning){
     }
   }
   return {color: "#000000"};
+}
+
+function navigatePage(warning, expand){
+  if( expand ){
+    openLink(warning.type+"/"+warning._id);
+  }
+  else{
+    history.back();
+  }
 }
 
 function openLink(page){
