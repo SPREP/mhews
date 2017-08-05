@@ -88,10 +88,10 @@ class PreferencesPage extends React.Component {
           <Subheader>{quakeInfoHeader}</Subheader>
           <RadioButtonGroup name="quakeDistance" onChange={(e, v)=>{this.changeQuakeDistance(v)}} defaultSelected={quakeDistance}>
             {
-              quakeDistances.map((distance)=>(
+              quakeDistances.map(({distance, description})=>(
                 <RadioButton
                   key={distance}
-                  label={this.getQuakeLabel(distance)}
+                  label={description}
                   value={distance} />
                 ))
               }
@@ -141,16 +141,6 @@ class PreferencesPage extends React.Component {
     this.quakeDistance = distance;
   }
 
-  getQuakeLabel(distance){
-    if( distance == 0 ){
-      return "Don't receive any earthquake information.";
-    }
-    if( distance == quakeDistances[quakeDistances.length -1]){
-      return "Not limited by distance";
-    }
-    return distance+" km or near";
-  }
-
   savePreferences(){
     this.savePreference("language", this.selectedLanguage);
     this.savePreference("district", this.selectedDistrict);
@@ -169,7 +159,8 @@ class PreferencesPage extends React.Component {
   }
 }
 
-
+// FIXME: propTypes.quakeDistance sometimes number, sometimes string.
+// To be unified.
 PreferencesPage.propTypes = {
   language: React.PropTypes.string,
   district: React.PropTypes.string,

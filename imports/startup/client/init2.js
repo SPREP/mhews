@@ -12,12 +12,21 @@ let pushClient = null;
 // To be executed in the componentDidMount() of the App.
 export function initAfterComponentMounted(){
 
+  initI18n();
   initPushClient();
   subscribeForCollections();
   startWarningObserver();
   cacheFiles();
 
 //  configReloader();
+}
+
+function initI18n(){
+  import("/imports/api/i18n.js").then(({default: i18n})=>{
+    Config.languages.forEach((lang)=>{
+      i18n.loadLanguage(lang);
+    });
+  })
 }
 
 function initPushClient(){

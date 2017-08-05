@@ -32,8 +32,12 @@ class i18n {
   }
 
   changeLanguage(lang){
-    const ns = "common";
+//    this.loadLanguage(lang);
+    i18next.changeLanguage(lang);
+  }
 
+  loadLanguage(lang){
+    const ns = "common";
     if( !i18next.hasResourceBundle(lang, ns)){
       const moduleName = "/locales/"+ lang + "." + ns + ".js";
       console.log("Adding resource bundle "+moduleName);
@@ -41,7 +45,6 @@ class i18n {
       const resource = require(moduleName).default;
       i18next.addResourceBundle(lang, ns, resource);
     }
-    i18next.changeLanguage(lang);
   }
 
 }
