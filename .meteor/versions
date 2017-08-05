@@ -27,6 +27,7 @@ ejson@1.0.13
 es5-shim@4.6.15
 geojson-utils@1.0.10
 ground:db@2.0.0-rc.7
+hot-code-push@1.0.4
 html-tools@1.0.11
 htmljs@1.0.11
 http@1.2.12

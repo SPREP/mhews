@@ -28,3 +28,4 @@ practicalmeteor:mocha
 practicalmeteor:mocha-console-runner
 lmieulet:meteor-coverage
 ssrwpo:uglifyjs2
+hot-code-push

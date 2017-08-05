@@ -1,6 +1,5 @@
 import React from 'react';
 import Card from 'material-ui/Card/Card';
-import CardHeader from 'material-ui/Card/CardHeader';
 import CardActions from 'material-ui/Card/CardActions';
 import RightArrowIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
 import LeftArrowIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-left';
@@ -56,24 +55,33 @@ export class WeatherForecastForMobile extends React.Component {
       speed: 500,
       slidesToShow: 1,
       slidesToScroll: 1,
+      slickGoTo: displayDateIndex,
+      touchMove: true,
+      touchThreshold: 10,
+      responsive: [
+        {breakpoint: 600, settings: {slidesToShow: 1}},
+        {breakpoint: 900, settings: {slidesToShow: 2}},
+        {breakpoint: 1200, settings: {slidesToShow: 3}},
+        {breakpoint: 10000, settings: 'unslick'}
+      ],
       nextArrow: <RightNavButton />,
       prevArrow: <LeftNavButton />
     };
 
     // The Weather card expands/shrinks when the CardText is tapped.
     return (
-      <Card style={{paddingLeft: "20px", paddingRight: "20px"}}>
+      <div>
+      <Card>
+        <div style={{paddingLeft: "3%", paddingRight: "3%", minWidth: "94%", maxWidth: "94%"}}>
           <Slider
 //            style={{display: "inline-block", width: "300px"}}
             {...settings}
             index={displayDateIndex}
-            afterChange={(index)=>{
-            this.setState({displayDate: dates[index]});
-          }}>
+          >
           {
             forecasts.map((forecast, index) => {
               return (
-                <div key={index}>
+                <div key={index} style={{display: "inline-block", width: "300px", verticalAlign: "top"}}>
                 <Nowcast
                   key={index}
                   forecast={forecast}
@@ -84,6 +92,7 @@ export class WeatherForecastForMobile extends React.Component {
             })
           }
         </Slider>
+      </div>
         <CardActions style={{"paddingTop": "0px", "paddingLeft": "16px"}}>
           {
             forecasts.map((forecast, index)=>{
@@ -99,19 +108,10 @@ export class WeatherForecastForMobile extends React.Component {
           }
         </CardActions>
 
-        <CardHeader
-          title={t("Weather")+" "+t("situation")}
-          showExpandableButton={true}
-          subtitle={t("Issued_at")+" "+this.dateTimeToString(this.props.issuedAt)}
-        />
-        <WeatherSituation t={t} expandable={true} situation={this.props.situation} />
-
       </Card>
+      <WeatherSituation t={t} expandable={true} situation={this.props.situation} />
+    </div>
     );
-  }
-
-  dateTimeToString(dateTime){
-    return moment(dateTime).format("YYYY-MM-DD HH:mm");
   }
 
   changeDisplayDate(date){

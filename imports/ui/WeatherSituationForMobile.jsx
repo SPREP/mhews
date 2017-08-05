@@ -1,48 +1,30 @@
 import React from 'react';
+import Card from 'material-ui/Card/Card';
+import CardHeader from 'material-ui/Card/CardHeader';
 import CardMedia from 'material-ui/Card/CardMedia';
 import CardTitle from 'material-ui/Card/CardTitle';
+import CardText from 'material-ui/Card/CardText';
 import { createContainer } from 'meteor/react-meteor-data';
 import Slider from 'react-slick';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
+import RightArrowIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
+import LeftArrowIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-left';
 
 import Config from '/imports/config.js';
 
-class WeatherSituationImage extends React.Component {
-
-  constructor(props){
-    super(props);
-    this.state = {displayCardMediaTitle : true};
-  }
-
-  toggleDisplayCardMediaTitle(){
-    this.setState({displayCardMediaTitle: !this.state.displayCardMediaTitle});
-  }
-
+class LeftNavButton extends React.Component {
   render(){
-    console.log("WeatherSituationImage.render()");
-    return (
-      <CardMedia
-        overlay={this.state.displayCardMediaTitle ? this.props.cardTitle : undefined}
-        expandable={true}
-        onTouchTap={()=>{this.toggleDisplayCardMediaTitle()}}>
-        {
-          this.props.image ? <img src={this.props.image} /> : <p>"Loading ..."</p>
-        }
-      </CardMedia>
-    );
+    return <LeftArrowIcon {...this.props}/>
   }
 }
 
-WeatherSituationImage.propTypes = {
-  cardTitle: React.PropTypes.node,
-  image: React.PropTypes.string
-}
-
-const WeatherSituationImageContainer = createContainer(({imageHandler})=>{
-  return {
-    image: imageHandler.getSource()
+class RightNavButton extends React.Component {
+  render(){
+    return <RightArrowIcon {...this.props}/>
   }
-
-}, WeatherSituationImage);
+}
 
 let FileCache;
 
@@ -83,31 +65,65 @@ export class WeatherSituation extends React.Component {
     return handlers;
   }
 
-  render(){
-    const t = this.props.t;
-    console.log("WeatherSituation.render()");
-
-    const cardTitle = (<CardTitle title={t("Situation")} subtitle={this.props.situation} />);
-
-    return (
-      <Slider>
-        {
-          this.getImageHandlers().map((imageHandler, key)=>{
-            return (
-              <div>
-              <WeatherSituationImageContainer
-                key={key}
-                cardTitle={cardTitle}
-                imageHandler={imageHandler}
-              />
-            </div>);
-          })
-        }
-      </Slider>
-    );
+  dateTimeToString(dateTime){
+    return moment(dateTime).format("YYYY-MM-DD HH:mm");
   }
 
-}
+  render(){
+    const t = this.props.t;
+
+    const settings = {
+      dots: true,
+      infinite: true,
+      arrow: true,
+      speed: 500,
+      slideToShow: 1,
+      slidesToScroll: 1,
+      touchMove: true,
+      touchThreshold: 10,
+      nextArrow: <RightNavButton />,
+      prevArrow: <LeftNavButton />
+    };
+
+    const slides = this.getImageHandlers();
+
+    if( slides.length == 0 ){
+      return <div></div>;
+    }
+
+    return (
+      <Card>
+        <CardHeader
+          title={t("Weather")+" "+t("situation")}
+          showExpandableButton={true}
+          subtitle={t("Issued_at")+" "+this.dateTimeToString(this.props.issuedAt)}
+        />
+        <CardText>
+          {this.props.situation}
+        </CardText>
+
+        <CardMedia expandable={true}>
+          <div style={{position: "relative", paddingLeft: "5%", paddingRight: "5%", minWidth: "90%", width: "90%"}}>
+            <Slider {...settings}>
+              {
+                slides.map((imageHandler, key)=>{
+                  return (
+                    <div key={key} >
+                      <img src={imageHandler.getSource()} style={{width: "100%"}}/>
+                    </div>
+                  );
+                })
+              }
+            </Slider>
+          </div>
+        </CardMedia>
+
+      </Card>
+
+      );
+    }
+
+  }
 
 WeatherSituation.propTypes = {
   t: React.PropTypes.func,
