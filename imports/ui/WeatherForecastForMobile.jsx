@@ -2,14 +2,28 @@ import React from 'react';
 import Card from 'material-ui/Card/Card';
 import CardHeader from 'material-ui/Card/CardHeader';
 import CardActions from 'material-ui/Card/CardActions';
-
 import RightArrowIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
 import LeftArrowIcon from 'material-ui/svg-icons/hardware/keyboard-arrow-left';
 
-import SwipeableViews from 'react-swipeable-views';
+import Slider from 'react-slick';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 import {Nowcast} from './components/Nowcast.jsx';
 import {ExtendedForecast} from './components/ExtendedForecast.jsx';
 import {WeatherSituation} from './WeatherSituationForMobile.jsx';
+
+class LeftNavButton extends React.Component {
+  render(){
+    return <LeftArrowIcon {...this.props}/>
+  }
+}
+
+class RightNavButton extends React.Component {
+  render(){
+    return <RightArrowIcon {...this.props}/>
+  }
+}
 
 export class WeatherForecastForMobile extends React.Component {
 
@@ -35,25 +49,41 @@ export class WeatherForecastForMobile extends React.Component {
     const forecasts = this.props.forecasts;
     const t = this.props.t;
 
+    var settings = {
+      dots: false,
+      infinite: false,
+      arrow: true,
+      speed: 500,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      nextArrow: <RightNavButton />,
+      prevArrow: <LeftNavButton />
+    };
+
     // The Weather card expands/shrinks when the CardText is tapped.
     return (
-      <Card>
-          <SwipeableViews style={{display: "inline-block", width: "300px"}}
-            index={displayDateIndex} onChangeIndex={(index)=>{
+      <Card style={{paddingLeft: "20px", paddingRight: "20px"}}>
+          <Slider
+//            style={{display: "inline-block", width: "300px"}}
+            {...settings}
+            index={displayDateIndex}
+            afterChange={(index)=>{
             this.setState({displayDate: dates[index]});
           }}>
           {
             forecasts.map((forecast, index) => {
               return (
+                <div key={index}>
                 <Nowcast
                   key={index}
                   forecast={forecast}
                   t={this.props.t}
                 />
+              </div>
               )
             })
           }
-        </SwipeableViews>
+        </Slider>
         <CardActions style={{"paddingTop": "0px", "paddingLeft": "16px"}}>
           {
             forecasts.map((forecast, index)=>{

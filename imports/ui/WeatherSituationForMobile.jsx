@@ -2,7 +2,7 @@ import React from 'react';
 import CardMedia from 'material-ui/Card/CardMedia';
 import CardTitle from 'material-ui/Card/CardTitle';
 import { createContainer } from 'meteor/react-meteor-data';
-import SwipeableViews from 'react-swipeable-views';
+import Slider from 'react-slick';
 
 import Config from '/imports/config.js';
 
@@ -90,18 +90,20 @@ export class WeatherSituation extends React.Component {
     const cardTitle = (<CardTitle title={t("Situation")} subtitle={this.props.situation} />);
 
     return (
-      <SwipeableViews>
+      <Slider>
         {
           this.getImageHandlers().map((imageHandler, key)=>{
             return (
+              <div>
               <WeatherSituationImageContainer
                 key={key}
                 cardTitle={cardTitle}
                 imageHandler={imageHandler}
-              />);
+              />
+            </div>);
           })
         }
-      </SwipeableViews>
+      </Slider>
     );
   }
 

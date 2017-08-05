@@ -61,7 +61,8 @@ class WeatherPage extends React.Component {
 
   loadWeatherForecastComponent(){
 
-    if( Meteor.isCordova ){
+//    if( Meteor.isCordova ){
+    if( true ){
       import('./WeatherForecastForMobile.jsx').then(({WeatherForecastForMobile: m})=>{
         WeatherForecast = m;
         this.setState({forecastComponentLoaded: true});
