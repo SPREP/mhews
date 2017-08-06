@@ -3,8 +3,11 @@ import React from 'react';
 /* i18n */
 import { translate } from 'react-i18next';
 
-import SwipeableViews from 'react-swipeable-views';
-import { autoPlay } from 'react-swipeable-views-utils';
+
+import Slider from 'react-slick';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 import RaisedButton from 'material-ui/RaisedButton';
 import Card from 'material-ui/Card/Card';
 import CardMedia from 'material-ui/Card/CardMedia';
@@ -15,8 +18,6 @@ import CardActions from 'material-ui/Card/CardActions';
 import {playSoundNoDelay} from '../api/client/mediautils.js';
 
 /* global device */
-
-const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 // Shows the usage when the user starts the app for the first time.
 // 1) Alarm list
@@ -82,7 +83,6 @@ class UsagePage extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = {index: 0, finished: false};
     this.onChangeIndex = this.onChangeIndex.bind(this);
     this.platform = Meteor.isCordova ? device.platform.toLowerCase() : "browser";
     this.pages = pages.filter((page)=>{
@@ -99,55 +99,64 @@ class UsagePage extends React.Component {
       "margin": "0 auto"
     };
 
+    const settings = {
+      dots: false,
+      infinite: false,
+      arrow: false,
+      speed: 500,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      touchMove: true,
+      touchThreshold: 10,
+      autoplay: true,
+      autoplaySpeed: 5000,
+      afterChange: (currentSlide)=>{
+        console.log("afterChange fired. currentSlide = "+currentSlide);
+      }
+    };
+
+
     return (
-      <AutoPlaySwipeableViews
-        interval={5000}
-        index={this.state.index}
-        onChangeIndex={this.onChangeIndex}
-        >
+      <Slider {...settings}>
           {
             this.pages.map((page, index)=>{
               return (
-                <Card style={{minHeight: "100%"}} key={index}>
-                  <CardMedia style={{margin: "0 auto"}}>
-                    <img
-                      src={"/images/screenshots/"+page.image}
-                      style={imageStyle}
-                    />
-                  </CardMedia>
-                  <CardText style={{minHeight: "20%", maxHeight: "20%"}}>
-                    {page.text}
-                  </CardText>
-                </Card>
+                <div>
+                  <Card style={{minHeight: "100%"}} key={index}>
+                    <CardMedia style={{margin: "0 auto"}}>
+                      <img
+                        src={"/images/screenshots/"+page.image}
+                        style={imageStyle}
+                      />
+                    </CardMedia>
+                    <CardText style={{minHeight: "20%", maxHeight: "20%"}}>
+                      {page.text}
+                    </CardText>
+                  </Card>
+                </div>
               )
             })
           }
-          <Card>
-            <CardText>{"Now you're ready to use this app!"}</CardText>
-            <CardActions>
-              <RaisedButton
-                label={'Finish'}
-                disableTouchRipple={true}
-                disableFocusRipple={true}
-                primary={true}
-                onTouchTap={()=>{history.back()}}
-                style={{marginRight: 12}}
-              />
-            </CardActions>
-          </Card>
-        </AutoPlaySwipeableViews>
+          <div>
+            <Card>
+              <CardText>{"Now you're ready to use this app!"}</CardText>
+              <CardActions>
+                <RaisedButton
+                  label={'Finish'}
+                  disableTouchRipple={true}
+                  disableFocusRipple={true}
+                  primary={true}
+                  onTouchTap={()=>{history.back()}}
+                  style={{marginRight: 12}}
+                />
+              </CardActions>
+            </Card>
+          </div>
+        </Slider>
     )
   }
 
-  onChangeIndex(index, indexLatest){
-    if( indexLatest < index ){
-      if( !this.state.finished ){
-        this.setState({index: index})
-      }
-    }
-    else{
-      this.setState({finished: true})
-    }
+  onChangeIndex(index){
     if( this.pages[index].sound && Meteor.isCordova ){
       Meteor.defer(()=>{
         playSoundNoDelay(this.pages[index].sound);

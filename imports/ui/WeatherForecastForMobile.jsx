@@ -48,7 +48,7 @@ export class WeatherForecastForMobile extends React.Component {
     const forecasts = this.props.forecasts;
     const t = this.props.t;
 
-    var settings = {
+    const settings = {
       dots: false,
       infinite: false,
       arrow: true,
