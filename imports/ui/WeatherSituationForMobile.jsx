@@ -2,9 +2,7 @@ import React from 'react';
 import Card from 'material-ui/Card/Card';
 import CardHeader from 'material-ui/Card/CardHeader';
 import CardMedia from 'material-ui/Card/CardMedia';
-import CardTitle from 'material-ui/Card/CardTitle';
 import CardText from 'material-ui/Card/CardText';
-import { createContainer } from 'meteor/react-meteor-data';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -26,8 +24,6 @@ class RightNavButton extends React.Component {
   }
 }
 
-let FileCache;
-
 export class WeatherSituation extends React.Component {
 
   constructor(props){
@@ -36,33 +32,6 @@ export class WeatherSituation extends React.Component {
       Config.cacheFiles.surfaceChart,
       Config.cacheFiles.satelliteImage
     ];
-    this.state = {
-      isFileCacheReady: FileCache ? true : false
-    }
-
-    if( !FileCache ){
-      import('/imports/api/client/filecache.js').then(({default: m})=>{
-        console.log("============= import filecache.js");
-        FileCache = m;
-        this.setState({isFileCacheReady: true});
-      })
-    }
-  }
-
-  getImageHandlers(){
-    const handlers = [];
-    if( this.state.isFileCacheReady ){
-      this.imageUrls.forEach((url)=>{
-        const handler = FileCache.get(url);
-        if( handler ){
-          handlers.push(handler);
-        }
-        else{
-          console.error("No handler for image "+url);
-        }
-      })
-    }
-    return handlers;
   }
 
   dateTimeToString(dateTime){
@@ -85,7 +54,7 @@ export class WeatherSituation extends React.Component {
       prevArrow: <LeftNavButton />
     };
 
-    const slides = this.getImageHandlers();
+    const slides = this.imageUrls;
 
     if( slides.length == 0 ){
       return <div></div>;
@@ -106,10 +75,10 @@ export class WeatherSituation extends React.Component {
           <div style={{position: "relative", paddingLeft: "5%", paddingRight: "5%", minWidth: "90%", width: "90%"}}>
             <Slider {...settings}>
               {
-                slides.map((imageHandler, key)=>{
+                slides.map((slide, key)=>{
                   return (
                     <div key={key} >
-                      <img src={imageHandler.getSource()} style={{width: "100%"}}/>
+                      <img src={slide} style={{width: "100%"}}/>
                     </div>
                   );
                 })
