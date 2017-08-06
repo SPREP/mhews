@@ -6,6 +6,10 @@ import CardText from 'material-ui/Card/CardText';
 
 import Config from '/imports/config.js';
 
+import Event from '/imports/api/client/magnifier/Event.js';
+import Magnifier from '/imports/api/client/magnifier/Magnifier.js';
+import '/imports/api/client/magnifier/magnifier.css';
+
 export class WeatherSituation extends React.Component {
 
   constructor(props){
@@ -20,6 +24,7 @@ export class WeatherSituation extends React.Component {
         url: Config.cacheFiles.satelliteImage
       }
     ];
+
   }
 
   dateTimeToString(dateTime){
@@ -42,7 +47,8 @@ export class WeatherSituation extends React.Component {
         </Card>
 
         {
-          this.images.map(({title, url})=>{
+          this.images.map(({title, url}, key)=>{
+            const imgId = "weather_situation_image_"+ key;
             return (
               <Card>
                 <CardHeader
@@ -50,7 +56,17 @@ export class WeatherSituation extends React.Component {
                   showExpandableButton={true}
                 />
                 <CardMedia expandable={true}>
-                  <img src={url} style={{width: "100%"}}/>
+                  <img src={url} id={imgId} style={{width: "100%"}} onLoad={()=>{
+                    const magnifier = new Magnifier(new Event());
+//                    if( magnifier ){
+                      magnifier.attach({
+                        thumb: '#'+imgId,
+                        large: url,
+                        zoom: 3,
+                        mode: "inside"
+                      })
+//                    }
+                  }}/>
                 </CardMedia>
               </Card>
             )
