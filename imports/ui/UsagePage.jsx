@@ -32,28 +32,23 @@ const pages = [
     platforms: ["browser", "android", "ios"]
   },
   {
-    image: "weather_details.jpg",
-    text: "The details of the weather forecast are displayed by tapping on the rectangle.",
+    image: "weather_surface_chart_2.jpg",
+    text: "The details of the weather forecast are displayed by tapping the triangle.",
     platforms: ["browser", "android", "ios"]
   },
   {
-    image: "weather_surface_chart.jpg",
-    text: "By swiping on the image, you can see either the surface chart...",
-    platforms: ["browser", "android", "ios"]
-  },
-  {
-    image: "weather_satellite.jpg",
-    text: "Or the satellite image.",
+    image: "weather_surface_chart_3.jpg",
+    text: "Tapping inside the surface chart magnifies the area around the tapped point.",
     platforms: ["browser", "android", "ios"]
   },
   {
     image: "toppage_with_warnings.jpg",
-    text: "By tapping on the alert list, you can see the details like potentially affected area.",
+    text: "Tapping the triangle on the warning list shows you the details like potentially affected area.",
     platforms: ["browser", "android", "ios"]
   },
   {
     image: "sidemenu_before.jpg",
-    text: "Tapping on the left top corner will open the side menu.",
+    text: "Tapping the left top corner opens the side menu.",
     platforms: ["browser", "android", "ios"]
   },
   {
@@ -62,8 +57,18 @@ const pages = [
     platforms: ["android"]
   },
   {
+    image: "settings.jpg",
+    text: "In the Settings menu, you can choose the language, district, and the distance to limit the reception of earthquake information.",
+    platforms: ["browser", "android", "ios"]
+  },
+  {
+    image: "settings_2.jpg",
+    text: "MET office may send dummy warning messages for system test and exercise purpose. If you want to receive them please turn it on.",
+    platforms: ["browser", "android", "ios"]
+  },
+  {
     image: "home_screen.jpg",
-    text: "An alert can be received while the app is not running. The alert will appear in the notification list.",
+    text: "An alert can be received even while the app is not running. The alert will appear in the notification list.",
     platforms: ["browser", "android", "ios"]
   },
   {
@@ -112,6 +117,7 @@ class UsagePage extends React.Component {
       autoplaySpeed: 5000,
       afterChange: (currentSlide)=>{
         console.log("afterChange fired. currentSlide = "+currentSlide);
+        this.onChangeIndex(currentSlide);
       }
     };
 

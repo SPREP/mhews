@@ -58,14 +58,12 @@ export class WeatherSituation extends React.Component {
                 <CardMedia expandable={true}>
                   <img src={url} id={imgId} style={{width: "100%"}} onLoad={()=>{
                     const magnifier = new Magnifier(new Event());
-//                    if( magnifier ){
                       magnifier.attach({
                         thumb: '#'+imgId,
                         large: url,
-                        zoom: 3,
+                        zoom: 2,
                         mode: "inside"
                       })
-//                    }
                   }}/>
                 </CardMedia>
               </Card>
