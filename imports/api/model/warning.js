@@ -120,22 +120,22 @@ export class Warning {
   // update and return the fcmMessage returned by the superclass's method.
   toFcmMessage(){
     let title = toTitleCase(this.type + " " + this.level);
-    if( this.is_exercise == undefined ){
-      this.is_exercise = false;
+
+    if( !this.in_effect ){
+      title = "Cancel "+title;
     }
-    if( this.is_exercise ){
-      title = "exercise".toUpperCase() + " " + title;
+    if( this.is_exercise == true ){
+      title = "EXERCISE" + " " + title;
     }
 
     // Destination topics are set by the send function. Don't set "to" here.
     // "click_action" is needed for cordova-plugin-fcm. However, setting it will prevent
     // the app launch from tapping the notification if cordova-plugin-firebase is used.
-    //
-    // notification.body must be set by a subclass.
     const fcmMessage = {
       "priority": "high",
       "notification" : {
         "title" : title,
+        "body": this.issued_at,
         "icon" : "myicon"
       },
       "data" : {
@@ -151,10 +151,6 @@ export class Warning {
     Config.languages.forEach((lang)=>{
       fcmMessage.data["description_"+lang] = this["description_"+lang];
     })
-
-    if( !this.in_effect ){
-      fcmMessage.notification.title = "Cancel "+title;
-    }
 
     return fcmMessage;
 
