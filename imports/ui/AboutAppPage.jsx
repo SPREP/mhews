@@ -29,6 +29,7 @@ Samoa Meteorology Division issues the following hazard warning bulletins:
   <tr><td>{this.renderIcon("earthquake")}</td><td>Earthquake Information</td></tr>
   <tr><td>{this.renderIcon("tsunami")}</td><td>Tsunami Advisory, Watch and Warning</td></tr>
   <tr><td>{this.renderIcon("cyclone")}</td><td>Cyclone Watch and Warning</td></tr>
+  <tr><td>{this.renderIcon("wind")}</td><td>Wind Advisory</td></tr>
 </table>
 
 "Warning" is severer than "Watch", and "Watch" is severer than "Advisory".

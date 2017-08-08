@@ -24,6 +24,12 @@ export default {
       "icon": "/images/warnings/storm.png",
       "page": "heavyRainPage",
       "useLocation": false
+    },
+    "wind" : {
+      "sound": "general_warning.mp3",
+      "icon": "/images/warnings/wind.png",
+      "page": "heavyRainPage",
+      "useLocation": false
     }
   },
   "menu": [
