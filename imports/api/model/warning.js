@@ -124,7 +124,10 @@ export class Warning {
     if( !this.in_effect ){
       title = "Cancel "+title;
     }
-    if( this.is_exercise == true ){
+    if( this.is_exercise == undefined ){
+      this.is_exercise = false;
+    }
+    if( this.is_exercise ){
       title = "EXERCISE" + " " + title;
     }
 
